@@ -3,6 +3,7 @@
 Biglietto da visita digitale e progetti formali di LBS.
 
 - **Biglietto da visita**: https://lindabs.github.io/lbs/
+- **Ciak, si sceglie** (il gioco per scegliere il film in due): https://lindabs.github.io/lbs/ciak/
 - **Buon Appetito** (cena di festa a tappe): https://lindabs.github.io/lbs/cena/
 
 ## Come è organizzata la repository
@@ -11,15 +12,22 @@ Biglietto da visita digitale e progetti formali di LBS.
 index.html          il biglietto da visita (pagina principale)
 anteprima.jpg       l'immagine che compare quando il link viene condiviso (WhatsApp, social)
 qr-biglietto.png    il QR code che apre il biglietto
+ciak/               Ciak, si sceglie (pagina pubblica e anteprima)
+ciak/sorgenti/      archivio dei film, trame, script per TMDB e per ricostruire la pagina
 cena/index.html     Buon Appetito: percorso a tappe, piano della serata e invito per gli ospiti
 cena/anteprima.jpg  l'immagine di anteprima del link della cena
 ```
 
+### Aggiornare Ciak
+Dentro `ciak/sorgenti/`: aggiungi i film in `films_src.py`, poi
+`python3 fetch_tmdb.py && python3 fetch_providers.py && python3 build.py --sito ../index.html`.
+Gli script leggono i dati da TMDB: la chiave non va mai scritta nei file.
+
 ## Buon Appetito
 
-Identità propria, «Lume di candela», distinta dal biglietto. Una sola pagina, senza cookie né tracciamento. Cinque tappe (occasione, ospiti, esigenze,
-atmosfera, tempo ed energie) e un piano completo: menù, lista della spesa, mise en place,
-playlist, tabella di marcia e invito da mandare su WhatsApp.
+Identità propria, «Lume di candela», distinta dal biglietto. Una sola pagina, senza cookie né tracciamento.
+Cinque tappe (occasione, ospiti, esigenze, atmosfera, tempo ed energie) e un piano completo:
+menù, lista della spesa, mise en place, playlist, tabella di marcia e invito da mandare su WhatsApp.
 
 - Le risposte e il piano restano sul telefono di chi lo usa (localStorage).
 - L'invito viaggia tutto dentro il link (`cena/#invito=…`): il sito non lo riceve.

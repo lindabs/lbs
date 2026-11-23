@@ -81,14 +81,14 @@ main { max-width: 560px; margin: 0 auto; padding-block: 12px calc(48px + env(saf
 .step h2 i { color: var(--gold); }
 .lead { color: var(--muted); max-width: 46ch; }
 .btn {
-  justify-self: start; display: inline-flex; align-items: center; gap: 10px; border: 0; border-radius: 999px; padding: 14px 24px;
+  justify-self: center; display: inline-flex; align-items: center; gap: 10px; border: 0; border-radius: 999px; padding: 14px 24px;
   background: linear-gradient(180deg, var(--gold-hi), var(--gold)); color: #3a0818; font-weight: 700; font-size: 16px;
   box-shadow: 0 10px 26px -12px rgba(232, 199, 143, .7); transition: transform .2s;
 }
 .btn:hover { transform: translateY(-2px); }
 .btn:disabled { opacity: .45; transform: none; cursor: not-allowed; }
 .ghost { border: 1px solid var(--line); background: transparent; color: var(--ivory); border-radius: 999px; padding: 12px 20px; font-weight: 600; }
-.row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: center; }
 
 /* ---------- Marquee (start) ---------- */
 .marquee { display: grid; justify-items: center; text-align: center; gap: 22px; padding-top: 4vh; }
@@ -129,6 +129,8 @@ main { max-width: 560px; margin: 0 auto; padding-block: 12px calc(48px + env(saf
 .chip[aria-pressed="true"] b::before { content: "✓ "; color: var(--gold); }
 .chip.veto[aria-pressed="true"] b::before { content: "✕ "; color: var(--no); }
 .count { font-size: 14px; color: var(--muted); }
+.count.warn { color: var(--gold-hi); }
+.count.stop { color: var(--no); }
 
 /* ---------- Pass the phone ---------- */
 .pass { display: grid; justify-items: center; text-align: center; gap: 18px; padding-top: 8vh; }
@@ -320,6 +322,14 @@ function start() {
   };
 }
 
+function poolNote(el, btn, base) {
+  const n = pool().length;
+  btn.disabled = n === 0;
+  el.className = "count" + (n === 0 ? " stop" : n < 4 ? " warn" : "");
+  el.textContent = n === 0 ? "Nessun film rispetta tutte queste scelte: togli un veto o aggiungi una piattaforma."
+    : n < 4 ? `Solo ${n} ${n === 1 ? "film rispetta" : "film rispettano"} tutte le scelte: si fa presto. Per più varietà togli un veto o aggiungi una piattaforma.`
+    : base(n);
+}
 /* ---------- 1. Platforms ---------- */
 function room() {
   render(`<p class="kicker">Prologo · La sala</p>
@@ -328,7 +338,7 @@ function room() {
     <div class="chips plat">${PLATFORMS.map(p => `<button type="button" class="chip" data-k="${p.k}" aria-pressed="${S.platforms.has(p.k)}"><b>${p.t}</b></button>`).join("")}</div>
     <p class="count" id="pool"></p>
     <button class="btn" id="next" type="button">Avanti</button>`);
-  const upd = () => { const n = pool().length; document.getElementById("pool").textContent = S.platforms.size ? `${n} film disponibili sulle vostre piattaforme` : `Tutto il catalogo: ${n} film`; document.getElementById("next").disabled = n < 4; };
+  const upd = () => poolNote(document.getElementById("pool"), document.getElementById("next"), n => S.platforms.size ? `${n} film disponibili sulle vostre piattaforme` : `Tutto il catalogo: ${n} film`);
   app.querySelectorAll(".chip").forEach(c => c.onclick = () => {
     S.platforms.has(c.dataset.k) ? S.platforms.delete(c.dataset.k) : S.platforms.add(c.dataset.k);
     c.setAttribute("aria-pressed", S.platforms.has(c.dataset.k)); upd();
@@ -349,7 +359,7 @@ function vetoes() {
     <div class="chips">${VETOES.map(v => `<button type="button" class="chip veto" data-k="${v.k}" aria-pressed="${S.vetoes.has(v.k)}"><b>${v.t}</b><span>${v.s}</span></button>`).join("")}</div>
     <p class="count" id="pool"></p>
     <button class="btn" id="next" type="button">Avanti</button>`);
-  const upd = () => { const n = pool().length; document.getElementById("pool").textContent = `${n} film ancora in gara`; document.getElementById("next").disabled = n < 4; };
+  const upd = () => poolNote(document.getElementById("pool"), document.getElementById("next"), n => `${n} film ancora in gara`);
   app.querySelectorAll(".chip").forEach(c => c.onclick = () => {
     S.vetoes.has(c.dataset.k) ? S.vetoes.delete(c.dataset.k) : S.vetoes.add(c.dataset.k);
     c.setAttribute("aria-pressed", S.vetoes.has(c.dataset.k)); upd();
@@ -393,7 +403,8 @@ function mood(who) {
 /* ---------- Pick ten films ---------- */
 function choose() {
   const seen = new Set(S.round ? S.pick.map(f => f.id) : []);
-  const p = pool().filter(f => !seen.has(f.id));
+  let p = pool().filter(f => !seen.has(f.id));
+  if (!p.length) p = pool();
   const a = f => f.m.some(m => S.moods[0].has(m)), b = f => f.m.some(m => S.moods[1].has(m));
   const both = shuffle(p.filter(f => a(f) && b(f)));
   const one = shuffle(p.filter(f => (a(f) || b(f)) && !(a(f) && b(f))));

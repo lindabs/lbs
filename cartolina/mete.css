@@ -1,0 +1,92 @@
+/* La cartolina che si apre · caratteri e animazioni delle illustrazioni, condivisi dalle due pagine.
+   I percorsi dei caratteri sono relativi a questo file. */
+@font-face { font-family: "Instrument Serif"; font-style: normal; font-weight: 400; font-display: swap; src: url(caratteri/instrument-serif.woff2) format("woff2"); }
+@font-face { font-family: "Instrument Serif"; font-style: italic; font-weight: 400; font-display: swap; src: url(caratteri/instrument-serif-corsivo.woff2) format("woff2"); }
+@font-face { font-family: "Hanken Grotesk"; font-style: normal; font-weight: 400 600; font-display: swap; src: url(caratteri/hanken-grotesk.woff2) format("woff2"); }
+@font-face { font-family: "Caveat"; font-style: normal; font-weight: 400 700; font-display: swap; src: url(caratteri/caveat.woff2) format("woff2"); }
+@font-face { font-family: "Josefin Sans"; font-style: normal; font-weight: 300 700; font-display: swap; src: url(caratteri/josefin-sans.woff2) format("woff2"); }
+@font-face { font-family: "GFS Didot"; font-style: normal; font-weight: 400; font-display: swap; src: url(caratteri/gfs-didot-greco.woff2) format("woff2"); unicode-range: U+0370-03FF, U+1F00-1FFF; }
+
+/* Illustrazione: stati animati */
+.scena-svg * { transform-box: view-box; }
+.scena-svg .cielo-sera, .scena-svg .stella, .scena-svg .lampione { opacity: 0; }
+.scena-svg .cl { fill: #fbf3e4; transition: fill 9s 2s; }
+.scena-svg .cs { fill: #cbc0d6; transition: fill 9s 2s; }
+.scena-svg .w { fill: #4d3c56; transition: fill 1.2s var(--d, 0s); }
+.scena-svg .nv { fill: #fde4c8; transition: fill 12s 1s; }
+.scena-svg .nv2 { fill: #f4bda0; transition: fill 12s 1s; }
+.scena-svg .isola { fill: #8a6f98; transition: fill 12s; }
+.scena-svg .titolo { opacity: 0; transform: translateY(14px); }
+.scena-svg .sole { transition: transform 22s cubic-bezier(.3, 0, .6, 1); }
+.scena-svg .riflesso { transition: opacity 16s 4s; }
+.vivo .scena-svg .titolo { animation: titolo 1.6s .6s cubic-bezier(.2, .7, .2, 1) forwards; }
+.vivo .scena-svg .sottotitolo { animation-delay: 1.1s; }
+@keyframes titolo { to { opacity: 1; transform: none; } }
+.sera .scena-svg .cielo-sera { opacity: 1; transition: opacity 16s 1s linear; }
+.sera .scena-svg .sole { transform: translateY(78px); }
+.sera .scena-svg .riflesso { opacity: .35; }
+.sera .scena-svg .cl { fill: #f1d6cf; }
+.sera .scena-svg .cs { fill: #9e8db4; }
+.sera .scena-svg .w { fill: #ffd27a; }
+.sera .scena-svg .nv { fill: #f0a1a6; }
+.sera .scena-svg .nv2 { fill: #c56a86; }
+.sera .scena-svg .isola { fill: #4f3f6c; }
+.sera .scena-svg .lampione { opacity: 1; transition: opacity 1.4s var(--d, 6s); }
+.sera .scena-svg .stella { opacity: .9; transition: opacity 3s var(--d, 10s); }
+.vivo .scena-svg .stella { animation: brilla 3.2s var(--t, 0s) ease-in-out infinite; }
+@keyframes brilla { 50% { fill-opacity: .3; } }
+.scena-svg .pale { transform-origin: 98px 404px; }
+.vivo .scena-svg .pale { animation: gira 14s linear infinite; }
+@keyframes gira { to { transform: rotate(360deg); } }
+.vivo .scena-svg .nuvole-a { animation: deriva 46s ease-in-out infinite alternate; }
+.vivo .scena-svg .nuvole-b { animation: deriva 60s ease-in-out infinite alternate-reverse; }
+@keyframes deriva { from { transform: translateX(-30px); } to { transform: translateX(40px); } }
+.vivo .scena-svg .onde-1 { animation: onde 5.5s ease-in-out infinite alternate; }
+.vivo .scena-svg .onde-2 { animation: onde 7s ease-in-out infinite alternate-reverse; }
+@keyframes onde { from { transform: translateX(-7px); } to { transform: translateX(8px); } }
+.vivo .scena-svg .scintilla { animation: scintilla 2.2s var(--t, 0s) ease-in-out infinite; }
+@keyframes scintilla { 50% { opacity: .25; } }
+.vivo .scena-svg .barca { animation: naviga 80s linear infinite; }
+@keyframes naviga { from { transform: translateX(0); } to { transform: translateX(-420px); } }
+.vivo .scena-svg .uccelli { animation: vola 26s linear infinite; }
+@keyframes vola { from { transform: translate(-60px, 10px); } to { transform: translate(380px, -40px); } }
+.scena-svg .campana-b { transform-origin: 236px 429px; }
+.suona .scena-svg .campana-b { animation: dondola 1.1s ease-in-out 6; }
+@keyframes dondola { 25% { transform: rotate(18deg); } 75% { transform: rotate(-18deg); } }
+.scena-svg .ramo { transform-origin: 700px 0; }
+.vivo .scena-svg .ramo { animation: ramo 7s ease-in-out infinite alternate; }
+@keyframes ramo { from { transform: rotate(-1.2deg); } to { transform: rotate(1.6deg); } }
+
+/* Parigi: colori che virano dal giorno alla sera */
+.scena-svg .torre { fill: #5d4356; transition: fill 12s 1s; }
+.scena-svg .traliccio { opacity: .32; transition: opacity 12s 1s; }
+.scena-svg .traliccio-l { stroke: #5d4356; transition: stroke 12s 1s; }
+.scena-svg .riva { fill: #b7a5b6; transition: fill 11s 1.5s; }
+.scena-svg .riva-tetto { fill: #8d8aa6; transition: fill 11s 1.5s; }
+.scena-svg .oro { fill: #d9a84e; transition: fill 12s 1s; }
+.scena-svg .oro-l { fill: #8a6630; }
+.scena-svg .albero { fill: #55704f; transition: fill 11s 1s; }
+.scena-svg .ponte { fill: #e3d0ae; transition: fill 10s 2s; }
+.scena-svg .zinco { fill: #7e8ca7; transition: fill 10s 2s; }
+.scena-svg .colmo { fill: #5c6780; transition: fill 10s 2s; }
+.scena-svg .mattone { fill: #b56f56; transition: fill 10s 2s; }
+.scena-svg .cornice { fill: #d8c6a7; transition: fill 10s 2s; }
+.sera .scena-svg .torre { fill: #2a2340; }
+.sera .scena-svg .traliccio { opacity: .1; }
+.sera .scena-svg .traliccio-l { stroke: #2a2340; }
+.sera .scena-svg .riva { fill: #5a4c70; }
+.sera .scena-svg .riva-tetto { fill: #433a5c; }
+.sera .scena-svg .oro { fill: #c08a40; }
+.sera .scena-svg .albero { fill: #2d3b3c; }
+.sera .scena-svg .ponte { fill: #b39aa6; }
+.sera .scena-svg .zinco { fill: #535e7d; }
+.sera .scena-svg .colmo { fill: #3a4360; }
+.sera .scena-svg .mattone { fill: #8a525a; }
+.sera .scena-svg .cornice { fill: #c7aeb0; }
+.vivo .scena-svg .battello { animation: battello 70s linear infinite; }
+@keyframes battello { from { transform: translateX(0); } to { transform: translateX(1000px); } }
+
+/* Miniature (modulo, vetrina): la scena ferma, già al tramonto */
+.fermo .scena-svg *, .fermo.scena-svg * { animation: none !important; transition: none !important; }
+.fermo .scena-svg .titolo { opacity: 1; transform: none; }
+.fermo .scena-svg .battello { transform: translateX(560px); }

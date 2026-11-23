@@ -1,0 +1,1060 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Per te, una busta chiusa</title>
+<meta name="description" content="Una busta chiusa, con il tuo nome sopra. Si apre con un tocco, quando è il momento.">
+<meta property="og:title" content="Per te, una busta chiusa">
+<meta property="og:description" content="Dentro c'è una sorpresa. Si apre con un tocco, quando è il momento.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://lindabs.github.io/lbs/cartolina/per-te/">
+<meta property="og:image" content="https://lindabs.github.io/lbs/cartolina/per-te/anteprima.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#22050e">
+<meta name="robots" content="noindex">
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Ccircle%20cx%3D%2232%22%20cy%3D%2232%22%20r%3D%2228%22%20fill%3D%22%236b1430%22%2F%3E%3Ctext%20x%3D%2232%22%20y%3D%2242%22%20font-family%3D%22Georgia%2Cserif%22%20font-style%3D%22italic%22%20font-size%3D%2230%22%20fill%3D%22%23efd6b8%22%20text-anchor%3D%22middle%22%3EL%3C%2Ftext%3E%3C%2Fsvg%3E">
+<style>[hidden]{display:none!important}img{max-width:100%}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}</style>
+<!--
+  LA CARTOLINA CHE SI APRE · la busta di chi riceve · un'esperienza di LBS
+  La cartolina arriva dentro il link: per-te/#<codice>, creato dalla pagina "Crea la tua cartolina" (../).
+  Esempi pronti: per-te/#santorini e per-te/#parigi. Senza nulla dopo il #, si apre l'esempio di Santorini.
+  Mete, disegni e testi predefiniti: ../mete.js · caratteri e animazioni delle scene: ../mete.css
+  Prova del conto alla rovescia: aggiungi ?attesa all'indirizzo. Con ?anteprima la data di apertura viene ignorata.
+  La pagina non contatta nessun server esterno e non salva nulla.
+-->
+<link rel="stylesheet" href="../mete.css">
+</head>
+<body>
+<style>
+/* Layout: un tavolo bordeaux su cui accadono tre scene, una alla volta: la busta con la ceralacca, il foglio degli indizi, la cartolina che si gira (e sotto, il taccuino del viaggio). Un solo aspetto, scuro e caldo, come gli altri lavori LBS. */
+
+:root {
+  --tavolo: #22050e;
+  --vino: #6b1430;
+  --vino-hi: #8f2647;
+  --champagne: #efd6b8;
+  --avorio: #fbf1f2;
+  --tenue: #cfa1ad;
+  --carta: #f3e9d8;
+  --carta-scura: #e4d5bd;
+  --inchiostro: #2e1b26;
+  --inchiostro-2: #6a5160;
+  --timbro: #5a1a2c;
+  --egeo: #1f4e9c;
+  --f-display: "Instrument Serif", "Didot", Georgia, serif;
+  --f-corpo: "Hanken Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --f-mano: "Caveat", "Segoe Print", "Bradley Hand", cursive;
+  --f-manifesto: "Josefin Sans", "Futura", "Century Gothic", sans-serif;
+  --f-greco: "GFS Didot", "Instrument Serif", "Didot", Georgia, serif;
+  --grana: none;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body, main { height: 100%; }
+html { background: var(--tavolo); }
+body {
+  margin: 0;
+  background:
+    radial-gradient(90% 55% at 15% 0%, rgba(143, 38, 71, .42), transparent 62%),
+    radial-gradient(80% 60% at 100% 100%, rgba(107, 20, 48, .5), transparent 60%),
+    linear-gradient(165deg, #2c0712 0%, #1a040b 100%) fixed,
+    var(--tavolo);
+  color: var(--avorio);
+  font-family: var(--f-corpo);
+  font-size: 17px;
+  line-height: 1.55;
+  -webkit-tap-highlight-color: transparent;
+  overflow-x: hidden;
+}
+button { font: inherit; color: inherit; cursor: pointer; }
+p { margin: 0; }
+h1, h2, h3 { font-family: var(--f-display); font-weight: 400; margin: 0; line-height: 1.05; text-wrap: balance; }
+.nascosto { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+:focus-visible { outline: 2px solid var(--champagne); outline-offset: 4px; border-radius: 6px; }
+
+/* ---------- Scene ---------- */
+.scena {
+  min-height: 100%;
+  display: none;
+  flex-direction: column; align-items: center; justify-content: center; gap: 22px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 64px 40px;
+  text-align: center;
+}
+.scena.attiva { display: flex; animation: entra .7s cubic-bezier(.2, .7, .2, 1) both; }
+.scena.esce { animation: esce .45s ease-in both; }
+@keyframes entra { from { opacity: 0; transform: translateY(18px); } }
+@keyframes esce { to { opacity: 0; transform: translateY(-14px); } }
+
+.occhiello { font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: var(--tenue); }
+.suggerimento { font-size: 15px; color: var(--tenue); display: inline-flex; align-items: center; gap: 8px; min-height: 24px; }
+.suggerimento svg { width: 18px; height: 18px; flex: none; }
+.pulsa { animation: pulsa 2.4s ease-in-out infinite; }
+@keyframes pulsa { 50% { opacity: .45; } }
+
+/* Interruttore audio */
+.audio {
+  position: fixed; z-index: 30;
+  top: calc(env(safe-area-inset-top, 0px) + 14px);
+  right: calc(env(safe-area-inset-right, 0px) + 14px);
+  width: 42px; height: 42px; border-radius: 50%;
+  border: 1px solid rgba(239, 214, 184, .28); background: rgba(34, 5, 14, .55);
+  display: grid; place-items: center; color: var(--champagne);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+}
+.audio svg { width: 20px; height: 20px; }
+.audio .off { display: none; }
+.audio[aria-pressed="false"] .on { display: none; }
+.audio[aria-pressed="false"] .off { display: block; }
+
+/* ---------- Scena 1: la busta ---------- */
+.busta-wrap { width: min(86vw, 400px); perspective: 1400px; margin-top: 4vh; }
+.busta { position: relative; width: 100%; aspect-ratio: 3 / 2; transform-style: preserve-3d; }
+.busta.trema { animation: trema .5s ease-in-out; }
+@keyframes trema { 20% { transform: rotate(-1.6deg); } 40% { transform: rotate(1.4deg); } 60% { transform: rotate(-.9deg); } 80% { transform: rotate(.5deg); } }
+.busta-fondo {
+  position: absolute; inset: 0; border-radius: 5px;
+  background:
+    repeating-linear-gradient(45deg, rgba(239, 214, 184, .14) 0 2px, transparent 2px 9px),
+    repeating-linear-gradient(-45deg, rgba(239, 214, 184, .14) 0 2px, transparent 2px 9px),
+    linear-gradient(180deg, #7a1a37, #4d0c1f);
+  box-shadow: 0 30px 60px -24px rgba(0, 0, 0, .85), 0 10px 20px -10px rgba(0, 0, 0, .6);
+}
+.lettera {
+  position: absolute; left: 5%; right: 5%; top: 5%; height: 90%; z-index: 2;
+  background: var(--grana), linear-gradient(180deg, #fbf5ea, var(--carta));
+  border-radius: 3px; color: var(--inchiostro);
+  display: grid; align-content: start; justify-items: center; padding-top: 9%;
+  transition: transform 1s cubic-bezier(.3, .7, .2, 1);
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, .15);
+}
+.lettera strong { font-family: var(--f-display); font-style: italic; font-weight: 400; font-size: clamp(30px, 9vw, 40px); line-height: 1; }
+.lettera span { font-size: 11px; letter-spacing: .28em; text-transform: uppercase; color: var(--inchiostro-2); margin-top: 8px; }
+.busta-tasca, .lembo svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.busta-tasca { z-index: 3; }
+.busta-nome {
+  position: absolute; z-index: 4; left: 0; right: 0; bottom: 11%;
+  font-family: var(--f-mano); font-size: clamp(30px, 9vw, 40px); line-height: 1; color: var(--inchiostro); font-weight: 500;
+  transition: opacity .4s;
+}
+.busta-data {
+  position: absolute; z-index: 4; left: 0; right: 0; bottom: 4.5%;
+  font-size: 10.5px; letter-spacing: .26em; text-transform: uppercase; color: var(--inchiostro-2);
+  transition: opacity .4s;
+}
+.busta-grana { position: absolute; inset: 0; z-index: 5; pointer-events: none; border-radius: 5px; background: var(--grana); mix-blend-mode: multiply; opacity: .55; }
+.lembo { position: absolute; left: 0; right: 0; top: 0; height: 52%; z-index: 6; transform-origin: 50% 0; transform-style: preserve-3d; transition: transform .8s cubic-bezier(.5, 0, .25, 1); }
+.lembo svg { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.lembo .retro-lembo { transform: rotateX(180deg); }
+.busta.aperta .lembo { transform: rotateX(180deg); }
+.busta.dentro .lembo { z-index: 1; }
+.busta.dentro .busta-nome, .busta.dentro .busta-data { opacity: 0; }
+.busta.esce .lettera { transform: translateY(-62%); }
+.sigillo {
+  position: absolute; z-index: 8; left: 50%; top: 52%; width: 22%; aspect-ratio: 1;
+  transform: translate(-50%, -50%); border: 0; padding: 0; background: none; border-radius: 50%;
+}
+.sigillo .meta-s { position: absolute; inset: 0; transition: transform .7s cubic-bezier(.4, 0, .6, 1), opacity .7s; }
+.sigillo .meta-s svg { width: 100%; height: 100%; display: block; filter: drop-shadow(0 5px 6px rgba(0, 0, 0, .45)); }
+.sigillo .sx { clip-path: polygon(0 0, 54% 0, 47% 22%, 56% 41%, 46% 60%, 54% 79%, 49% 100%, 0 100%); }
+.sigillo .dx { clip-path: polygon(54% 0, 100% 0, 100% 100%, 49% 100%, 54% 79%, 46% 60%, 56% 41%, 47% 22%); }
+.sigillo:not(:disabled):hover .meta-s, .sigillo:focus-visible .meta-s { transform: scale(1.04); }
+.sigillo.rotto .sx { transform: translate(-30%, 60%) rotate(-28deg); opacity: 0; }
+.sigillo.rotto .dx { transform: translate(30%, 70%) rotate(24deg); opacity: 0; }
+.sigillo.trema { animation: sigillo-no .45s ease-in-out; }
+@keyframes sigillo-no { 25% { transform: translate(-50%, -50%) rotate(-9deg); } 75% { transform: translate(-50%, -50%) rotate(7deg); } }
+.busta-sotto { min-height: 150px; display: grid; justify-items: center; align-content: start; gap: 12px; }
+.attesa { display: grid; gap: 14px; justify-items: center; }
+.attesa-titolo { font-family: var(--f-display); font-style: italic; font-size: 26px; color: var(--champagne); }
+.conto { display: flex; gap: 6px; font-variant-numeric: tabular-nums; }
+.conto div { display: grid; gap: 2px; min-width: 64px; }
+.conto b { font-family: var(--f-display); font-weight: 400; font-size: 42px; line-height: 1; color: var(--avorio); }
+.conto small { font-size: 10.5px; letter-spacing: .24em; text-transform: uppercase; color: var(--tenue); }
+.conto i { font-style: normal; font-family: var(--f-display); font-size: 34px; color: rgba(239, 214, 184, .35); align-self: start; line-height: 1.1; }
+.attesa-nota { max-width: 30ch; font-size: 15px; color: var(--tenue); text-wrap: balance; min-height: 3em; }
+
+/* ---------- Scena 2: il foglio degli indizi ---------- */
+.foglio {
+  position: relative; width: min(100%, 440px);
+  background: var(--grana), linear-gradient(180deg, #fbf5ea, var(--carta));
+  color: var(--inchiostro); border-radius: 4px;
+  padding: 30px 24px 26px;
+  box-shadow: 0 30px 60px -28px rgba(0, 0, 0, .85), 0 2px 0 rgba(255, 255, 255, .5) inset;
+  display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; justify-items: center;
+}
+.foglio .occhiello { color: var(--inchiostro-2); }
+.foglio h2 { font-size: clamp(34px, 10vw, 46px); }
+.foglio p { max-width: 34ch; text-wrap: pretty; }
+.foglio .testo-grande { font-family: var(--f-display); font-size: 22px; line-height: 1.3; }
+.tappe { display: flex; gap: 8px; justify-content: center; }
+.tappe span { width: 9px; height: 9px; border-radius: 50%; border: 1px solid var(--inchiostro-2); transition: background .4s, transform .4s; }
+.tappe span.fatta { background: var(--vino); border-color: var(--vino); }
+.tappe span.ora { transform: scale(1.35); border-color: var(--vino); }
+.passo { display: grid; gap: 18px; justify-items: center; width: 100%; }
+.passo.entra { animation: entra .6s cubic-bezier(.2, .7, .2, 1) both; }
+.svela { display: grid; gap: 8px; justify-items: center; opacity: 0; transform: translateY(8px); transition: opacity .7s, transform .7s; min-height: 4.6em; }
+.svela.visto { opacity: 1; transform: none; }
+.svela .nota { font-size: 14px; color: var(--inchiostro-2); font-style: italic; }
+.btn {
+  border: 0; border-radius: 999px; padding: 14px 26px; min-height: 48px;
+  background: linear-gradient(115deg, #4d0c1f, var(--vino) 40%, var(--vino-hi) 60%, #5a1026);
+  color: var(--champagne); font-weight: 500; letter-spacing: .02em;
+  box-shadow: 0 10px 24px -12px rgba(60, 8, 22, .9), 0 1px 0 rgba(255, 220, 232, .25) inset;
+  transition: transform .2s, opacity .4s;
+}
+.btn:active { transform: scale(.97); }
+.btn:disabled { opacity: 0; pointer-events: none; }
+.btn-testo { border: 0; background: none; padding: 8px 6px; font-size: 14px; color: var(--inchiostro-2); text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; }
+.scena .btn-testo { color: var(--tenue); }
+.foglio .btn-testo { color: var(--inchiostro-2); }
+
+/* Profumo: la carta da strofinare */
+.gratta { position: relative; width: 100%; height: 150px; border-radius: 6px; overflow: hidden; background: linear-gradient(180deg, #fff8e8, #f6ecd3); box-shadow: inset 0 0 0 1px rgba(46, 27, 38, .12); }
+.gratta-sotto { position: absolute; inset: 0; display: grid; place-items: center; padding: 12px; font-family: var(--f-display); font-style: italic; font-size: 30px; line-height: 1.1; color: var(--vino); text-wrap: balance; }
+.gratta canvas { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; cursor: grab; transition: opacity .8s; }
+.gratta.finito canvas { opacity: 0; pointer-events: none; }
+
+/* Suono: il cerchio da toccare */
+.ascolta { position: relative; width: 150px; height: 150px; border-radius: 50%; border: 0; padding: 0; background: radial-gradient(circle at 38% 32%, #2f63b4, var(--egeo) 55%, #12306a); color: #fbf1e3; display: grid; place-items: center; box-shadow: 0 16px 30px -14px rgba(18, 48, 106, .9); }
+.ascolta svg { width: 54px; height: 54px; }
+.ascolta .onda { position: absolute; inset: 0; border-radius: 50%; border: 2px solid rgba(31, 78, 156, .5); opacity: 0; pointer-events: none; }
+.ascolta.suona .onda { animation: onda 2.4s ease-out infinite; }
+.ascolta.suona .onda:nth-child(2) { animation-delay: .8s; }
+.ascolta.suona .onda:nth-child(3) { animation-delay: 1.6s; }
+@keyframes onda { from { transform: scale(1); opacity: .9; } to { transform: scale(1.45); opacity: 0; } }
+.ascolta-nota { font-size: 13px; color: var(--inchiostro-2); }
+
+/* Colore: il ventaglio di campioni */
+.ventaglio { position: relative; width: 100%; height: 230px; border: 0; background: none; padding: 0; }
+.campione {
+  position: absolute; left: 50%; bottom: 8px; width: 96px; height: 184px; margin-left: -48px;
+  background: #fffaf0; border-radius: 6px; padding: 6px 6px 0;
+  box-shadow: 0 8px 18px -8px rgba(46, 27, 38, .55), 0 0 0 1px rgba(46, 27, 38, .08);
+  transform-origin: 50% 92%;
+  transition: transform .9s cubic-bezier(.3, 1.3, .4, 1);
+  display: grid; grid-template-rows: 1fr auto;
+}
+.campione i { display: block; border-radius: 3px; }
+.campione span { font-size: 11px; line-height: 1.25; letter-spacing: .06em; color: var(--inchiostro); padding: 8px 2px 10px; text-align: left; }
+.campione span small { display: block; font-size: 9px; letter-spacing: .18em; text-transform: uppercase; color: var(--inchiostro-2); }
+.ventaglio .campione:nth-child(1) { transform: rotate(-3deg); }
+.ventaglio .campione:nth-child(2) { transform: rotate(1deg); }
+.ventaglio .campione:nth-child(3) { transform: rotate(4deg); }
+.ventaglio.aperto .campione:nth-child(1) { transform: translateX(-94px) translateY(4px) rotate(-13deg); }
+.ventaglio.aperto .campione:nth-child(2) { transform: translateY(-10px) rotate(0deg); }
+.ventaglio.aperto .campione:nth-child(3) { transform: translateX(94px) translateY(4px) rotate(13deg); }
+
+/* Parola: la tessera che si gira */
+.tessera-wrap { perspective: 900px; width: min(100%, 290px); }
+.tessera { position: relative; width: 100%; aspect-ratio: 290 / 170; border: 0; padding: 0; background: none; transform-style: preserve-3d; transition: transform .9s cubic-bezier(.45, .05, .2, 1); }
+.tessera.girata { transform: rotateY(180deg); }
+.tessera > div { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: 8px; display: grid; place-content: center; gap: 6px; padding: 14px; }
+.tessera .t-fronte { background: var(--egeo); color: #fbf1e3; box-shadow: inset 0 0 0 5px var(--egeo), inset 0 0 0 6px rgba(251, 241, 227, .6), 0 14px 26px -14px rgba(18, 48, 106, .9); }
+.tessera .t-fronte strong { font-family: var(--f-greco); font-weight: 400; font-size: 46px; line-height: 1; }
+.tessera .t-fronte small { font-size: 11px; letter-spacing: .24em; text-transform: uppercase; opacity: .8; }
+.tessera .t-retro { transform: rotateY(180deg); background: #fffaf0; color: var(--inchiostro); box-shadow: inset 0 0 0 1px rgba(46, 27, 38, .15), 0 14px 26px -14px rgba(46, 27, 38, .6); }
+.tessera .t-retro strong { font-family: var(--f-display); font-style: italic; font-weight: 400; font-size: 34px; line-height: 1; color: var(--egeo); }
+.tessera .t-retro small { font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--inchiostro-2); }
+.tessera .t-retro em { font-style: normal; font-size: 15px; line-height: 1.4; max-width: 28ch; }
+
+/* Indovina */
+.indovina { display: grid; gap: 12px; width: 100%; justify-items: center; }
+.indovina form { display: flex; gap: 8px; width: 100%; align-items: end; }
+.indovina input {
+  flex: 1; width: 0; min-width: 0; font: inherit; font-family: var(--f-mano); font-size: 28px; color: var(--inchiostro);
+  background: transparent; border: 0; border-bottom: 1.5px solid var(--inchiostro-2); padding: 4px 2px; border-radius: 0;
+}
+.indovina input::placeholder { color: rgba(106, 81, 96, .55); }
+.indovina input:focus { outline: none; border-bottom-color: var(--vino); }
+.indovina .btn { padding: 10px 20px; min-height: 44px; }
+.esito { min-height: 3em; font-family: var(--f-display); font-size: 21px; line-height: 1.25; color: var(--vino); text-wrap: balance; }
+
+/* ---------- Scena 3: la cartolina ---------- */
+#s-cartolina { justify-content: flex-start; padding-top: 70px; }
+.cartolina-wrap { width: min(86vw, 400px, calc((100svh - 210px) * .7)); min-width: 240px; perspective: 1700px; }
+.cartolina {
+  position: relative; width: 100%; aspect-ratio: 7 / 10; transform-style: preserve-3d;
+  transform: rotateZ(-1.2deg) rotateY(var(--ry, 0deg));
+  transition: transform 1.05s cubic-bezier(.45, .05, .2, 1);
+  touch-action: pan-y; cursor: pointer; user-select: none; -webkit-user-select: none;
+}
+.cartolina.cade { animation: cade 1s cubic-bezier(.2, .8, .25, 1) both; }
+@keyframes cade { from { opacity: 0; transform: translateY(-60px) rotateZ(-9deg) scale(1.08); } }
+.faccia {
+  position: absolute; inset: 0; border-radius: 6px; overflow: hidden; container-type: inline-size;
+  backface-visibility: hidden; -webkit-backface-visibility: hidden;
+  box-shadow: 0 34px 60px -26px rgba(0, 0, 0, .9), 0 10px 20px -10px rgba(0, 0, 0, .6);
+}
+.fronte { transform: rotateY(180deg); background: #f4ead6; padding: 3.4cqw; }
+.fronte svg { display: block; width: 100%; height: 100%; border-radius: 2px; }
+.grana { position: absolute; inset: 0; pointer-events: none; background: var(--grana); mix-blend-mode: multiply; opacity: .5; }
+
+.retro { background: var(--grana), linear-gradient(170deg, #f8f0e1, #efe2cb); color: var(--inchiostro); }
+.r-testa { position: absolute; left: 6cqw; top: 6.5cqw; text-align: left; }
+.r-testa b { display: block; font-family: var(--f-manifesto); font-weight: 600; font-size: 3.6cqw; letter-spacing: .32em; color: var(--timbro); }
+.r-testa small { display: block; font-size: 2.3cqw; letter-spacing: .2em; text-transform: uppercase; color: var(--inchiostro-2); margin-top: .8cqw; }
+.r-casella { position: absolute; top: 5.5cqw; right: 6cqw; width: 20cqw; height: 25cqw; border: .35cqw dashed rgba(106, 81, 96, .45); display: grid; place-items: center; font-size: 2cqw; letter-spacing: .16em; text-transform: uppercase; color: rgba(106, 81, 96, .7); }
+.r-francobollo { position: absolute; top: 4.5cqw; right: 5cqw; width: 22cqw; opacity: 0; transform: translateY(-14cqw) rotate(-14deg) scale(1.3); filter: drop-shadow(0 .6cqw .8cqw rgba(46, 27, 38, .3)); }
+.r-timbro { position: absolute; top: 15cqw; right: 2cqw; width: 54cqw; opacity: 0; transform: scale(1.25); mix-blend-mode: multiply; }
+.retro.scritto .r-francobollo { animation: posa .7s .2s cubic-bezier(.3, 1.4, .5, 1) both; }
+.retro.scritto .r-timbro { animation: timbra .35s 1.15s cubic-bezier(.5, 0, .3, 1) both; }
+@keyframes posa { to { opacity: 1; transform: rotate(2.5deg); } }
+@keyframes timbra { to { opacity: .82; transform: rotate(-7deg); } }
+.r-messaggio {
+  position: absolute; left: 6cqw; right: 6cqw; top: 40cqw; height: 61cqw; overflow: hidden;
+  font-family: var(--f-mano); font-weight: 500; font-size: 6cqw; line-height: 1.22; text-align: left; color: #2a2550;
+}
+.r-messaggio p + p { margin-top: .5em; }
+.r-messaggio .firma { text-align: right; font-weight: 700; }
+.r-messaggio .pa { opacity: 0; display: inline-block; transform: translateY(.15em); filter: blur(2px); }
+.retro.scritto .r-messaggio .pa { animation: scrivi .45s calc(1.7s + var(--i) * 55ms) ease-out forwards; }
+@keyframes scrivi { to { opacity: 1; transform: none; filter: none; } }
+.r-linea { position: absolute; left: 6cqw; right: 6cqw; top: 105cqw; border-top: .3cqw solid rgba(106, 81, 96, .3); }
+.r-indirizzo { position: absolute; right: 6cqw; left: 34cqw; top: 108cqw; display: grid; gap: 0; text-align: left; }
+.r-indirizzo span { font-family: var(--f-mano); font-size: 5.6cqw; line-height: 1.5; border-bottom: .3cqw dotted rgba(106, 81, 96, .5); color: #2a2550; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.r-via { position: absolute; left: 6cqw; top: 110cqw; width: 22cqw; font-size: 2.1cqw; letter-spacing: .16em; text-transform: uppercase; color: var(--inchiostro-2); text-align: left; line-height: 1.5; }
+.r-via b { display: block; font-family: var(--f-manifesto); font-weight: 600; font-size: 2.6cqw; letter-spacing: .22em; color: var(--egeo); border: .3cqw solid var(--egeo); padding: .8cqw 1.2cqw .4cqw; margin-bottom: 1.4cqw; width: max-content; }
+
+.cartolina-sotto { display: grid; justify-items: center; gap: 10px; min-height: 64px; }
+.giro-icona { animation: oscilla 2.6s ease-in-out infinite; }
+@keyframes oscilla { 50% { transform: rotateY(180deg); } }
+
+/* Taccuino del viaggio */
+.taccuino {
+  width: min(100%, 460px); text-align: left; margin-top: 18px;
+  background: var(--grana), linear-gradient(180deg, #fbf5ea, var(--carta));
+  color: var(--inchiostro); border-radius: 4px; padding: 30px 24px;
+  box-shadow: 0 30px 60px -28px rgba(0, 0, 0, .85);
+  display: grid; gap: 26px; position: relative;
+}
+.taccuino.entra { animation: entra .9s cubic-bezier(.2, .7, .2, 1) both; }
+.taccuino .occhiello { color: var(--inchiostro-2); }
+.taccuino h2 { font-size: clamp(34px, 9.5vw, 44px); margin-top: 6px; }
+.taccuino h3 { font-family: var(--f-corpo); font-size: 12px; font-weight: 600; letter-spacing: .26em; text-transform: uppercase; color: var(--vino); margin-bottom: 10px; }
+.date { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.date > div { border-top: 1px solid rgba(106, 81, 96, .3); padding-top: 10px; }
+.date small { display: block; font-size: 11px; letter-spacing: .22em; text-transform: uppercase; color: var(--inchiostro-2); }
+.date b { display: block; font-family: var(--f-display); font-weight: 400; font-size: 23px; line-height: 1.15; }
+.date span { display: block; font-size: 14px; color: var(--inchiostro-2); margin-top: 4px; }
+.valigia { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.valigia li { display: grid; grid-template-columns: 18px 1fr; gap: 10px; align-items: start; font-size: 16px; line-height: 1.4; }
+.valigia li::before { content: ""; width: 13px; height: 13px; margin-top: 4px; border: 1.4px solid var(--inchiostro-2); border-radius: 2px; }
+.programma { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+.programma li { display: grid; grid-template-columns: 86px 1fr; gap: 12px; align-items: baseline; }
+.programma b { font-family: var(--f-display); font-style: italic; font-weight: 400; font-size: 20px; line-height: 1.1; color: var(--vino); }
+.programma b small { display: block; font-family: var(--f-corpo); font-style: normal; font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--inchiostro-2); margin-top: 3px; }
+.programma span { font-size: 16px; line-height: 1.45; }
+.chiusa { font-family: var(--f-mano); font-size: 26px; line-height: 1.2; color: #2a2550; }
+.finale { display: grid; justify-items: center; gap: 10px; text-align: center; padding-top: 6px; position: relative; }
+.ci-sto {
+  display: inline-grid; place-items: center; text-decoration: none;
+  font-family: var(--f-display); font-style: italic; font-size: 34px; line-height: 1;
+  padding: 18px 46px 20px; border-radius: 999px; color: var(--champagne);
+  background:
+    radial-gradient(60% 90% at 30% 20%, rgba(255, 220, 232, .28), transparent 60%),
+    linear-gradient(112deg, #3b0918 0%, #6c1530 26%, #94294a 42%, #5d1026 60%, #7d1b38 78%, #3a0816 100%);
+  box-shadow: 0 16px 30px -14px rgba(60, 8, 22, .95), 0 1px 0 rgba(255, 220, 232, .25) inset;
+  transition: transform .2s;
+}
+.ci-sto:active { transform: scale(.97); }
+.finale small { font-size: 13px; color: var(--inchiostro-2); max-width: 30ch; }
+.timbro-ok {
+  position: absolute; right: 2%; top: -26px; width: 120px; height: 120px; pointer-events: none;
+  opacity: 0; transform: scale(1.6) rotate(-14deg); mix-blend-mode: multiply;
+}
+.timbro-ok.su { animation: ok .38s cubic-bezier(.5, 0, .3, 1) forwards; }
+@keyframes ok { to { opacity: .85; transform: scale(1) rotate(-12deg); } }
+
+.credito { font-size: 13px; color: var(--tenue); display: grid; gap: 6px; justify-items: center; padding-top: 18px; }
+.credito a { color: var(--champagne); }
+.nastro { font-size: 13px; color: var(--champagne); border: 1px dashed rgba(239, 214, 184, .4); border-radius: 999px; padding: 6px 14px; }
+.guasto { max-width: 34ch; display: grid; gap: 14px; justify-items: center; }
+.guasto h1 { font-size: 34px; color: var(--champagne); font-style: italic; }
+.guasto p { color: var(--tenue); }
+
+@media (max-width: 360px) {
+  .conto div { min-width: 52px; }
+  .conto b { font-size: 34px; }
+  .programma li { grid-template-columns: 1fr; gap: 2px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01s !important; animation-delay: 0s !important; animation-iteration-count: 1 !important; transition-duration: .01s !important; transition-delay: 0s !important; }
+  .retro.scritto .r-messaggio .pa { animation-delay: 0s !important; }
+}
+</style>
+
+<button class="audio" id="audio" type="button" aria-pressed="true" aria-label="Suoni attivi: tocca per spegnerli">
+  <svg class="on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4.5 4.5 0 0 1 0 6"/><path d="M18 6.5a8 8 0 0 1 0 11"/></svg>
+  <svg class="off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M16 9.5l5 5M21 9.5l-5 5"/></svg>
+</button>
+
+<!-- Scena 1 · La busta -->
+<main>
+<section class="scena attiva" id="s-busta" aria-label="La busta">
+  <p class="occhiello">Posta per te</p>
+  <p class="nastro" id="nastro" hidden>Anteprima per chi la manda: la data di apertura viene ignorata</p>
+  <div class="busta-wrap">
+    <div class="busta" id="busta">
+      <div class="busta-fondo"></div>
+      <div class="lettera" aria-hidden="true"><strong>Si parte.</strong></div>
+      <svg class="busta-tasca" viewBox="0 0 300 200" preserveAspectRatio="none" aria-hidden="true">
+        <defs>
+          <linearGradient id="tasca-l" x1="0" x2="1"><stop offset="0" stop-color="#e9dcc5"/><stop offset="1" stop-color="#efe3cf"/></linearGradient>
+          <linearGradient id="tasca-r" x1="1" x2="0"><stop offset="0" stop-color="#e4d6be"/><stop offset="1" stop-color="#ece0ca"/></linearGradient>
+          <linearGradient id="tasca-b" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#f3eadb"/><stop offset="1" stop-color="#efe4d2"/></linearGradient>
+        </defs>
+        <path d="M0 0 L148 108 Q150 110 148 112 L0 200 Z" fill="url(#tasca-l)"/>
+        <path d="M300 0 L152 108 Q150 110 152 112 L300 200 Z" fill="url(#tasca-r)"/>
+        <path d="M0 200 L146 96 Q150 93 154 96 L300 200 Z" fill="url(#tasca-b)"/>
+        <path d="M0 200 L146 96 Q150 93 154 96 L300 200" fill="none" stroke="rgba(110,80,60,.18)" stroke-width="1" vector-effect="non-scaling-stroke"/>
+      </svg>
+      <div class="busta-nome" id="busta-nome"></div>
+      <div class="busta-data" id="busta-data"></div>
+      <div class="busta-grana"></div>
+      <div class="lembo" aria-hidden="true">
+        <svg viewBox="0 0 300 120" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="lembo-f" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#efe3cf"/><stop offset="1" stop-color="#f5ecdd"/></linearGradient>
+            <filter id="ombra-lembo" x="-10%" y="-10%" width="120%" height="140%"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#3a1a10" flood-opacity=".28"/></filter>
+          </defs>
+          <path d="M0 0 H300 L156 116 Q150 121 144 116 Z" fill="url(#lembo-f)" filter="url(#ombra-lembo)"/>
+        </svg>
+        <svg class="retro-lembo" viewBox="0 0 300 120" preserveAspectRatio="none">
+          <defs>
+            <pattern id="fodera" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="9" height="9" fill="#6b1430"/><rect width="2" height="9" fill="rgba(239,214,184,.18)"/></pattern>
+          </defs>
+          <path d="M0 0 H300 L156 116 Q150 121 144 116 Z" fill="url(#fodera)"/>
+        </svg>
+      </div>
+      <button class="sigillo" id="sigillo" type="button" aria-label="Rompi il sigillo e apri la busta">
+        <span class="meta-s sx" id="sigillo-sx"></span>
+        <span class="meta-s dx" id="sigillo-dx"></span>
+      </button>
+    </div>
+  </div>
+  <div class="busta-sotto" id="busta-sotto" aria-live="polite">
+    <p class="suggerimento pulsa" id="tocca-sigillo">Tocca il sigillo per aprire</p>
+    <div class="attesa" id="attesa" hidden>
+      <p class="attesa-titolo">Non ancora</p>
+      <div class="conto" id="conto" role="timer" aria-label="Tempo che manca all'apertura">
+        <div><b data-u="g">0</b><small>giorni</small></div><i>·</i>
+        <div><b data-u="h">00</b><small>ore</small></div><i>·</i>
+        <div><b data-u="m">00</b><small>minuti</small></div><i>·</i>
+        <div><b data-u="s">00</b><small>secondi</small></div>
+      </div>
+      <p class="attesa-nota" id="attesa-nota"></p>
+    </div>
+  </div>
+</section>
+
+<section class="scena" id="s-guasto" aria-label="Busta rovinata">
+  <div class="guasto">
+    <h1>Questa busta si è rovinata in viaggio</h1>
+    <p id="guasto-testo">Il link sembra incompleto. Chiedi a chi te l'ha mandato di inviarlo di nuovo, per intero.</p>
+  </div>
+</section>
+
+<!-- Scena 2 · Gli indizi -->
+<section class="scena" id="s-indizi" aria-label="Gli indizi">
+  <div class="foglio" id="foglio">
+    <div class="tappe" id="tappe" aria-hidden="true"></div>
+    <div class="passo" id="passo" aria-live="polite"></div>
+  </div>
+</section>
+
+<!-- Scena 3 · La cartolina -->
+<section class="scena" id="s-cartolina" aria-label="La cartolina">
+  <div class="cartolina-wrap">
+    <div class="cartolina" id="cartolina" role="button" tabindex="0" aria-label="Cartolina: tocca per girarla">
+      <div class="faccia retro" id="retro">
+        <div class="r-testa"><b>CARTOLINA POSTALE</b><small id="r-sotto">Carte postale · Post card</small></div>
+        <div class="r-casella">Francobollo</div>
+        <div class="r-francobollo" id="r-francobollo"></div>
+        <div class="r-timbro" id="r-timbro"></div>
+        <div class="r-messaggio" id="r-messaggio"></div>
+        <div class="r-linea"></div>
+        <div class="r-via" id="r-via"></div>
+        <div class="r-indirizzo" id="r-indirizzo"></div>
+      </div>
+      <div class="faccia fronte" id="fronte">
+        <div id="illustrazione" style="height:100%"></div>
+        <div class="grana"></div>
+      </div>
+    </div>
+  </div>
+  <div class="cartolina-sotto">
+    <p class="suggerimento" id="cartolina-hint" aria-live="polite"></p>
+  </div>
+
+  <article class="taccuino" id="taccuino" hidden>
+    <div>
+      <p class="occhiello">Il viaggio, in breve</p>
+      <h2 id="t-titolo"></h2>
+    </div>
+    <div class="date" id="t-date"></div>
+    <div><h3>In valigia</h3><ul class="valigia" id="t-valigia"></ul></div>
+    <div><h3>Il programma</h3><ol class="programma" id="t-programma"></ol></div>
+    <p class="chiusa" id="t-nota"></p>
+    <div class="finale">
+      <a class="ci-sto" id="ci-sto" href="#">Ci sto!</a>
+      <small id="ci-sto-nota"></small>
+      <svg class="timbro-ok" id="timbro-ok" viewBox="0 0 120 120" aria-hidden="true"></svg>
+    </div>
+  </article>
+
+  <footer class="credito">
+    <button class="btn-testo" id="ricomincia" type="button" hidden>Rivivi la sorpresa dall'inizio</button>
+    <p>Una cartolina di <a href="https://lindabs.github.io/lbs/" target="_blank" rel="noopener">LBS</a> · nessun cookie, nessun tracciamento</p>
+  </footer>
+</section>
+</main>
+
+<script src="../mete.js"></script>
+<script>
+let C, M;
+const $ = s => document.querySelector(s);
+const ridotto = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const attendi = ms => new Promise(r => setTimeout(r, ridotto ? Math.min(ms, 60) : ms));
+/* ---------- Grana della carta (generata una volta, nessuna immagine esterna) ---------- */
+(function grana() {
+  const c = document.createElement("canvas"); c.width = c.height = 160;
+  const x = c.getContext("2d"), img = x.createImageData(160, 160), r = rng(7);
+  for (let i = 0; i < img.data.length; i += 4) {
+    const v = 200 + r() * 55 | 0;
+    img.data[i] = v; img.data[i + 1] = v - 6; img.data[i + 2] = v - 14; img.data[i + 3] = r() < .5 ? 22 : 10;
+  }
+  x.putImageData(img, 0, 0);
+  document.documentElement.style.setProperty("--grana", `url(${c.toDataURL()})`);
+})();
+
+/* ---------- Suoni, sintetizzati nel browser: nessun file audio ---------- */
+const Suono = {
+  ctx: null, attivo: true,
+  avvia() {
+    if (this.ctx) { if (this.ctx.state === "suspended") this.ctx.resume(); return; }
+    const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
+    try { if (navigator.audioSession) navigator.audioSession.type = "playback"; } catch (e) {}
+    const c = this.ctx = new AC();
+    this.master = c.createGain(); this.master.gain.value = this.attivo ? .9 : 0; this.master.connect(c.destination);
+    // riverbero: una coda di rumore che si spegne
+    const len = c.sampleRate * 2.8, ir = c.createBuffer(2, len, c.sampleRate);
+    for (let ch = 0; ch < 2; ch++) { const d = ir.getChannelData(ch); for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2.6); }
+    this.eco = c.createConvolver(); this.eco.buffer = ir;
+    this.ecoG = c.createGain(); this.ecoG.gain.value = .5; this.eco.connect(this.ecoG); this.ecoG.connect(this.master);
+    // rumore rosa, base per onde, carta e ceralacca
+    const n = c.sampleRate * 4, buf = c.createBuffer(1, n, c.sampleRate), d = buf.getChannelData(0);
+    let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0;
+    for (let i = 0; i < n; i++) {
+      const w = Math.random() * 2 - 1;
+      b0 = .99886 * b0 + w * .0555179; b1 = .99332 * b1 + w * .0750759; b2 = .969 * b2 + w * .153852;
+      b3 = .8665 * b3 + w * .3104856; b4 = .55 * b4 + w * .5329522; b5 = -.7616 * b5 - w * .016898;
+      d[i] = (b0 + b1 + b2 + b3 + b4 + b5 + w * .5362) * .11;
+    }
+    this.rumore = buf;
+  },
+  imposta(on) { this.attivo = on; if (this.master) this.master.gain.setTargetAtTime(on ? .9 : 0, this.ctx.currentTime, .08); },
+  pronto() { return this.ctx && this.attivo; },
+  sorgente(loop) { const s = this.ctx.createBufferSource(); s.buffer = this.rumore; s.loop = !!loop; return s; },
+  verso(nodo, eco = .3) { nodo.connect(this.master); if (eco) { const g = this.ctx.createGain(); g.gain.value = eco; nodo.connect(g); g.connect(this.eco); } },
+  crepa() {
+    if (!this.pronto()) return; const c = this.ctx, t = c.currentTime;
+    [0, .05, .09].forEach((o, k) => {
+      const s = this.sorgente(), f = c.createBiquadFilter(), g = c.createGain();
+      f.type = "bandpass"; f.frequency.value = 1800 + k * 900; f.Q.value = 1.2;
+      g.gain.setValueAtTime(0, t + o); g.gain.linearRampToValueAtTime(1.1 - k * .25, t + o + .004); g.gain.exponentialRampToValueAtTime(.001, t + o + .07);
+      s.connect(f); f.connect(g); this.verso(g, .15); s.start(t + o, Math.random() * 2, .12);
+    });
+  },
+  carta(dur = .55, vol = .35) {
+    if (!this.pronto()) return; const c = this.ctx, t = c.currentTime;
+    const s = this.sorgente(), f = c.createBiquadFilter(), g = c.createGain();
+    f.type = "bandpass"; f.Q.value = .6; f.frequency.setValueAtTime(900, t); f.frequency.linearRampToValueAtTime(3200, t + dur);
+    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol, t + dur * .3); g.gain.linearRampToValueAtTime(0, t + dur);
+    s.connect(f); f.connect(g); this.verso(g, .1); s.start(t, Math.random() * 3, dur + .1);
+  },
+  tonfo(vol = .7) {
+    if (!this.pronto()) return; const c = this.ctx, t = c.currentTime;
+    const o = c.createOscillator(), g = c.createGain();
+    o.frequency.setValueAtTime(150, t); o.frequency.exponentialRampToValueAtTime(48, t + .14);
+    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(.001, t + .22);
+    o.connect(g); this.verso(g, .12); o.start(t); o.stop(t + .25);
+    const s = this.sorgente(), f = c.createBiquadFilter(), g2 = c.createGain();
+    f.type = "lowpass"; f.frequency.value = 1400;
+    g2.gain.setValueAtTime(.5, t); g2.gain.exponentialRampToValueAtTime(.001, t + .06);
+    s.connect(f); f.connect(g2); this.verso(g2, 0); s.start(t, 1, .08);
+  },
+  campana(quando = 0, f = 330, vol = .2) {
+    if (!this.pronto()) return; const c = this.ctx, t = c.currentTime + quando;
+    const out = c.createBiquadFilter(); out.type = "lowpass"; out.frequency.value = 2600; this.verso(out, .9);
+    [[.5, 1, 7], [1, .9, 5], [1.19, .55, 3.4], [1.5, .4, 2.8], [2, .45, 2.4], [2.52, .22, 1.7], [2.66, .18, 1.5], [3.01, .16, 1.2], [4.17, .09, .9]].forEach(([r, a, d]) => {
+      const o = c.createOscillator(), g = c.createGain();
+      o.frequency.value = f * r * (1 + (Math.random() - .5) * .002);
+      g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol * a, t + .006); g.gain.exponentialRampToValueAtTime(.0005, t + d);
+      o.connect(g); g.connect(out); o.start(t); o.stop(t + d + .1);
+    });
+  },
+  mare(dur = 9, vol = .55) {
+    if (!this.pronto()) return; const c = this.ctx, t = c.currentTime;
+    const s = this.sorgente(true), f = c.createBiquadFilter(), g = c.createGain();
+    f.type = "lowpass"; f.Q.value = .4; f.frequency.setValueAtTime(400, t);
+    g.gain.setValueAtTime(0, t);
+    let x = t;
+    while (x < t + dur) {
+      const p = 3.6 + Math.random() * 2.6, top = vol * (.6 + Math.random() * .4);
+      g.gain.linearRampToValueAtTime(top, x + p * .42); g.gain.linearRampToValueAtTime(vol * .14, x + p);
+      f.frequency.linearRampToValueAtTime(1300 + Math.random() * 900, x + p * .42); f.frequency.linearRampToValueAtTime(420, x + p);
+      x += p;
+    }
+    g.gain.linearRampToValueAtTime(0, x + 1.5);
+    s.connect(f); f.connect(g); this.verso(g, .25); s.start(t); s.stop(x + 2);
+    this.ultimoMare = { g, fine: x + 2 };
+  },
+  tram(quando = 0) {
+    if (!this.pronto()) return; const c = this.ctx, t = c.currentTime + quando;
+    [0, .28, 2.2, 2.48].forEach(o => [[1, .22, 1.3], [2.01, .1, .8], [2.76, .08, .6], [5.4, .04, .3]].forEach(([r, a, d]) => {
+      const os = c.createOscillator(), g = c.createGain(); os.frequency.value = 1320 * r;
+      g.gain.setValueAtTime(0, t + o); g.gain.linearRampToValueAtTime(a, t + o + .003); g.gain.exponentialRampToValueAtTime(.0005, t + o + d);
+      os.connect(g); this.verso(g, .3); os.start(t + o); os.stop(t + o + d + .05);
+    }));
+    const s = this.sorgente(true), f = c.createBiquadFilter(), g = c.createGain();
+    f.type = "lowpass"; f.frequency.value = 160;
+    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(.8, t + 2); g.gain.linearRampToValueAtTime(0, t + 6.5);
+    s.connect(f); f.connect(g); this.verso(g, .1); s.start(t); s.stop(t + 7);
+  },
+  citta(dur = 12, vol = .2) {
+    if (!this.pronto()) return; const c = this.ctx, t = c.currentTime;
+    const s = this.sorgente(true), f = c.createBiquadFilter(), g = c.createGain();
+    f.type = "bandpass"; f.frequency.value = 420; f.Q.value = .5;
+    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol, t + 2.5); g.gain.setValueAtTime(vol, t + dur - 3); g.gain.linearRampToValueAtTime(0, t + dur);
+    s.connect(f); f.connect(g); this.verso(g, .2); s.start(t); s.stop(t + dur + .1);
+    this.ultimoMare = { g, fine: t + dur };
+  },
+  fisarmonica(quando = 0, vol = .1) {
+    if (!this.pronto()) return; const c = this.ctx, t0 = c.currentTime + quando, q = .34;
+    const filtro = c.createBiquadFilter(); filtro.type = "lowpass"; filtro.frequency.value = 2300; filtro.Q.value = .7;
+    const g = c.createGain(); g.gain.value = vol; filtro.connect(g); this.verso(g, .35);
+    this.ultimaFisa = g;
+    const hz = m => 440 * Math.pow(2, (m - 69) / 12);
+    const nota = (m, t, d, v, voci) => voci.forEach(cent => {
+      const o = c.createOscillator(), e = c.createGain(); o.type = "sawtooth"; o.frequency.value = hz(m); o.detune.value = cent;
+      const a = v / voci.length; e.gain.setValueAtTime(0, t); e.gain.linearRampToValueAtTime(a, t + .03); e.gain.setValueAtTime(a, t + Math.max(.04, d - .07)); e.gain.linearRampToValueAtTime(0, t + d);
+      o.connect(e); e.connect(filtro); o.start(t); o.stop(t + d + .02);
+    });
+    // un valzer musette originale, in la minore
+    const melodia = [[76, 1], [81, 1], [83, 1], [84, 2], [83, 1], [81, 1], [80, 1], [81, 1], [76, 3], [77, 1], [81, 1], [84, 1], [88, 2], [86, 1], [84, 1], [83, 1], [81, 1], [83, 3],
+      [76, 1], [80, 1], [83, 1], [86, 2], [84, 1], [83, 1], [81, 1], [80, 1], [81, 3]];
+    let t = t0; melodia.forEach(([m, b]) => { nota(m, t, b * q * .95, 1, [-9, 0, 8]); t += b * q; });
+    const accordi = { Am: [45, [57, 60, 64]], Dm: [50, [57, 62, 65]], E: [40, [56, 59, 64]] };
+    ["Am", "Am", "Am", "Am", "Dm", "Dm", "Am", "E", "E", "E", "E", "Am"].forEach((a, i) => {
+      const [basso, acc] = accordi[a], tb = t0 + i * 3 * q;
+      nota(basso + (i % 2 ? -5 : 0), tb, q * .8, .7, [-4, 4]);
+      [1, 2].forEach(k => acc.forEach(m => nota(m, tb + k * q, q * .45, .22, [0])));
+    });
+  },
+  ferma() {
+    if (this.ultimaFisa && this.ctx) { this.ultimaFisa.gain.setTargetAtTime(0, this.ctx.currentTime, .3); this.ultimaFisa = null; } if (this.ultimoMare && this.ctx) { const g = this.ultimoMare.g.gain; g.cancelScheduledValues(this.ctx.currentTime); g.setTargetAtTime(0, this.ctx.currentTime, .4); } },
+  atmosfera(nomi, dur) {
+    nomi.forEach(n => {
+      if (n === "mare") this.mare(dur, .5);
+      if (n === "campane") { this.campana(1.2, 311, .17); this.campana(3.6, 311, .15); this.campana(6.2, 277, .13); }
+      if (n === "tram") this.tram(.4);
+      if (n === "fisarmonica") this.fisarmonica(.3);
+      if (n === "citta") this.citta(dur, .16);
+    });
+  }
+};
+const btnAudio = $("#audio");
+btnAudio.addEventListener("click", () => {
+  Suono.avvia();
+  const on = btnAudio.getAttribute("aria-pressed") !== "true";
+  btnAudio.setAttribute("aria-pressed", on);
+  btnAudio.setAttribute("aria-label", on ? "Suoni attivi: tocca per spegnerli" : "Suoni spenti: tocca per accenderli");
+  Suono.imposta(on);
+});
+
+/* ---------- Cambio di scena ---------- */
+async function vai(id) {
+  const ora = document.querySelector(".scena.attiva");
+  if (ora) { ora.classList.add("esce"); await attendi(430); ora.classList.remove("attiva", "esce"); }
+  const s = document.getElementById(id); s.classList.add("attiva");
+  window.scrollTo(0, 0);
+  return s;
+}
+
+/* =====================================================================
+   SCENA 1 · LA BUSTA
+   ===================================================================== */
+function sigilloSVG(lettera) {
+  const r = rng(11), pts = [];
+  for (let i = 0; i < 26; i++) { const a = i / 26 * Math.PI * 2, rr = 45 + r() * 4.5 - (i % 5 === 0 ? 3 : 0); pts.push([50 + Math.cos(a) * rr, 50 + Math.sin(a) * rr]); }
+  let d = `M${pts[0][0].toFixed(1)} ${pts[0][1].toFixed(1)}`;
+  for (let i = 0; i < pts.length; i++) { const p = pts[(i + 1) % pts.length], q = pts[i]; d += ` Q${q[0].toFixed(1)} ${q[1].toFixed(1)} ${((q[0] + p[0]) / 2).toFixed(1)} ${((q[1] + p[1]) / 2).toFixed(1)}`; }
+  return `<svg viewBox="0 0 100 100" aria-hidden="true"><defs>
+    <radialGradient id="cera" cx=".36" cy=".3" r=".8"><stop offset="0" stop-color="#b03a5a"/><stop offset=".45" stop-color="#7d1a38"/><stop offset="1" stop-color="#3f0819"/></radialGradient>
+    <radialGradient id="cera-luce" cx=".32" cy=".26" r=".35"><stop offset="0" stop-color="#ffd9e2" stop-opacity=".55"/><stop offset="1" stop-color="#ffd9e2" stop-opacity="0"/></radialGradient></defs>
+    <path d="${d} Z" fill="url(#cera)"/>
+    <circle cx="50" cy="50" r="31" fill="none" stroke="#3d0716" stroke-opacity=".55" stroke-width="2.4"/>
+    <circle cx="50.6" cy="50.8" r="31" fill="none" stroke="#ffc4d2" stroke-opacity=".22" stroke-width="1"/>
+    <circle cx="50" cy="50" r="25.5" fill="none" stroke="#3d0716" stroke-opacity=".35" stroke-width=".8" stroke-dasharray="1.2 2.2"/>
+    <text x="50.7" y="62.5" text-anchor="middle" font-family="Instrument Serif, Georgia, serif" font-style="italic" font-size="38" fill="#ffc9d6" fill-opacity=".25">${esc(lettera)}</text>
+    <text x="50" y="61.5" text-anchor="middle" font-family="Instrument Serif, Georgia, serif" font-style="italic" font-size="38" fill="#4a0a1c" fill-opacity=".85">${esc(lettera)}</text>
+    <path d="${d} Z" fill="url(#cera-luce)"/></svg>`;
+}
+const qs = new URLSearchParams(location.search);
+let apertura = null;
+const FRASI_ATTESA = ["Non ancora. Il pensiero però è apprezzato.", "La busta resiste: è stata educata bene.", "Ancora un po'. Le sorprese migliori si fanno desiderare.", "Puoi scuoterla quanto vuoi: la data è quella."];
+let tentativiAttesa = 0, timerConto = null;
+const chiusa = () => apertura && Date.now() < apertura.getTime();
+
+function preparaBusta() {
+  const sig = sigilloSVG(C.iniziale || (C.da || "L")[0]);
+  $("#sigillo-sx").innerHTML = sig;
+  $("#sigillo-dx").innerHTML = sig.replace(/id="cera"/, 'id="cera2"').replace(/url\(#cera\)/, "url(#cera2)").replace(/id="cera-luce"/, 'id="cera-luce2"').replace(/url\(#cera-luce\)/, "url(#cera-luce2)");
+  $("#busta-nome").textContent = `Per ${C.per}`;
+  apertura = C.apertura ? new Date(C.apertura + "T00:00:00") : null;
+  if (qs.has("attesa")) apertura = new Date(Date.now() + ((2 * 24 + 5) * 60 + 17) * 60000 + 9000);
+  $("#busta-data").textContent = apertura ? `Da aprire solo ${conArticolo(apertura)}` : "Da aprire con calma";
+  if (qs.has("anteprima") && !qs.has("attesa")) { $("#nastro").hidden = false; apertura = null; }
+  if (chiusa()) {
+    $("#tocca-sigillo").hidden = true; $("#attesa").hidden = false;
+    $("#attesa-nota").textContent = `La busta si apre ${conArticolo(apertura)}. Le sorprese migliori si fanno desiderare.`;
+    aggiornaConto(); timerConto = setInterval(aggiornaConto, 1000);
+  }
+}
+
+function aggiornaConto() {
+  const ms = apertura.getTime() - Date.now();
+  if (ms <= 0) {
+    clearInterval(timerConto); timerConto = null;
+    $("#attesa").hidden = true;
+    const h = $("#tocca-sigillo"); h.hidden = false; h.textContent = "È il momento. Tocca il sigillo.";
+    return;
+  }
+  const s = Math.floor(ms / 1000), v = { g: Math.floor(s / 86400), h: Math.floor(s % 86400 / 3600), m: Math.floor(s % 3600 / 60), s: s % 60 };
+  document.querySelectorAll("#conto b").forEach(b => { const u = b.dataset.u; b.textContent = u === "g" ? v.g : String(v[u]).padStart(2, "0"); });
+}
+
+let bustaAperta = false;
+$("#sigillo").addEventListener("click", async () => {
+  Suono.avvia();
+  if (chiusa()) {
+    const b = $("#busta"), s = $("#sigillo");
+    b.classList.remove("trema"); s.classList.remove("trema"); void b.offsetWidth;
+    b.classList.add("trema"); s.classList.add("trema"); Suono.carta(.25, .2);
+    $("#attesa-nota").textContent = FRASI_ATTESA[tentativiAttesa++ % FRASI_ATTESA.length];
+    return;
+  }
+  if (bustaAperta) return; bustaAperta = true;
+  const b = $("#busta"), s = $("#sigillo");
+  s.disabled = true; $("#tocca-sigillo").classList.remove("pulsa"); $("#tocca-sigillo").textContent = " ";
+  Suono.crepa(); s.classList.add("rotto");
+  await attendi(380);
+  Suono.carta(.7, .32); b.classList.add("aperta");
+  await attendi(450); b.classList.add("dentro");
+  await attendi(350); b.classList.add("esce"); Suono.carta(.9, .22);
+  await attendi(1500);
+  apriIndizi();
+});
+
+/* =====================================================================
+   SCENA 2 · GLI INDIZI
+   ===================================================================== */
+let indizi = [], passi = [];
+let passoOra = 0;
+
+function apriIndizi() {
+  indizi = C.indizi || [];
+  passi = [{ tipo: "biglietto" }, ...indizi, ...(C.indovina && C.indovina.attivo ? [{ tipo: "indovina" }] : [])];
+  $("#tappe").innerHTML = indizi.map(() => "<span></span>").join("");
+  vai("s-indizi"); mostraPasso(0);
+}
+function aggiornaTappe() {
+  const n = passoOra - 1;
+  [...$("#tappe").children].forEach((el, i) => { el.classList.toggle("fatta", i < n); el.classList.toggle("ora", i === n); });
+  $("#tappe").style.visibility = (passi[passoOra].tipo === "biglietto") ? "hidden" : "visible";
+}
+function prossimo() { if (passoOra < passi.length - 1) mostraPasso(passoOra + 1); else apriCartolina(); }
+
+function mostraPasso(i) {
+  passoOra = i; const p = passi[i], box = $("#passo");
+  const nIndizio = i, tot = indizi.length, ultimoIndizio = i === tot;
+  const avanti = ultimoIndizio ? (passi[i + 1] ? "Ho un'idea (forse)" : "Apri la cartolina") : "Prossimo indizio";
+  let html = "";
+  if (p.tipo === "biglietto") {
+    html = `<p class="occhiello">Prima di tutto</p><h2>${esc(C.per)}, si parte.</h2>
+      <p class="testo-grande">${esc(C.biglietto)}</p>
+      <button class="btn" type="button" data-avanti>${tot ? "Il primo indizio" : "Apri la cartolina"}</button>`;
+  } else if (p.tipo === "indovina") {
+    html = `<p class="occhiello">Ultima tappa prima della cartolina</p><h2>Allora, dove si va?</h2>
+      <div class="indovina"><form id="f-indovina" autocomplete="off">
+        <label for="ipotesi" class="nascosto">La tua ipotesi</label>
+        <input id="ipotesi" name="ipotesi" type="text" placeholder="Un'isola, una città, un paese…" enterkeyhint="go" autocapitalize="off" spellcheck="false">
+        <button class="btn" type="submit">Prova</button></form>
+        <p class="esito" id="esito" aria-live="polite"></p>
+        <button class="btn" type="button" data-avanti id="vai-cartolina" hidden>Apri la cartolina</button>
+        <button class="btn-testo" type="button" data-avanti id="salta">Niente ipotesi: voglio la sorpresa</button></div>`;
+  } else {
+    html = `<p class="occhiello">Indizio ${nIndizio} di ${tot}</p><h2>${esc(p.titolo || "")}</h2>${corpoIndizio(p)}
+      <div class="svela" id="svela"><p class="testo-grande">${esc(p.testo || "")}</p>${p.nota ? `<p class="nota">${esc(p.nota)}</p>` : ""}</div>
+      <button class="btn" type="button" data-avanti disabled id="avanti">${avanti}</button>`;
+  }
+  box.classList.remove("entra"); void box.offsetWidth; box.classList.add("entra");
+  box.innerHTML = html; aggiornaTappe();
+  box.querySelectorAll("[data-avanti]").forEach(b => b.addEventListener("click", () => { Suono.avvia(); Suono.carta(.4, .18); Suono.ferma(); prossimo(); }));
+  if (p.tipo !== "biglietto" && p.tipo !== "indovina") montaIndizio(p);
+  if (p.tipo === "indovina") montaIndovina();
+}
+function svelato() {
+  $("#svela").classList.add("visto");
+  const a = $("#avanti"); if (a) { a.disabled = false; setTimeout(() => a.focus({ preventScroll: true }), 50); }
+}
+function corpoIndizio(p) {
+  if (p.tipo === "profumo") return `<div class="gratta" id="gratta"><div class="gratta-sotto">${esc(p.segreto || "")}</div><canvas aria-hidden="true"></canvas></div>
+    <button class="btn-testo" type="button" id="senza-grattare">Scopri senza strofinare</button>`;
+  if (p.tipo === "suono") return `<button class="ascolta" type="button" id="ascolta" aria-label="Tocca e ascolta"><span class="onda"></span><span class="onda"></span><span class="onda"></span>
+      <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 26c4-5 8-5 12 0s8 5 12 0 8-5 12 0"/><path d="M6 34c4-5 8-5 12 0s8 5 12 0 8-5 12 0" opacity=".55"/><path d="M30 8v11"/><path d="M26 19h8l-1-3h-6z" fill="currentColor"/></svg></button>
+    <p class="ascolta-nota">Tocca e ascolta. Alza il volume (su iPhone, togli il silenzioso).</p>`;
+  if (p.tipo === "colore") return `<button class="ventaglio" type="button" id="ventaglio" aria-label="Apri il ventaglio dei colori">${(p.colori || []).slice(0, 3).map(c =>
+      `<span class="campione"><i style="background:${esc(c.hex)}"></i><span><small>Campione</small>${esc(c.nome)}</span></span>`).join("")}</button>
+    <p class="ascolta-nota" id="ventaglio-nota">Tocca il ventaglio per aprirlo</p>`;
+  if (p.tipo === "parola") return `<div class="tessera-wrap"><button class="tessera" type="button" id="tessera" aria-label="Gira la tessera per leggere il significato">
+      <div class="t-fronte"><strong lang="el">${esc(p.parola)}</strong><small>Tocca per tradurre</small></div>
+      <div class="t-retro"><strong>${esc(p.traslitterazione || "")}</strong><small>Si pronuncia ${esc(p.pronuncia || "")}</small><em>${esc(p.significato || "")}</em></div></button></div>`;
+  return "";
+}
+function montaIndizio(p) {
+  if (p.tipo === "profumo") {
+    const box = $("#gratta"); let fatto = false;
+    const fine = () => { if (fatto) return; fatto = true; box.classList.add("finito"); $("#senza-grattare").hidden = true; svelato(); };
+    $("#senza-grattare").addEventListener("click", fine);
+    document.fonts.load("italic 26px 'Instrument Serif'").finally(() => grattaEVinci(box.querySelector("canvas"), fine));
+  }
+  if (p.tipo === "suono") {
+    const b = $("#ascolta"); let primo = true;
+    b.addEventListener("click", () => {
+      Suono.avvia();
+      if (!Suono.attivo) { btnAudio.click(); }
+      b.classList.add("suona"); Suono.ferma();
+      const nomi = p.suoni && p.suoni.length ? p.suoni : ["mare"];
+      Suono.atmosfera(nomi, nomi.includes("fisarmonica") ? 13 : 10);
+      clearTimeout(b._t); b._t = setTimeout(() => b.classList.remove("suona"), nomi.includes("fisarmonica") ? 13500 : 10500);
+      if (primo) { primo = false; setTimeout(svelato, ridotto ? 0 : 1800); }
+    });
+  }
+  if (p.tipo === "colore") {
+    const v = $("#ventaglio");
+    v.addEventListener("click", () => {
+      const ap = !v.classList.contains("aperto"); v.classList.toggle("aperto", ap); Suono.avvia(); Suono.carta(.35, .22);
+      $("#ventaglio-nota").textContent = ap ? (p.colori || []).slice(0, 3).map(c => c.nome).join(" · ") : "Tocca il ventaglio per aprirlo";
+      if (ap) setTimeout(svelato, ridotto ? 0 : 700);
+    });
+  }
+  if (p.tipo === "parola") {
+    const t = $("#tessera"); let primo = true;
+    t.addEventListener("click", () => { t.classList.toggle("girata"); Suono.avvia(); Suono.carta(.3, .2); if (primo) { primo = false; setTimeout(svelato, ridotto ? 0 : 800); } });
+  }
+}
+function grattaEVinci(cv, fine) {
+  const box = cv.parentElement, dpr = Math.min(2, window.devicePixelRatio || 1);
+  const w = box.clientWidth, h = box.clientHeight;
+  cv.width = w * dpr; cv.height = h * dpr;
+  const x = cv.getContext("2d"); x.scale(dpr, dpr);
+  const g = x.createLinearGradient(0, 0, w, h); g.addColorStop(0, "#efe0b0"); g.addColorStop(.5, "#e3cf93"); g.addColorStop(1, "#d8c07e");
+  x.fillStyle = g; x.fillRect(0, 0, w, h);
+  x.strokeStyle = "rgba(255,255,255,.22)"; x.lineWidth = 1;
+  for (let i = -h; i < w; i += 7) { x.beginPath(); x.moveTo(i, h); x.lineTo(i + h, 0); x.stroke(); }
+  x.strokeStyle = "rgba(90,60,20,.35)"; x.setLineDash([3, 4]); x.strokeRect(8.5, 8.5, w - 17, h - 17); x.setLineDash([]);
+  x.fillStyle = "#6a4a1c"; x.textAlign = "center"; x.textBaseline = "middle";
+  x.font = "italic 30px 'Instrument Serif', Georgia, serif"; x.fillText("Strofina qui", w / 2, h / 2 - 6);
+  x.font = "600 10px 'Hanken Grotesk', Arial, sans-serif";
+  x.fillText("CARTA PROFUMATA · N. 1", w / 2, h / 2 + 24);
+  x.globalCompositeOperation = "destination-out"; x.lineCap = x.lineJoin = "round"; x.lineWidth = 38;
+  let giu = false, ux = 0, uy = 0, mosse = 0, suonato = 0;
+  const pos = e => { const r = cv.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
+  const controlla = () => {
+    const d = x.getImageData(0, 0, cv.width, cv.height).data; let vuoti = 0, tot = 0;
+    for (let i = 3; i < d.length; i += 4 * 24) { tot++; if (d[i] < 120) vuoti++; }
+    if (vuoti / tot > .5) fine();
+  };
+  cv.addEventListener("pointerdown", e => { giu = true; [ux, uy] = pos(e); cv.setPointerCapture(e.pointerId); Suono.avvia(); x.beginPath(); x.arc(ux, uy, 19, 0, 7); x.fill(); });
+  cv.addEventListener("pointermove", e => {
+    if (!giu) return; const [nx, ny] = pos(e);
+    x.beginPath(); x.moveTo(ux, uy); x.lineTo(nx, ny); x.stroke(); ux = nx; uy = ny;
+    if (++mosse % 8 === 0) controlla();
+    const t = performance.now(); if (t - suonato > 160) { suonato = t; Suono.carta(.14, .1); }
+  });
+  const su = () => { if (giu) { giu = false; controlla(); } };
+  cv.addEventListener("pointerup", su); cv.addEventListener("pointercancel", su);
+}
+const norm = s => s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-zͰ-Ͽ ]/g, " ").replace(/\s+/g, " ").trim();
+function montaIndovina() {
+  const I = C.indovina; let errori = 0;
+  $("#f-indovina").addEventListener("submit", e => {
+    e.preventDefault();
+    const v = norm($("#ipotesi").value); if (!v) { $("#ipotesi").focus(); return; }
+    const ha = lista => lista.some(k => { const n = norm(k); return v === n || v.split(" ").includes(n) || (n.includes(" ") && v.includes(n)); });
+    const esito = $("#esito");
+    if (ha(I.giuste)) { esito.textContent = I.giusta; finito(); Suono.campana(0, 392, .12); }
+    else if (ha(I.vicine)) { esito.textContent = I.vicina; errori++; }
+    else { esito.textContent = I.sbagliate[errori % I.sbagliate.length]; errori++; }
+    if (errori >= 1) { $("#vai-cartolina").hidden = false; }
+    if (errori >= 3) finito();
+  });
+  function finito() { $("#vai-cartolina").hidden = false; $("#salta").hidden = true; $("#f-indovina").querySelector("button").disabled = true; $("#ipotesi").disabled = true; }
+}
+
+/* =====================================================================
+   SCENA 3 · LA CARTOLINA
+   ===================================================================== */
+let partenza = null, ritorno = null;
+let cartolinaPronta = false;
+function preparaCartolina() {
+  if (cartolinaPronta) return; cartolinaPronta = true;
+  $("#illustrazione").innerHTML = M.scena();
+  $("#r-francobollo").innerHTML = M.francobollo();
+  $("#r-timbro").innerHTML = timbroPostale();
+  $("#r-via").innerHTML = `<b>Par avion</b>${esc(M.via || "")}`;
+  // messaggio diviso in parole, per scriverlo una parola alla volta
+  let i = 0;
+  const righe = [...(C.messaggio || [])];
+  $("#r-messaggio").innerHTML = righe.map(r => `<p>${r.split(/\s+/).map(w => `<span class="pa" style="--i:${i++}">${esc(w)}</span>`).join(" ")}</p>`).join("")
+    + (C.firma ? `<p class="firma"><span class="pa" style="--i:${i++ + 3}">${esc(C.firma)}</span></p>` : "");
+  $("#r-messaggio").dataset.parole = i;
+  const ind = [`Per ${C.per}`];
+  if (partenza) ind.push(`in partenza ${conArticolo(partenza)}`);
+  ind.push("destinazione: girala");
+  $("#r-indirizzo").innerHTML = ind.map(t => `<span>${esc(t)}</span>`).join("");
+  riempiTaccuino();
+}
+function adattaMessaggio() {
+  const el = $("#r-messaggio"); el.style.fontSize = "";
+  let s = parseFloat(getComputedStyle(el).fontSize), n = 30;
+  while (el.scrollHeight > el.clientHeight + 1 && n--) { s *= .94; el.style.fontSize = s + "px"; }
+}
+async function apriCartolina() {
+  preparaCartolina();
+  await vai("s-cartolina");
+  adattaMessaggio();
+  const c = $("#cartolina"); c.classList.add("cade"); Suono.carta(.5, .25);
+  setTimeout(() => { c.classList.remove("cade"); }, 1100);
+  hint(`<svg class="giro-icona" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="6" y="4" width="12" height="16" rx="1.5"/></svg>Tocca la cartolina per girarla`, true);
+}
+window.addEventListener("resize", () => { if (cartolinaPronta) adattaMessaggio(); });
+function hint(html, pulsa) { const h = $("#cartolina-hint"); h.innerHTML = html; h.classList.toggle("pulsa", !!pulsa); }
+
+let ry = 0, rivelata = false, scritta = false;
+const cart = $("#cartolina");
+function lato() { return Math.round(ry / 180) % 2 !== 0; } // true = illustrazione
+function imposta(deg, animato = true) { cart.style.transition = animato ? "" : "none"; ry = deg; cart.style.setProperty("--ry", deg + "deg"); }
+function gira(dir = 1) { Suono.avvia(); Suono.carta(.5, .2); imposta(Math.round(ry / 180) * 180 + 180 * dir); setTimeout(dopoGiro, ridotto ? 50 : 700); }
+function dopoGiro() {
+  if (lato() && !rivelata) rivela();
+  else if (!lato() && rivelata && !scritta) scrivi();
+}
+async function rivela() {
+  rivelata = true; const f = $("#fronte");
+  f.classList.add("vivo"); cart.setAttribute("aria-label", `Cartolina da ${M.nome}: tocca per girarla`);
+  if (Suono.pronto()) { Suono.atmosfera(M.ambiente || [], 26); f.classList.add("suona"); setTimeout(() => f.classList.remove("suona"), 9000); }
+  await attendi(900); f.classList.add("sera");
+  await attendi(2600); hint("Girala di nuovo: dietro c'è scritto qualcosa", true);
+}
+async function scrivi() {
+  scritta = true; const r = $("#retro");
+  r.classList.add("scritto"); hint("");
+  setTimeout(() => Suono.carta(.2, .2), ridotto ? 0 : 300);
+  setTimeout(() => Suono.tonfo(), ridotto ? 0 : 1250);
+  const n = +$("#r-messaggio").dataset.parole || 0;
+  await attendi(1900 + n * 55 + 600);
+  const t = $("#taccuino"); t.hidden = false; t.classList.add("entra"); $("#ricomincia").hidden = false;
+  hint(`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg>Scorri: c'è il programma`, true);
+}
+// gesto: toccare gira, trascinare in orizzontale fa ruotare la cartolina con il dito
+let x0 = null, y0 = 0, base = 0, trascina = false;
+cart.addEventListener("pointerdown", e => { x0 = e.clientX; y0 = e.clientY; base = ry; trascina = false; });
+cart.addEventListener("pointermove", e => {
+  if (x0 === null) return; const dx = e.clientX - x0, dy = e.clientY - y0;
+  if (!trascina && Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(dy)) { trascina = true; try { cart.setPointerCapture(e.pointerId); } catch (_) {} }
+  if (trascina) imposta(base + Math.max(-180, Math.min(180, dx * .55)), false);
+});
+const lascia = e => {
+  if (x0 === null) return; const dx = e.clientX - x0; x0 = null;
+  if (!trascina) { if (e.type === "pointerup") gira(1); return; }
+  trascina = false;
+  if (Math.abs(dx) > 55) { imposta(base + 180 * Math.sign(dx)); Suono.carta(.4, .18); setTimeout(dopoGiro, ridotto ? 50 : 650); }
+  else imposta(base);
+};
+cart.addEventListener("pointerup", lascia); cart.addEventListener("pointercancel", lascia);
+cart.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); gira(1); } });
+
+function timbroPostale() {
+  const giorni = partenza && ritorno ? (partenza.getMonth() === ritorno.getMonth() ? `${partenza.getDate()}–${ritorno.getDate()}·${ROMANI[ritorno.getMonth()]}` : `${partenza.getDate()}·${ROMANI[partenza.getMonth()]}–${ritorno.getDate()}·${ROMANI[ritorno.getMonth()]}`) : "";
+  const anno = (ritorno || partenza || new Date()).getFullYear();
+  let onde = "";
+  for (let k = 0; k < 5; k++) { const y = 28 + k * 13; onde += `<path d="M104 ${y} q12 -6 24 0 t24 0 t24 0 t24 0" fill="none" stroke="currentColor" stroke-width="2.2"/>`; }
+  return `<svg viewBox="0 0 210 112" style="color:var(--timbro)" aria-hidden="true"><defs>
+    <filter id="inchiostro"><feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="2" seed="4" result="n"/>
+    <feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -2.2 1.6" result="m"/><feComposite in="SourceGraphic" in2="m" operator="in"/></filter>
+    <path id="giro-timbro" d="M56 56 m-38 0 a38 38 0 1 1 76 0 a38 38 0 1 1 -76 0"/></defs>
+    <g filter="url(#inchiostro)" fill="currentColor">
+      <circle cx="56" cy="56" r="47" fill="none" stroke="currentColor" stroke-width="2.4"/>
+      <circle cx="56" cy="56" r="30" fill="none" stroke="currentColor" stroke-width="1.4"/>
+      <text font-family="'GFS Didot', 'Josefin Sans', Georgia, serif" font-size="10.5" letter-spacing="1.3"><textPath href="#giro-timbro" startOffset="0">${esc(M.timbro)}${esc(M.timbro)}</textPath></text>
+      <text x="56" y="54" text-anchor="middle" font-family="'Josefin Sans', Arial, sans-serif" font-weight="600" font-size="13.5" letter-spacing=".5">${esc(giorni)}</text>
+      <rect x="36" y="59" width="40" height="1.2"/>
+      <text x="56" y="73" text-anchor="middle" font-family="'Josefin Sans', Arial, sans-serif" font-weight="600" font-size="12.5" letter-spacing="2">${anno}</text>
+      ${onde}
+    </g></svg>`;
+}
+
+function riempiTaccuino() {
+  const V = C.viaggio || {};
+  $("#t-titolo").textContent = partenza && ritorno ? `${M.nome}, ${intervallo(partenza, ritorno)}` : M.nome;
+  const cella = (et, d, nota) => d ? `<div><small>${et}</small><b>${fmt(d, { weekday: "long" })}<br>${fmt(d, { day: "numeric", month: "long" })}</b>${nota ? `<span>${esc(nota)}</span>` : ""}</div>` : "";
+  $("#t-date").innerHTML = cella("Partenza", partenza, V.partenzaNota) + cella("Rientro", ritorno, V.ritornoNota);
+  $("#t-valigia").innerHTML = (V.valigia || []).map(v => `<li>${esc(v)}</li>`).join("");
+  let g = partenza ? new Date(partenza) : null;
+  $("#t-programma").innerHTML = (V.programma || []).map((p, n) => {
+    const testo = typeof p === "string" ? p : p.testo;
+    let nome = typeof p === "string" ? "" : p.giorno, data = "";
+    if (g) { if (!nome) nome = fmt(g, { weekday: "long" }); data = fmt(g, { day: "numeric", month: "short" }); g.setDate(g.getDate() + 1); }
+    if (!nome) nome = `Giorno ${n + 1}`;
+    return `<li><b>${esc(nome[0].toUpperCase() + nome.slice(1))}${data ? `<small>${data}</small>` : ""}</b><span>${esc(testo)}</span></li>`;
+  }).join("");
+  $("#t-nota").textContent = V.nota || "";
+  const W = C.whatsapp || {}, num = String(W.numero || "").replace(/\D/g, "");
+  const url = `https://wa.me/${num}?text=${encodeURIComponent(W.risposta || "Ci sto!")}`;
+  const a = $("#ci-sto"); a.href = url;
+  $("#ci-sto-nota").textContent = `Si apre WhatsApp con la risposta già pronta${C.da ? ` per ${C.da}` : ""}.`;
+  $("#timbro-ok").innerHTML = `<g fill="none" stroke="#8f2647" stroke-width="3"><circle cx="60" cy="60" r="52"/><circle cx="60" cy="60" r="44" stroke-width="1.4"/></g>
+    <text x="60" y="58" text-anchor="middle" font-family="'Josefin Sans', Arial, sans-serif" font-weight="600" font-size="19" letter-spacing="3" fill="#8f2647">CI STO</text>
+    <text x="60" y="78" text-anchor="middle" font-family="'Josefin Sans', Arial, sans-serif" font-size="9" letter-spacing="2.5" fill="#8f2647">${esc(fmt(new Date(), { day: "numeric", month: "short", year: "numeric" }).toUpperCase())}</text>`;
+  a.addEventListener("click", e => {
+    e.preventDefault(); Suono.avvia(); Suono.tonfo(.8);
+    const t = $("#timbro-ok"); t.classList.remove("su"); void t.getBoundingClientRect(); t.classList.add("su");
+    setTimeout(() => { location.href = url; }, ridotto ? 100 : 750);
+  });
+}
+$("#ricomincia").addEventListener("click", () => location.reload());
+window.addEventListener("hashchange", () => location.reload());
+
+/* ---------- Avvio: la cartolina arriva dal link ---------- */
+(async function avvia() {
+  try { C = await caricaCartolina(location.hash); }
+  catch (e) {
+    if (e && e.message === "browser") $("#guasto-testo").textContent = "Questo browser è troppo datato per aprirla. Prova ad aggiornarlo, oppure apri il link con Chrome o Safari.";
+    document.querySelector(".scena.attiva").classList.remove("attiva"); $("#s-guasto").classList.add("attiva"); return;
+  }
+  M = METE[C.meta] || METE.santorini;
+  if (C.viaggio && C.viaggio.partenza) partenza = giornoDa(C.viaggio.partenza);
+  if (C.viaggio && C.viaggio.ritorno) ritorno = giornoDa(C.viaggio.ritorno);
+  preparaBusta();
+})();
+
+</script>
+</body>
+</html>

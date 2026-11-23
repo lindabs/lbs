@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>La cartolina che si apre</title>
+<meta name="description" content="Annuncia un viaggio a sorpresa con una cartolina che si apre: scegli la meta, scrivi il messaggio, invia il link su WhatsApp.">
+<meta property="og:title" content="La cartolina che si apre · LBS">
+<meta property="og:description" content="Un viaggio a sorpresa, annunciato con una busta da aprire e una cartolina da girare. Scegli la meta e scrivi il tuo messaggio.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://lindabs.github.io/lbs/cartolina/">
+<meta property="og:image" content="https://lindabs.github.io/lbs/cartolina/anteprima.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#22050e">
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Ccircle%20cx%3D%2232%22%20cy%3D%2232%22%20r%3D%2228%22%20fill%3D%22%236b1430%22%2F%3E%3Ctext%20x%3D%2232%22%20y%3D%2242%22%20font-family%3D%22Georgia%2Cserif%22%20font-style%3D%22italic%22%20font-size%3D%2230%22%20fill%3D%22%23efd6b8%22%20text-anchor%3D%22middle%22%3EL%3C%2Ftext%3E%3C%2Fsvg%3E">
+<style>[hidden]{display:none!important}img{max-width:100%}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}</style>
+<!--
+  LA CARTOLINA CHE SI APRE · Crea la tua cartolina · un'esperienza di LBS
+  Chi regala sceglie la meta e compila il modulo; la pagina crea un link per-te/#<codice>
+  che contiene tutta la cartolina. Nulla viene salvato o inviato a un server.
+  Mete e testi predefiniti: mete.js · caratteri e scene: mete.css
+-->
+<link rel="stylesheet" href="mete.css">
+</head>
+<body>
+<style>
+/* Layout: una colonna sul tavolo bordeaux. In alto la promessa, poi le mete come cartoline da scegliere, poi un modulo di spedizione su carta (sei riquadri numerati, nell'ordine in cui si compilano), infine l'invio e l'offerta su misura. */
+:root {
+  --tavolo: #22050e;
+  --vino: #6b1430;
+  --vino-hi: #8f2647;
+  --champagne: #efd6b8;
+  --avorio: #fbf1f2;
+  --tenue: #cfa1ad;
+  --carta: #f3e9d8;
+  --inchiostro: #2e1b26;
+  --inchiostro-2: #6a5160;
+  --penna: #2a2550;
+  --linea: rgba(106, 81, 96, .35);
+  --f-display: "Instrument Serif", "Didot", Georgia, serif;
+  --f-corpo: "Hanken Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --f-mano: "Caveat", "Segoe Print", "Bradley Hand", cursive;
+  --f-manifesto: "Josefin Sans", "Futura", "Century Gothic", sans-serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { background: var(--tavolo); }
+body {
+  margin: 0; color: var(--avorio); font-family: var(--f-corpo); font-size: 17px; line-height: 1.55;
+  background:
+    radial-gradient(90% 40% at 15% 0%, rgba(143, 38, 71, .42), transparent 62%),
+    radial-gradient(80% 40% at 100% 100%, rgba(107, 20, 48, .5), transparent 60%),
+    linear-gradient(165deg, #2c0712 0%, #1a040b 100%) fixed, var(--tavolo);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 0 40px;
+  overflow-x: hidden;
+}
+button, input, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+p { margin: 0; }
+h1, h2, h3 { font-family: var(--f-display); font-weight: 400; margin: 0; line-height: 1.05; text-wrap: balance; }
+:focus-visible { outline: 2px solid var(--champagne); outline-offset: 3px; border-radius: 4px; }
+.colonna { width: min(100%, 580px); margin-inline: auto; display: grid; gap: 44px; }
+.occhiello { font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: var(--tenue); }
+
+/* Apertura */
+.apertura { padding-top: 56px; display: grid; gap: 18px; }
+.apertura h1 { font-size: clamp(40px, 11vw, 64px); line-height: 1; }
+.apertura h1 i { color: var(--champagne); }
+.apertura p.intro { font-size: 18px; color: #ecd3da; max-width: 36ch; text-wrap: pretty; }
+.passaggi { list-style: none; margin: 6px 0 0; padding: 0; display: grid; gap: 10px; counter-reset: p; }
+.passaggi li { counter-increment: p; display: grid; grid-template-columns: 30px 1fr; gap: 12px; align-items: baseline; color: #ecd3da; font-size: 16px; }
+.passaggi li::before { content: counter(p); font-family: var(--f-display); font-style: italic; font-size: 24px; color: var(--champagne); line-height: 1; }
+
+/* Le mete */
+.sezione { display: grid; gap: 16px; }
+.sezione > h2 { font-size: 32px; }
+.sezione > h2 small { display: block; font-family: var(--f-corpo); font-size: 12px; letter-spacing: .28em; text-transform: uppercase; color: var(--tenue); margin-bottom: 8px; }
+.mete { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.meta { position: relative; display: grid; gap: 10px; justify-items: start; text-align: left; }
+.meta input { position: absolute; opacity: 0; pointer-events: none; }
+.meta label { display: block; width: 100%; cursor: pointer; }
+.miniatura {
+  display: block; width: 100%; aspect-ratio: 7 / 10; background: #f4ead6; padding: 3.2%; border-radius: 5px;
+  box-shadow: 0 22px 40px -22px rgba(0, 0, 0, .9), 0 0 0 0 var(--champagne);
+  transition: transform .35s cubic-bezier(.2, .8, .2, 1), box-shadow .35s;
+  transform: rotate(-1.5deg);
+}
+.meta:nth-child(2) .miniatura { transform: rotate(1.4deg); }
+.miniatura svg { display: block; width: 100%; height: 100%; border-radius: 2px; }
+.meta input:checked + label .miniatura { box-shadow: 0 22px 40px -22px rgba(0, 0, 0, .9), 0 0 0 3px var(--champagne); transform: rotate(0) translateY(-4px); }
+.meta input:focus-visible + label .miniatura { outline: 2px solid var(--champagne); outline-offset: 5px; }
+.meta-nome { display: flex; align-items: center; gap: 8px; margin-top: 12px; font-family: var(--f-display); font-size: 24px; line-height: 1.1; }
+.meta-nome::before { content: ""; width: 16px; height: 16px; border-radius: 50%; border: 1.5px solid var(--tenue); flex: none; }
+.meta input:checked + label .meta-nome::before { background: var(--champagne); border-color: var(--champagne); box-shadow: inset 0 0 0 3px var(--tavolo); }
+.meta-luogo { font-size: 13px; color: var(--tenue); }
+.meta a { font-size: 14px; color: var(--champagne); text-underline-offset: 4px; }
+.nota-mete { font-size: 15px; color: var(--tenue); }
+
+/* Il modulo */
+.modulo {
+  background: linear-gradient(180deg, #fbf5ea, var(--carta)); color: var(--inchiostro);
+  border-radius: 4px; padding: 28px 22px 30px; display: grid; gap: 34px;
+  box-shadow: 0 30px 60px -28px rgba(0, 0, 0, .85);
+  position: relative;
+}
+.modulo-testa { display: flex; justify-content: space-between; align-items: start; gap: 12px; border-bottom: 2px solid var(--vino); padding-bottom: 14px; }
+.modulo-testa b { display: block; font-family: var(--f-manifesto); font-weight: 600; font-size: 14px; letter-spacing: .26em; color: var(--vino); }
+.modulo-testa small { display: block; font-size: 12px; color: var(--inchiostro-2); margin-top: 4px; }
+.modulo-testa span { font-family: var(--f-mano); font-size: 22px; color: var(--inchiostro-2); transform: rotate(-4deg); white-space: nowrap; }
+fieldset { border: 0; margin: 0; padding: 0; display: grid; gap: 16px; min-width: 0; }
+legend { padding: 0; margin-bottom: 14px; display: flex; align-items: baseline; gap: 12px; font-family: var(--f-display); font-size: 26px; line-height: 1.1; }
+legend i { font-style: normal; font-family: var(--f-manifesto); font-weight: 600; font-size: 13px; color: var(--avorio); background: var(--vino); width: 24px; height: 24px; border-radius: 50%; display: inline-grid; place-items: center; flex: none; transform: translateY(-3px); }
+.campo { display: grid; gap: 4px; min-width: 0; }
+.campo label { font-size: 11.5px; letter-spacing: .2em; text-transform: uppercase; color: var(--inchiostro-2); }
+.campo label em { font-style: normal; letter-spacing: .04em; text-transform: none; font-size: 12px; opacity: .85; }
+.campo input[type="text"], .campo input[type="tel"], .campo input[type="date"], .campo textarea {
+  width: 100%; min-width: 0; border: 0; border-bottom: 1.5px solid var(--linea); border-radius: 0; background: transparent;
+  font-family: var(--f-mano); font-size: 24px; line-height: 1.3; color: var(--penna); padding: 4px 2px;
+}
+.campo input[type="date"] { font-family: var(--f-corpo); font-size: 17px; padding: 8px 2px; min-height: 44px; color-scheme: light; }
+.campo textarea { resize: vertical; min-height: 120px; font-size: 22px; line-height: 1.35;
+  background-image: repeating-linear-gradient(180deg, transparent 0 calc(1.35em - 1px), var(--linea) calc(1.35em - 1px) 1.35em);
+  background-attachment: local; border-bottom: 0; }
+.campo input:focus, .campo textarea:focus { outline: none; border-bottom-color: var(--vino); }
+.campo textarea:focus { box-shadow: 0 2px 0 var(--vino); }
+.campo input::placeholder, .campo textarea::placeholder { color: rgba(106, 81, 96, .5); }
+.aiuto { font-size: 13px; line-height: 1.45; color: var(--inchiostro-2); }
+.conta { font-size: 12px; color: var(--inchiostro-2); text-align: right; font-variant-numeric: tabular-nums; }
+.coppia { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.spunta { display: grid; grid-template-columns: 22px 1fr; gap: 10px; align-items: start; font-size: 16px; cursor: pointer; }
+.spunta input { width: 20px; height: 20px; margin: 2px 0 0; accent-color: var(--vino); }
+.avviso { font-size: 14px; color: var(--vino); min-height: 1.4em; }
+
+/* Invio */
+.invio { display: grid; gap: 14px; border-top: 2px solid var(--vino); padding-top: 24px; }
+.invio h3 { font-size: 26px; }
+.link-pronto { width: 100%; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12.5px; color: var(--inchiostro-2); background: rgba(106, 81, 96, .08); border: 1px dashed var(--linea); border-radius: 4px; padding: 10px; word-break: break-all; line-height: 1.4; max-height: 5.8em; overflow: auto; }
+.azioni { display: grid; gap: 10px; }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none;
+  border: 0; border-radius: 999px; padding: 14px 24px; min-height: 50px; font-weight: 500; letter-spacing: .01em;
+  background: linear-gradient(115deg, #4d0c1f, var(--vino) 40%, var(--vino-hi) 60%, #5a1026);
+  color: var(--champagne); box-shadow: 0 10px 24px -12px rgba(60, 8, 22, .9), 0 1px 0 rgba(255, 220, 232, .25) inset;
+  transition: transform .2s;
+}
+.btn:active { transform: scale(.98); }
+.btn svg { width: 20px; height: 20px; flex: none; }
+.btn.secondario { background: transparent; color: var(--vino); box-shadow: inset 0 0 0 1.5px var(--vino); }
+.esito { font-size: 14px; color: var(--vino); min-height: 1.4em; text-align: center; }
+.privato { display: grid; grid-template-columns: 24px 1fr; gap: 12px; font-size: 14px; line-height: 1.5; color: var(--inchiostro-2); background: rgba(106, 81, 96, .07); border-radius: 6px; padding: 14px; }
+.privato svg { width: 22px; height: 22px; color: var(--vino); }
+.francobollo-mod { position: absolute; top: -18px; right: 18px; width: 64px; transform: rotate(5deg); filter: drop-shadow(0 4px 6px rgba(0, 0, 0, .35)); }
+
+/* Su misura */
+.misura { display: grid; gap: 16px; border: 1px solid rgba(239, 214, 184, .25); border-radius: 6px; padding: 24px 20px; background: rgba(255, 228, 236, .04); }
+.misura h2 { font-size: 32px; }
+.misura h2 i { color: var(--champagne); }
+.misura ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; color: #ecd3da; }
+.misura li { display: grid; grid-template-columns: 18px 1fr; gap: 10px; }
+.misura li::before { content: "✶"; color: var(--champagne); font-size: 13px; line-height: 1.9; }
+.misura .btn { justify-self: start; }
+.credito { font-size: 13px; color: var(--tenue); text-align: center; display: grid; gap: 4px; }
+.credito a { color: var(--champagne); }
+
+@media (max-width: 400px) {
+  .coppia { grid-template-columns: minmax(0, 1fr); }
+  .modulo { padding-inline: 18px; }
+}
+@media (min-width: 560px) { .azioni { grid-template-columns: 1fr 1fr; } .azioni .btn:first-child { grid-column: 1 / -1; } }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="colonna">
+  <header class="apertura">
+    <p class="occhiello">LBS · La cartolina che si apre</p>
+    <h1>Un viaggio a sorpresa, <i>svelato con un gesto.</i></h1>
+    <p class="intro">Una busta con la ceralacca, quattro indizi da scoprire, poi una cartolina che si gira e svela la meta. Tu scegli il luogo e scrivi il messaggio; il resto lo fa la carta.</p>
+    <ol class="passaggi">
+      <li>Scegli la meta tra le cartoline illustrate.</li>
+      <li>Compila il modulo: nomi, date, messaggio, programma.</li>
+      <li>Invia il link su WhatsApp. Chi lo riceve rompe il sigillo.</li>
+    </ol>
+  </header>
+
+  <section class="sezione" aria-labelledby="t-mete">
+    <h2 id="t-mete"><small>Le mete</small>Dove si va?</h2>
+    <div class="mete" id="mete" role="radiogroup" aria-labelledby="t-mete"></div>
+    <p class="nota-mete">Altre mete sono in arrivo. Ne serve una diversa? Più sotto trovi la cartolina su misura.</p>
+  </section>
+
+  <form class="modulo" id="modulo" autocomplete="off" novalidate>
+    <div class="francobollo-mod" id="francobollo-mod" aria-hidden="true"></div>
+    <div class="modulo-testa">
+      <div><b>MODULO DI SPEDIZIONE</b><small>Cartolina con busta sigillata · Posta prioritaria</small></div>
+    </div>
+
+    <fieldset>
+      <legend><i>1</i>Chi riceve, chi regala</legend>
+      <div class="coppia">
+        <div class="campo"><label for="f-per">Per</label><input id="f-per" type="text" maxlength="40" placeholder="Giulia" autocapitalize="words"></div>
+        <div class="campo"><label for="f-da">Da <em>(la tua firma)</em></label><input id="f-da" type="text" maxlength="40" placeholder="Marco" autocapitalize="words"></div>
+      </div>
+      <p class="aiuto">L'iniziale della firma finisce impressa nella ceralacca.</p>
+    </fieldset>
+
+    <fieldset>
+      <legend><i>2</i>Le date</legend>
+      <div class="campo"><label for="f-apertura">La busta si apre dal <em>(facoltativo)</em></label><input id="f-apertura" type="date"></div>
+      <p class="aiuto">Prima di questa data, chi apre il link trova la busta chiusa e un conto alla rovescia. Lascialo vuoto per farla aprire subito.</p>
+      <div class="coppia">
+        <div class="campo"><label for="f-partenza">Partenza</label><input id="f-partenza" type="date"></div>
+        <div class="campo"><label for="f-ritorno">Rientro</label><input id="f-ritorno" type="date"></div>
+      </div>
+      <div class="campo"><label for="f-sn">Come si parte <em>(facoltativo)</em></label><input id="f-sn" type="text" maxlength="70" placeholder="Volo alle 7:05 da Milano Malpensa"></div>
+      <div class="campo"><label for="f-rn">Come si rientra <em>(facoltativo)</em></label><input id="f-rn" type="text" maxlength="70" placeholder="Atterraggio in serata"></div>
+      <p class="avviso" id="avviso-date" aria-live="polite"></p>
+    </fieldset>
+
+    <fieldset>
+      <legend><i>3</i>Il messaggio</legend>
+      <div class="campo"><label for="f-messaggio">Scritto a mano sul retro della cartolina</label><textarea id="f-messaggio" rows="7" maxlength="480"></textarea>
+        <p class="conta" id="conta"></p></div>
+      <p class="aiuto">Ogni riga diventa un capoverso. Ti abbiamo lasciato un esempio: cambialo pure, è il tuo.</p>
+    </fieldset>
+
+    <fieldset>
+      <legend><i>4</i>Il viaggio</legend>
+      <div class="campo"><label for="f-valigia">In valigia <em>(una voce per riga)</em></label><textarea id="f-valigia" rows="6" maxlength="600"></textarea></div>
+      <div class="campo"><label for="f-programma">Il programma <em>(una riga per giorno)</em></label><textarea id="f-programma" rows="5" maxlength="900"></textarea></div>
+      <p class="aiuto">I giorni della settimana e le date si aggiungono da soli, a partire dalla data di partenza.</p>
+      <div class="campo"><label for="f-nota">L'ultima riga del taccuino <em>(facoltativo)</em></label><input id="f-nota" type="text" maxlength="90"></div>
+    </fieldset>
+
+    <fieldset>
+      <legend><i>5</i>La risposta</legend>
+      <div class="campo"><label for="f-numero">Il tuo numero WhatsApp <em>(facoltativo)</em></label><input id="f-numero" type="tel" inputmode="tel" maxlength="20" placeholder="+39 333 123 4567"></div>
+      <p class="aiuto">Alla fine c'è il pulsante "Ci sto!", che apre WhatsApp con una risposta già scritta. Con il tuo numero arriva dritta a te; senza, chi riceve sceglie a chi mandarla.</p>
+      <div class="campo"><label for="f-risposta">La risposta già pronta <em>(facoltativo)</em></label><textarea id="f-risposta" rows="3" maxlength="300"></textarea></div>
+      <label class="spunta"><input id="f-indovina" type="checkbox" checked><span>Prima della cartolina, chiedi di indovinare la meta</span></label>
+    </fieldset>
+
+    <div class="invio">
+      <h3>Pronta per partire</h3>
+      <div class="azioni">
+        <a class="btn" id="invia" href="#" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20l1.3-3.9A8 8 0 1 1 8 18.8z"/><path d="M9 9.5c0 3 2.5 5.5 5.5 5.5"/></svg>Invia su WhatsApp</a>
+        <a class="btn secondario" id="prova" href="per-te/" target="_blank" rel="noopener">Prova la cartolina</a>
+        <button class="btn secondario" id="copia" type="button">Copia il link</button>
+      </div>
+      <p class="esito" id="esito" aria-live="polite"></p>
+      <label class="nascosto" for="link" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Il link della cartolina</label>
+      <textarea class="link-pronto" id="link" rows="3" readonly></textarea>
+      <div class="privato">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+        <p>Quello che scrivi non viene salvato né inviato a nessun server: resta sul tuo telefono e viaggia solo dentro il link. Chi riceve il link può leggerne il contenuto, quindi scrivi come su una cartolina vera.</p>
+      </div>
+    </div>
+  </form>
+
+  <section class="misura" aria-labelledby="t-misura">
+    <p class="occhiello">Su misura</p>
+    <h2 id="t-misura">Una meta che non c'è? <i>La disegno per te.</i></h2>
+    <ul>
+      <li>La meta illustrata apposta, nello stile dei manifesti di viaggio.</li>
+      <li>Indizi scritti per chi riceve: un profumo, un suono, un ricordo vostro.</li>
+      <li>Foto, messaggio e dettagli del viaggio curati insieme.</li>
+    </ul>
+    <a class="btn" href="https://wa.me/393461250608?text=Ciao%2C%20vorrei%20una%20cartolina%20su%20misura%20per%20un%20viaggio%20a%20sorpresa." target="_blank" rel="noopener">Scrivimi su WhatsApp</a>
+  </section>
+
+  <footer class="credito">
+    <p>Un'idea di <a href="https://lindabs.github.io/lbs/" target="_blank" rel="noopener">LBS</a> · nessun cookie, nessun tracciamento</p>
+    <p>Illustrazioni e suoni creati in codice, senza immagini di terzi.</p>
+  </footer>
+</div>
+
+<script src="mete.js"></script>
+<script>
+const $ = s => document.querySelector(s);
+const campo = id => $("#f-" + id);
+let meta = "santorini";
+const toccati = new Set();
+const PER_ESEMPIO = "Ciao";
+
+/* ---------- Le mete, come cartoline da scegliere ---------- */
+$("#mete").innerHTML = Object.values(METE).map((M, i) => `
+  <div class="meta">
+    <input type="radio" name="meta" id="meta-${M.id}" value="${M.id}"${i === 0 ? " checked" : ""}>
+    <label for="meta-${M.id}"><span class="miniatura fermo vivo sera">${M.scena()}</span>
+      <span class="meta-nome">${esc(M.nome)}</span><span class="meta-luogo">${esc(M.luogo)}</span></label>
+    <a href="per-te/#${M.id}" target="_blank" rel="noopener">Guarda l'esempio ↗</a>
+  </div>`).join("");
+document.querySelectorAll('input[name="meta"]').forEach(r => r.addEventListener("change", () => { meta = r.value; aggiornaPredefiniti(); aggiorna(); }));
+
+/* ---------- Testi predefiniti della meta, finché chi scrive non li cambia ---------- */
+function predefiniti() {
+  const P = METE[meta].predefiniti, per = campo("per").value.trim() || PER_ESEMPIO;
+  return { messaggio: P.messaggio(per), valigia: P.valigia.join("\n"), programma: P.programma.join("\n"), nota: P.nota };
+}
+function aggiornaPredefiniti() {
+  const D = predefiniti();
+  for (const k in D) if (!toccati.has(k)) campo(k).value = D[k];
+  $("#francobollo-mod").innerHTML = METE[meta].francobollo();
+  contaCaratteri();
+}
+["messaggio", "valigia", "programma", "nota"].forEach(k => campo(k).addEventListener("input", () => toccati.add(k)));
+function contaCaratteri() { const n = campo("messaggio").value.length; $("#conta").textContent = `${n} / 480`; }
+
+/* ---------- Dal modulo al link ---------- */
+function dati() {
+  const D = predefiniti(), v = id => campo(id).value.trim(), d = { m: meta };
+  const coppie = { p: "per", d: "da", a: "apertura", s: "partenza", r: "ritorno", sn: "sn", rn: "rn", x: "risposta" };
+  for (const k in coppie) if (v(coppie[k])) d[k] = v(coppie[k]);
+  const num = v("numero").replace(/\D/g, ""); if (num) d.w = num.length === 10 && num[0] === "3" ? "39" + num : num;
+  // i testi uguali a quelli predefiniti non entrano nel link: così resta più corto
+  if (v("messaggio") && v("messaggio") !== D.messaggio.trim()) d.t = v("messaggio");
+  if (!v("messaggio")) d.t = " ";
+  if (v("valigia") !== D.valigia.trim()) d.v = v("valigia").split(/\n+/).map(s => s.trim()).filter(Boolean);
+  if (v("programma") !== D.programma.trim()) d.g = v("programma").split(/\n+/).map(s => s.trim()).filter(Boolean);
+  if (v("nota") !== D.nota.trim()) d.n = v("nota");
+  if (!campo("indovina").checked) d.i = 0;
+  return d;
+}
+let link = "", codice = "", inCorso = 0;
+async function aggiorna() {
+  const mio = ++inCorso, d = dati();
+  controllaDate();
+  codice = await codifica(d);
+  if (mio !== inCorso) return;
+  link = new URL("per-te/", location.href).href + "#" + codice;
+  $("#link").value = link;
+  $("#prova").href = new URL("per-te/?anteprima", location.href).href + "#" + codice;
+  const a = d.a ? giornoDa(d.a) : null;
+  const testo = `Per te, una busta chiusa${a ? `. Si apre ${conArticolo(a)}` : ""}: ${link}`;
+  $("#invia").href = "https://wa.me/?text=" + encodeURIComponent(testo);
+  try { history.replaceState(null, "", "#" + codice); } catch (e) {}
+}
+function controllaDate() {
+  const v = id => campo(id).value, av = $("#avviso-date");
+  if (v("partenza") && v("ritorno") && v("ritorno") < v("partenza")) av.textContent = "Il rientro viene prima della partenza: controlla le date.";
+  else if (v("apertura") && v("partenza") && v("apertura") > v("partenza")) av.textContent = "La busta si aprirebbe dopo la partenza: la sorpresa arriverebbe in ritardo.";
+  else av.textContent = "";
+  campo("risposta").placeholder = componi({ m: meta, d: campo("da").value.trim(), s: v("partenza"), r: v("ritorno") }).whatsapp.risposta;
+}
+let attesa;
+$("#modulo").addEventListener("input", e => {
+  if (e.target === campo("per")) aggiornaPredefiniti();
+  if (e.target === campo("messaggio")) contaCaratteri();
+  clearTimeout(attesa); attesa = setTimeout(aggiorna, 250);
+});
+$("#modulo").addEventListener("submit", e => e.preventDefault());
+
+$("#copia").addEventListener("click", async () => {
+  await aggiorna();
+  try { await navigator.clipboard.writeText(link); $("#esito").textContent = "Link copiato. Incollalo dove vuoi."; }
+  catch (e) { const t = $("#link"); t.focus(); t.select(); $("#esito").textContent = "Il link è selezionato qui sotto: copialo con il menu del telefono."; }
+});
+$("#invia").addEventListener("click", () => { $("#esito").textContent = "Si apre WhatsApp: scegli a chi mandare la busta."; });
+
+/* ---------- Riaprire un modulo già compilato (il codice resta nell'indirizzo di questa pagina) ---------- */
+(async function avvia() {
+  const h = location.hash.slice(1);
+  if (/^[01]/.test(h)) {
+    try {
+      const d = await decodifica(h);
+      if (METE[d.m]) { meta = d.m; $("#meta-" + meta).checked = true; }
+      const riempi = (k, id) => { if (d[k] !== undefined) campo(id).value = Array.isArray(d[k]) ? d[k].join("\n") : d[k]; };
+      riempi("p", "per"); riempi("d", "da"); riempi("a", "apertura"); riempi("s", "partenza"); riempi("r", "ritorno");
+      riempi("sn", "sn"); riempi("rn", "rn"); riempi("x", "risposta"); riempi("w", "numero");
+      if (d.t) { campo("messaggio").value = d.t.trim(); toccati.add("messaggio"); }
+      if (d.v) { riempi("v", "valigia"); toccati.add("valigia"); }
+      if (d.g) { riempi("g", "programma"); toccati.add("programma"); }
+      if (d.n !== undefined) { riempi("n", "nota"); toccati.add("nota"); }
+      if (d.i === 0) campo("indovina").checked = false;
+    } catch (e) {}
+  }
+  aggiornaPredefiniti();
+  aggiorna();
+})();
+</script>
+</body>
+</html>

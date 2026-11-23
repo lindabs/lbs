@@ -1,0 +1,10 @@
+Caratteri usati dalla cartolina, ospitati qui per non contattare server esterni.
+Tutti sono distribuiti con licenza SIL Open Font License 1.1: https://openfontlicense.org
+
+instrument-serif.woff2, instrument-serif-corsivo.woff2   Instrument Serif · Copyright The Instrument Serif Project Authors
+hanken-grotesk.woff2                                      Hanken Grotesk · Copyright The Hanken Grotesk Project Authors
+caveat.woff2                                              Caveat · Copyright The Caveat Project Authors
+josefin-sans.woff2                                        Josefin Sans · Copyright The Josefin Sans Project Authors
+gfs-didot-greco.woff2 (solo caratteri greci)              GFS Didot · Copyright Greek Font Society
+
+File scaricati da Google Fonts (sottoinsiemi latino e greco).

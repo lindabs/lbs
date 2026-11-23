@@ -6,6 +6,7 @@ Biglietto da visita digitale e progetti formali di LBS.
 - **Ciak, si sceglie** (il gioco per scegliere il film in due): https://lindabs.github.io/lbs/ciak/
 - **La cartolina che si apre** (l'annuncio di un viaggio a sorpresa): https://lindabs.github.io/lbs/cartolina/
   esempi: [Santorini](https://lindabs.github.io/lbs/cartolina/per-te/#santorini) · [Parigi](https://lindabs.github.io/lbs/cartolina/per-te/#parigi)
+- **Buon Appetito** (cena di festa a tappe): https://lindabs.github.io/lbs/cena/
 
 ## Come è organizzata la repository
 
@@ -21,6 +22,8 @@ cartolina/mete.js   le mete (disegni, francobolli, indizi e testi predefiniti) e
 cartolina/mete.css  caratteri e animazioni delle illustrazioni, condivisi dalle due pagine
 cartolina/caratteri/ caratteri ospitati in locale (nessuna richiesta a Google Fonts)
 cartolina/sorgenti/ vetrina e script per rigenerare anteprime e miniatura del biglietto
+cena/index.html     Buon Appetito: percorso a tappe, piano della serata e invito per gli ospiti
+cena/anteprima.jpg  l'immagine di anteprima del link della cena
 ```
 
 ### Aggiornare Ciak
@@ -42,6 +45,18 @@ arriva mai al server, e niente viene salvato. Chi ha il link può però leggerne
 - Dopo aver cambiato le illustrazioni, rigenera anteprime e miniatura:
   `python3 -m http.server 8765`, poi `node cartolina/sorgenti/anteprima.js`.
   La miniatura `cartolina/sorgenti/miniatura.jpg` va poi incollata, in base64, nella galleria di `index.html`.
+
+## Buon Appetito
+
+Identità propria, «Lume di candela», distinta dal biglietto. Una sola pagina, senza cookie né tracciamento.
+Cinque tappe (occasione, ospiti, esigenze, atmosfera, tempo ed energie) e un piano completo:
+menù, lista della spesa, mise en place, playlist, tabella di marcia e invito da mandare su WhatsApp.
+
+- Le risposte e il piano restano sul telefono di chi lo usa (localStorage).
+- L'invito viaggia tutto dentro il link (`cena/#invito=…`): il sito non lo riceve.
+- I font sono incorporati nella pagina, quindi nessuna richiesta a server esterni.
+- Ricette, mise en place e playlist sono in fondo al file, negli oggetti `R`, `MISE` e `PL`:
+  per aggiungere una ricetta basta copiare un blocco esistente e cambiarne i valori.
 
 I progetti formali futuri andranno ciascuno in una propria cartella, per esempio
 `nome-progetto/index.html`, raggiungibile su `https://lindabs.github.io/lbs/nome-progetto/`.

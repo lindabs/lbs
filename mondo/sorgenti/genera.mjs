@@ -308,51 +308,87 @@ const SCHEMA_MONDO = {
 
 let ultimaGemini = 0;
 let modelloUsato = null;
+let modelli = null;
+
+// I modelli da provare: quelli scelti, poi gli altri "Flash" che la chiave può usare.
+// Quello che ha appena funzionato passa davanti, così le richieste successive vanno a colpo sicuro.
+async function elencoModelli() {
+  if (modelli) return modelli;
+  modelli = [...MODELLI];
+  try {
+    const r = await fetch('https://generativelanguage.googleapis.com/v1beta/models?pageSize=200', {
+      headers: { 'x-goog-api-key': CHIAVE }, signal: AbortSignal.timeout(30_000),
+    });
+    const altri = ((await r.json()).models || [])
+      .filter(m => m.supportedGenerationMethods?.includes('generateContent'))
+      .map(m => m.name.replace(/^models\//, ''))
+      .filter(n => /flash/.test(n) && !/image|tts|audio|live|thinking|exp|preview/.test(n))
+      .sort().reverse();
+    for (const n of altri) if (!modelli.includes(n) && modelli.length < 5) modelli.push(n);
+  } catch { /* si usano solo i modelli scelti */ }
+  log(`Modelli Gemini da provare: ${modelli.join(', ')}`);
+  return modelli;
+}
+
+// Anche Gemini ha un tempo massimo: i paesi rimasti fuori mostreranno i titoli originali.
+let geminiScadenza = null;
 async function gemini(istruzioni, testo, schema) {
-  for (const modello of MODELLI) {
-    for (let tentativo = 1; tentativo <= 4; tentativo++) {
-      const pausa = ultimaGemini + PAUSA_GEMINI - Date.now();
-      if (pausa > 0) await attendi(pausa);
-      ultimaGemini = Date.now();
-      let r, corpo;
-      try {
-        r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modello}:generateContent`, {
-          method: 'POST',
-          headers: { 'content-type': 'application/json', 'x-goog-api-key': CHIAVE },
-          body: JSON.stringify({
-            systemInstruction: { parts: [{ text: istruzioni }] },
-            contents: [{ role: 'user', parts: [{ text: testo }] }],
-            generationConfig: { responseMimeType: 'application/json', responseSchema: schema, temperature: 0.3, maxOutputTokens: 32768 },
-          }),
-          signal: AbortSignal.timeout(180_000),
-        });
-        corpo = await r.json();
-      } catch (e) {
-        log(`  Gemini non risponde (${e.cause?.code || e.name}), riprovo`);
-        continue;
+  const elenco = await elencoModelli();
+  geminiScadenza ??= Date.now() + 50 * 60_000;
+  for (const giro of [1, 2]) {
+    for (const modello of [...elenco]) {
+      for (let tentativo = 1; tentativo <= 3; tentativo++) {
+        if (Date.now() > geminiScadenza) { log('  tempo massimo per Gemini raggiunto'); return null; }
+        const pausa = ultimaGemini + PAUSA_GEMINI - Date.now();
+        if (pausa > 0) await attendi(pausa);
+        ultimaGemini = Date.now();
+        let r, corpo;
+        try {
+          r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modello}:generateContent`, {
+            method: 'POST',
+            headers: { 'content-type': 'application/json', 'x-goog-api-key': CHIAVE },
+            body: JSON.stringify({
+              systemInstruction: { parts: [{ text: istruzioni }] },
+              contents: [{ role: 'user', parts: [{ text: testo }] }],
+              generationConfig: { responseMimeType: 'application/json', responseSchema: schema, temperature: 0.3, maxOutputTokens: 32768 },
+            }),
+            signal: AbortSignal.timeout(120_000),
+          });
+          corpo = await r.json();
+        } catch (e) {
+          log(`  ${modello} non risponde (${e.cause?.code || e.name})`);
+          break; // un modello lento di solito resta lento: si passa al prossimo
+        }
+        if (r.ok) {
+          const parti = corpo.candidates?.[0]?.content?.parts || [];
+          const json = parti.filter(p => !p.thought).map(p => p.text || '').join('');
+          try {
+            const dati = JSON.parse(json);
+            modelloUsato = modello;
+            elenco.splice(elenco.indexOf(modello), 1); elenco.unshift(modello);
+            log(`  fatto con ${modello}`);
+            return dati;
+          } catch { log(`  ${modello}: risposta non leggibile (${corpo.candidates?.[0]?.finishReason})`); continue; }
+        }
+        const msg = String(corpo?.error?.message || r.status).slice(0, 120);
+        if (r.status === 401 || r.status === 403) {
+          throw new Error(`Gemini ha rifiutato la chiave (${r.status}): ${msg}. Controlla il secret GEMINI_API_KEY.`);
+        }
+        if (r.status === 429) {
+          if (/per ?day|PerDay/i.test(JSON.stringify(corpo))) { log(`  ${modello}: quota giornaliera esaurita`); break; }
+          // Limite al minuto del piano gratuito: se Google indica quanto aspettare, aspettiamo.
+          const ritardo = corpo?.error?.details?.find(d => d.retryDelay)?.retryDelay;
+          const secondi = Math.min(ritardo ? parseFloat(ritardo) : 60, 90);
+          log(`  ${modello}: limite al minuto, attendo ${Math.round(secondi)} s`);
+          await attendi(secondi * 1000 + 1000);
+          continue;
+        }
+        log(`  ${modello}: errore ${r.status} (${msg})`);
+        if (r.status === 400 || r.status === 404) break; // modello non adatto: si passa al prossimo
+        if (r.status >= 500) await attendi(15_000 * tentativo); // sovraccarico: un po' di pazienza
       }
-      if (r.ok) {
-        const parti = corpo.candidates?.[0]?.content?.parts || [];
-        const json = parti.filter(p => !p.thought).map(p => p.text || '').join('');
-        try { modelloUsato = modello; return JSON.parse(json); }
-        catch { log(`  risposta non leggibile (${corpo.candidates?.[0]?.finishReason}), riprovo`); continue; }
-      }
-      const msg = corpo?.error?.message || r.status;
-      if (r.status === 429) {
-        // Limite del piano gratuito: se Google indica quanto aspettare, aspettiamo.
-        const ritardo = corpo?.error?.details?.find(d => d.retryDelay)?.retryDelay;
-        const secondi = ritardo ? parseFloat(ritardo) : 60;
-        if (/per ?day|PerDay/i.test(JSON.stringify(corpo))) { log(`  quota giornaliera di ${modello} esaurita`); break; }
-        log(`  limite raggiunto su ${modello}, attendo ${Math.round(secondi)} s`);
-        await attendi(secondi * 1000 + 1000);
-        continue;
-      }
-      if (r.status === 400 || r.status === 401 || r.status === 403) {
-        throw new Error(`Gemini ha rifiutato la richiesta (${r.status}): ${msg}. Controlla la chiave GEMINI_API_KEY.`);
-      }
-      log(`  ${modello}: errore ${r.status} (${msg})`);
-      if (r.status === 404) break; // modello non disponibile: si passa alla riserva
     }
+    if (giro === 1) { log('  tutti i modelli sono occupati, riprovo tra due minuti'); await attendi(120_000); }
   }
   return null;
 }
@@ -455,6 +491,12 @@ if (!senzaAi && riassunti === 0) {
 
 if (opz('--solo')) {
   await writeFile(qui(`.prova-${LINGUA}.json`), JSON.stringify(notiziario, null, 1));
+  for (const [id, v] of Object.entries(notiziario.paesi)) {
+    console.log(`\n== ${id}: ${v.soloTitoli ? '(solo titoli)' : `${v.titolo} [intensità ${v.intensita}]`}`);
+    for (const x of v.punti) console.log(`- ${x.testo} [fonti ${x.fonti.map(n => n + 1).join(', ')}]`);
+    v.fonti.forEach((f, n) => console.log(`  ${n + 1}. ${f.t} (${f.d})`));
+  }
+  for (const n of notiziario.mondo) console.log(`\n** ${n.titolo}: ${n.testo} (${n.paesi.join(', ')})`);
   log(`Prova salvata in mondo/sorgenti/.prova-${LINGUA}.json (il notiziario pubblico non è stato toccato)`);
 } else {
   await writeFile(qui(`../dati/oggi-${LINGUA}.json`), JSON.stringify(notiziario));

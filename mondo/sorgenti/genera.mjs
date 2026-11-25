@@ -1,5 +1,6 @@
-// Il notiziario del mattino: raccoglie i titoli delle ultime 24 ore da GDELT, paese per paese,
-// e li fa riassumere in italiano da Gemini (piano gratuito). Nessuna dipendenza da installare.
+// Il notiziario del mattino: raccoglie i titoli delle ultime 24 ore da GDELT (stampa locale, paese per paese)
+// e dai feed RSS pubblici di alcune testate internazionali, poi li fa riassumere in italiano da Gemini
+// (piano gratuito). Nessuna dipendenza da installare.
 //
 //   GEMINI_API_KEY=... node mondo/sorgenti/genera.mjs
 //
@@ -29,10 +30,123 @@ const FONTI_MAX = 8;          // fonti da tenere per paese nel file finale
 const attendi = ms => new Promise(r => setTimeout(r, ms));
 const log = (...a) => console.log(new Date().toISOString().slice(11, 19), ...a);
 
-// ---------- 1. Raccolta dei titoli da GDELT ----------
+// ---------- 1a. Feed RSS delle testate internazionali ----------
+// Feed pubblici, pensati per essere ripresi con titolo, sommario e link.
 
-let ultimaGdelt = 0;
+const FEED = [
+  'https://feeds.bbci.co.uk/news/world/rss.xml',
+  'https://feeds.bbci.co.uk/news/world/africa/rss.xml',
+  'https://feeds.bbci.co.uk/news/world/asia/rss.xml',
+  'https://feeds.bbci.co.uk/news/world/europe/rss.xml',
+  'https://feeds.bbci.co.uk/news/world/latin_america/rss.xml',
+  'https://feeds.bbci.co.uk/news/world/middle_east/rss.xml',
+  'https://feeds.bbci.co.uk/news/world/us_and_canada/rss.xml',
+  'https://www.aljazeera.com/xml/rss/all.xml',
+  'https://rss.dw.com/rdf/rss-en-world',
+  'https://www.france24.com/en/rss',
+  'https://www.rfi.fr/en/rss',
+  'https://www.theguardian.com/world/rss',
+  'https://feeds.npr.org/1004/rss.xml',
+  'https://news.un.org/feed/subscribe/en/news/all/rss.xml',
+  'https://allafrica.com/tools/headlines/rdf/latest/headlines.rdf',
+  'https://en.mercopress.com/rss',
+  'https://www.ansa.it/sito/notizie/mondo/mondo_rss.xml',
+];
+
+// Altri modi in cui i giornali nominano un paese (oltre al nome inglese e a quello italiano).
+const SINONIMI = {
+  US: ['United States', 'U.S.', 'US', 'USA', 'Washington', 'White House', 'Stati Uniti', 'Usa'], CN: ['China', 'Chinese', 'Beijing', 'Cina', 'Pechino'],
+  GB: ['UK', 'Britain', 'British', 'London', 'Regno Unito', 'Londra'], RU: ['Russian', 'Kremlin', 'Moscow', 'Mosca', 'Cremlino'],
+  UA: ['Ukrainian', 'Kyiv', 'Kiev', 'Ucraina'], IL: ['Israeli', 'Israele'], PS: ['Gaza', 'West Bank', 'Palestinian', 'Cisgiordania'],
+  IR: ['Iranian', 'Tehran', 'Teheran'], DE: ['German', 'Berlin', 'Berlino'], FR: ['French', 'Paris', 'Parigi'], IT: ['Italian', 'Rome'],
+  JP: ['Japanese', 'Tokyo'], KR: ['Seoul'], KP: ['Pyongyang', 'Corea del Nord'], IN: ['Indian government', 'New Delhi', 'Modi'],
+  PK: ['Pakistani', 'Islamabad'], TR: ['Turkish', 'Türkiye', 'Ankara', 'Erdogan'], SY: ['Syrian', 'Damascus'], LB: ['Lebanese', 'Beirut', 'Hezbollah'],
+  YE: ['Yemeni', 'Houthi', 'Houthis'], SA: ['Saudi', 'Riyadh'], AE: ['UAE', 'Emirati', 'Dubai', 'Abu Dhabi'], EG: ['Egyptian', 'Cairo'],
+  SD: ['Sudanese', 'Khartoum', 'Darfur', 'El Fasher'], CD: ['DR Congo', 'DRC', 'Kinshasa'], CG: ['Brazzaville'], VE: ['Venezuelan', 'Caracas'],
+  BR: ['Brazilian', 'Brasília', 'Lula'], MX: ['Mexican', 'Mexico City'], AR: ['Argentine', 'Argentinian', 'Buenos Aires', 'Milei'],
+  CO: ['Colombian', 'Bogotá'], CU: ['Cuban', 'Havana'], HT: ['Haitian', 'Port-au-Prince'], TW: ['Taiwanese', 'Taipei'],
+  AF: ['Afghan', 'Taliban', 'Kabul'], MM: ['Burma', 'Burmese'], NG: ['Nigerian', 'Abuja', 'Lagos'], ET: ['Ethiopian', 'Addis Ababa', 'Tigray'],
+  SO: ['Somali', 'Mogadishu', 'al-Shabab'], ZA: ['South African', 'Pretoria', 'Johannesburg'], KE: ['Kenyan', 'Nairobi'],
+  PL: ['Polish', 'Warsaw'], HU: ['Hungarian', 'Budapest', 'Orban', 'Orbán'], CZ: ['Czech', 'Czechia', 'Prague'], GR: ['Greek', 'Athens'],
+  ES: ['Spanish', 'Madrid'], CA: ['Canadian', 'Ottawa'], AU: ['Australian', 'Canberra'], PH: ['Philippine', 'Filipino', 'Manila'],
+  ID: ['Indonesian', 'Jakarta'], VN: ['Vietnamese', 'Hanoi'], TH: ['Thai', 'Bangkok'], BD: ['Bangladeshi', 'Dhaka'], LK: ['Sri Lankan', 'Colombo'],
+  IQ: ['Iraqi', 'Baghdad'], JO: ['Jordanian', 'Amman'], CI: ["Côte d'Ivoire", 'Ivorian'], CV: ['Cabo Verde'], MK: ['Macedonia'],
+  SZ: ['Swaziland'], TL: ['Timor-Leste'], VA: ['Vatican', 'Pope', 'Papa', 'Vaticano'], BS: ['Bahamas'], GM: ['Gambia'], FM: ['Micronesia'],
+  BY: ['Belarusian', 'Minsk', 'Lukashenko'], RS: ['Serbian', 'Belgrade'], XK: ['Pristina'], GE: ['Tbilisi', 'Georgian Dream'],
+  AM: ['Armenian', 'Yerevan'], AZ: ['Azerbaijani', 'Baku'], ML: ['Malian', 'Bamako'], BF: ['Burkinabe', 'Ouagadougou'], NE: ['Niamey'],
+  LY: ['Libyan', 'Tripoli'], TN: ['Tunisian', 'Tunis'], DZ: ['Algerian', 'Algiers'], MA: ['Moroccan', 'Rabat'], QA: ['Qatari', 'Doha'],
+  NZ: ['Wellington'], CL: ['Chilean', 'Santiago'], PE: ['Peruvian', 'Lima'], BO: ['Bolivian', 'La Paz'], EC: ['Ecuadorian', 'Quito'],
+  NI: ['Nicaraguan', 'Managua'], SV: ['Salvadoran', 'Bukele'], GT: ['Guatemalan'], HN: ['Honduran'], PA: ['Panamanian', 'Panama Canal'],
+  KZ: ['Kazakh', 'Astana'], RO: ['Romanian', 'Bucharest'], BG: ['Bulgarian', 'Sofia'], MD: ['Moldovan', 'Chisinau'], SE: ['Swedish', 'Stockholm'],
+  NO: ['Norwegian', 'Oslo'], FI: ['Finnish', 'Helsinki'], DK: ['Danish', 'Copenhagen'], NL: ['Dutch', 'The Hague', 'Amsterdam'],
+  BE: ['Belgian', 'Brussels'], PT: ['Portuguese', 'Lisbon'], IE: ['Irish', 'Dublin'], CH: ['Swiss', 'Geneva', 'Bern'], AT: ['Austrian', 'Vienna'],
+};
+
+const decodifica = s => s
+  .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1')
+  .replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#0?39;|&apos;/g, "'")
+  .replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(+n)).replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&nbsp;/g, ' ')
+  .replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+const campo = (xml, ...nomi) => {
+  for (const n of nomi) {
+    const m = xml.match(new RegExp(`<${n}(?:\\s[^>]*)?>([\\s\\S]*?)</${n}>`, 'i'));
+    if (m && decodifica(m[1])) return decodifica(m[1]);
+  }
+  return '';
+};
+
+async function leggiFeed(url) {
+  try {
+    const r = await fetch(url, { signal: AbortSignal.timeout(30_000), headers: { 'user-agent': 'il-mondo-stamattina (notiziario personale)' } });
+    if (!r.ok) throw new Error(r.status);
+    const xml = await r.text();
+    const dominio = new URL(url).hostname.replace(/^(www|feeds|rss|en|news)\./, '');
+    const limite = Date.now() - 36 * 3600_000;
+    const voci = [...xml.matchAll(/<(item|entry)[\s>][\s\S]*?<\/\1>/gi)].map(([x]) => {
+      const href = x.match(/<link[^>]*href="([^"]+)"/i)?.[1];
+      const data = Date.parse(campo(x, 'pubDate', 'dc:date', 'updated', 'published'));
+      return { t: campo(x, 'title'), s: campo(x, 'description', 'summary', 'content').slice(0, 280), u: campo(x, 'link') || href, d: dominio, l: url.includes('ansa.it') ? 'Italian' : 'English', data };
+    }).filter(v => v.t && v.u && !(v.data < limite));
+    log(`  feed ${dominio}: ${voci.length} notizie`);
+    return voci;
+  } catch (e) {
+    log(`  feed non disponibile: ${url} (${e.message})`);
+    return [];
+  }
+}
+
+function regoleNomi(paesi) {
+  const esc = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const regole = [];
+  for (const p of paesi) {
+    for (const n of new Set([p.en, p.nome, ...(SINONIMI[p.id] || [])])) regole.push({ id: p.id, n });
+  }
+  // prima i nomi lunghi: "Papua New Guinea" non deve contare anche come "Guinea"
+  regole.sort((a, b) => b.n.length - a.n.length);
+  return regole.map(r => ({ id: r.id, re: new RegExp(`(?<![\\p{L}])${esc(r.n)}(?![\\p{L}])`, 'gu') }));
+}
+
+function assegna(voci, paesi) {
+  const regole = regoleNomi(paesi);
+  const perPaese = {};
+  for (const v of voci) {
+    let testo = v.t + ' — ' + v.s;
+    const trovati = new Set();
+    for (const r of regole) {
+      if (r.re.test(testo)) { trovati.add(r.id); testo = testo.replace(r.re, '#'); }
+      r.re.lastIndex = 0;
+    }
+    if (trovati.size > 4) continue; // articoli che citano mezzo mondo non aiutano
+    for (const id of trovati) (perPaese[id] ||= []).push(v);
+  }
+  return perPaese;
+}
+
+// ---------- 1b. Stampa locale da GDELT ----------
+
+let ultimaGdelt = 0, gdeltFallimenti = 0, gdeltSpento = false;
 async function gdelt(query, max) {
+  if (gdeltSpento) return null;
   const url = 'https://api.gdeltproject.org/api/v2/doc/doc?' + new URLSearchParams({
     query, mode: 'artlist', format: 'json', timespan: '24h', sort: 'hybridrel', maxrecords: String(max),
   });
@@ -43,41 +157,50 @@ async function gdelt(query, max) {
     try {
       const r = await fetch(url, { signal: AbortSignal.timeout(45_000) });
       const testo = await r.text();
-      if (testo.startsWith('Please limit')) { await attendi(20_000); continue; }
+      if (r.status === 429 || testo.startsWith('Please limit')) { log('  GDELT chiede di rallentare'); await attendi(30_000); continue; }
+      gdeltFallimenti = 0;
       if (!testo.trim()) return [];
       return JSON.parse(testo).articles || [];
     } catch (e) {
       log(`  GDELT non risponde (${e.cause?.code || e.name}), riprovo`);
     }
   }
-  return null; // GDELT irraggiungibile per questa richiesta
+  // Se GDELT non risponde per molte richieste di fila, si va avanti con i soli feed internazionali.
+  if (++gdeltFallimenti >= 5) { gdeltSpento = true; log('GDELT non risponde: proseguo con i soli feed internazionali.'); }
+  return null;
 }
 
 const normalizza = t => t.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
 function pulisci(articoli, visti = new Set()) {
   const out = [];
   for (const a of articoli || []) {
-    const t = (a.title || '').replace(/\s+/g, ' ').trim();
+    const t = (a.title || a.t || '').replace(/\s+/g, ' ').trim();
     const k = normalizza(t);
     if (t.length < 25 || visti.has(k)) continue;
     visti.add(k);
-    out.push({ t, d: a.domain, u: a.url, l: a.language });
+    out.push({ t, d: a.domain || a.d, u: a.url || a.u, l: a.language || a.l, ...(a.s && a.s !== t ? { s: a.s } : {}) });
   }
   return out;
 }
 
 async function raccogli(paesi) {
+  log(`Leggo ${FEED.length} feed internazionali...`);
+  const voci = (await Promise.all(FEED.map(leggiFeed))).flat();
+  const dalMondo = assegna(voci, JSON.parse(await readFile(qui('../dati/paesi.json'), 'utf8')));
+
+  log(`Raccolgo la stampa locale di ${paesi.length} paesi da GDELT (ci vuole circa un'ora)...`);
   const raccolta = {};
   for (const [i, p] of paesi.entries()) {
     const visti = new Set();
-    let titoli = pulisci(await gdelt(p.fonte || `sourcecountry:${p.fips}`, 50), visti);
-    // Pochi giornali locali indicizzati: aggiungiamo cosa scrive di quel paese la stampa internazionale.
-    if (titoli.length < 6) {
-      const estero = await gdelt(`"${p.en}" sourcelang:english -sourcecountry:${p.fips}`, 20);
-      titoli = titoli.concat(pulisci(estero, visti));
+    // prima la stampa internazionale (ha anche un breve sommario), poi quella locale
+    const estero = pulisci(dalMondo[p.id] || [], visti).slice(0, 8);
+    let locale = pulisci(await gdelt(`sourcecountry:${p.fips}`, 50), visti);
+    // Pochi giornali locali indicizzati e poca stampa internazionale: cerchiamo il nome del paese.
+    if (locale.length + estero.length < 6 && !gdeltSpento) {
+      locale = locale.concat(pulisci(await gdelt(`"${p.en}" sourcelang:english`, 20), visti));
     }
-    raccolta[p.id] = titoli.slice(0, 20);
-    log(`[${i + 1}/${paesi.length}] ${p.nome}: ${raccolta[p.id].length} titoli`);
+    raccolta[p.id] = [...estero, ...locale].slice(0, 22);
+    log(`[${i + 1}/${paesi.length}] ${p.nome}: ${estero.length} internazionali, ${locale.length} locali`);
   }
   return raccolta;
 }
@@ -85,10 +208,11 @@ async function raccogli(paesi) {
 // ---------- 2. Il riassunto con Gemini ----------
 
 const ISTRUZIONI = `Sei la redazione di un notiziario mattutino di geopolitica e attualità, scritto in italiano.
-Per ogni paese ricevi titoli di articoli pubblicati nelle ultime 24 ore, in varie lingue, numerati da 0.
+Per ogni paese ricevi titoli di articoli pubblicati nelle ultime 24 ore, in varie lingue, numerati da 0;
+alcuni hanno sotto anche un breve sommario.
 
 Regole, da rispettare sempre:
-- Usa SOLO le informazioni contenute nei titoli. Non aggiungere fatti, cifre, nomi, date o contesto che non compaiano.
+- Usa SOLO le informazioni contenute nei titoli e nei sommari. Non aggiungere fatti, cifre, nomi, date o contesto che non compaiano.
 - Se un titolo è un'opinione o un'accusa, riportalo come tale ("secondo...", "il governo accusa...").
 - Dai priorità a politica interna ed estera, conflitti, economia, diritti, ambiente, scienza e grandi fatti di società.
   Ignora gossip, sport, cucina, spettacolo, oroscopi e pubblicità, salvo fatti davvero eccezionali.
@@ -203,7 +327,7 @@ async function gemini(istruzioni, testo, schema) {
 
 function blocchiDiTesto(paesi, raccolta) {
   return paesi.map(p => `### ${p.id} — ${p.nome}\n` +
-    raccolta[p.id].map((a, i) => `[${i}] ${a.t} (${a.d}, ${a.l})`).join('\n')).join('\n\n');
+    raccolta[p.id].map((a, i) => `[${i}] ${a.t} (${a.d}, ${a.l})` + (a.s ? `\n    ${a.s}` : '')).join('\n')).join('\n\n');
 }
 
 // Tiene le fonti citate (poi le altre, fino a FONTI_MAX) e rinumera i riferimenti nei punti.
@@ -236,7 +360,6 @@ let raccolta;
 if (opz('--riusa-raccolta')) {
   raccolta = JSON.parse(await readFile(fileRaccolta, 'utf8'));
 } else {
-  log(`Raccolgo i titoli di ${scelti.length} paesi da GDELT (ci vuole circa un'ora)...`);
   raccolta = await raccogli(scelti);
   await writeFile(fileRaccolta, JSON.stringify(raccolta));
 }

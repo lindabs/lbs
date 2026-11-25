@@ -35,7 +35,7 @@ for (const { properties: p } of g50.features) {
   paesi.push({
     id: idDi(p),
     nome: p.NAME_IT || p.NAME,
-    en: p.NAME_LONG || p.NAME,
+    en: p.NAME_EN || p.NAME,
     fips,
     lat: +p.LABEL_Y.toFixed(2),
     lng: +p.LABEL_X.toFixed(2),

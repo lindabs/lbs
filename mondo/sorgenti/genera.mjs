@@ -10,7 +10,8 @@
 //   --riusa-raccolta     non interroga di nuovo GDELT: usa l'ultima raccolta salvata
 //
 // Variabili facoltative: GEMINI_MODEL (predefinito gemini-flash-latest),
-// GEMINI_RISERVA (predefinito gemini-flash-lite-latest), LINGUA (predefinita it).
+// GEMINI_RISERVA (predefinito gemini-flash-lite-latest), LINGUA (predefinita it),
+// GDELT_MINUTI (tempo massimo per GDELT, predefinito 60; 0 = solo feed internazionali).
 
 import { readFile, writeFile, mkdir, readdir, unlink } from 'node:fs/promises';
 
@@ -22,7 +23,7 @@ const val = n => { const i = args.indexOf(n); return i >= 0 ? args[i + 1] : null
 const LINGUA = process.env.LINGUA || 'it';
 const MODELLI = [process.env.GEMINI_MODEL || 'gemini-flash-latest', process.env.GEMINI_RISERVA || 'gemini-flash-lite-latest'];
 const CHIAVE = process.env.GEMINI_API_KEY;
-const PAUSA_GDELT = 10_000;   // GDELT chiede al massimo una richiesta ogni 5 secondi: stiamo larghi
+const PAUSA_GDELT = 8_000;    // GDELT chiede al massimo una richiesta ogni 5 secondi: stiamo larghi
 const PAUSA_GEMINI = 12_000;  // per restare sotto il limite di richieste al minuto del piano gratuito
 const PAESI_PER_RICHIESTA = 15;
 const FONTI_MAX = 8;          // fonti da tenere per paese nel file finale
@@ -43,7 +44,6 @@ const FEED = [
   'https://feeds.bbci.co.uk/news/world/us_and_canada/rss.xml',
   'https://www.aljazeera.com/xml/rss/all.xml',
   'https://rss.dw.com/rdf/rss-en-world',
-  'https://www.france24.com/en/rss',
   'https://www.rfi.fr/en/rss',
   'https://www.theguardian.com/world/rss',
   'https://feeds.npr.org/1004/rss.xml',
@@ -51,6 +51,32 @@ const FEED = [
   'https://allafrica.com/tools/headlines/rdf/latest/headlines.rdf',
   'https://en.mercopress.com/rss',
   'https://www.ansa.it/sito/notizie/mondo/mondo_rss.xml',
+  // per regione, così anche i paesi piccoli hanno qualche notizia
+  'https://rss.nytimes.com/services/xml/rss/nyt/World.xml',
+  'https://rss.nytimes.com/services/xml/rss/nyt/Africa.xml',
+  'https://rss.nytimes.com/services/xml/rss/nyt/Americas.xml',
+  'https://rss.nytimes.com/services/xml/rss/nyt/AsiaPacific.xml',
+  'https://rss.nytimes.com/services/xml/rss/nyt/Europe.xml',
+  'https://rss.nytimes.com/services/xml/rss/nyt/MiddleEast.xml',
+  'https://news.un.org/feed/subscribe/en/news/region/africa/feed/rss.xml',
+  'https://news.un.org/feed/subscribe/en/news/region/americas/feed/rss.xml',
+  'https://news.un.org/feed/subscribe/en/news/region/asia-pacific/feed/rss.xml',
+  'https://news.un.org/feed/subscribe/en/news/region/europe/feed/rss.xml',
+  'https://news.un.org/feed/subscribe/en/news/region/middle-east/feed/rss.xml',
+  'https://allafrica.com/tools/headlines/rdf/westafrica/headlines.rdf',
+  'https://allafrica.com/tools/headlines/rdf/eastafrica/headlines.rdf',
+  'https://allafrica.com/tools/headlines/rdf/southernafrica/headlines.rdf',
+  'https://allafrica.com/tools/headlines/rdf/centralafrica/headlines.rdf',
+  'https://allafrica.com/tools/headlines/rdf/northafrica/headlines.rdf',
+  'https://globalvoices.org/feed/',
+  'https://www.ipsnews.net/feed/',
+  'https://thediplomat.com/feed/',
+  'https://www.scmp.com/rss/91/feed',
+  'https://www.middleeasteye.net/rss',
+  'https://balkaninsight.com/feed/',
+  'https://www.euronews.com/rss?level=theme&name=news',
+  'https://www.rnz.co.nz/rss/pacific.xml',
+  'https://www.batimes.com.ar/feed',
 ];
 
 // Altri modi in cui i giornali nominano un paese (oltre al nome inglese e a quello italiano).
@@ -144,29 +170,35 @@ function assegna(voci, paesi) {
 
 // ---------- 1b. Stampa locale da GDELT ----------
 
-let ultimaGdelt = 0, gdeltFallimenti = 0, gdeltSpento = false;
+// GDELT è gratuito ma spesso lento: ha un tempo massimo, e se risponde male si va avanti senza.
+const GDELT_MINUTI = Number(process.env.GDELT_MINUTI ?? 60);
+const gdeltScadenza = Date.now() + GDELT_MINUTI * 60_000;
+let ultimaGdelt = 0, gdeltRichieste = 0, gdeltFallimenti = 0, gdeltSpento = GDELT_MINUTI <= 0;
+function spegniGdelt(motivo) { if (!gdeltSpento) log(`GDELT: ${motivo}. Proseguo con i soli feed internazionali.`); gdeltSpento = true; }
 async function gdelt(query, max) {
+  if (Date.now() > gdeltScadenza) spegniGdelt('tempo massimo raggiunto');
   if (gdeltSpento) return null;
+  gdeltRichieste++;
   const url = 'https://api.gdeltproject.org/api/v2/doc/doc?' + new URLSearchParams({
     query, mode: 'artlist', format: 'json', timespan: '24h', sort: 'hybridrel', maxrecords: String(max),
   });
-  for (let tentativo = 1; tentativo <= 4; tentativo++) {
+  for (let tentativo = 1; tentativo <= 3; tentativo++) {
     const pausa = ultimaGdelt + PAUSA_GDELT * tentativo - Date.now();
     if (pausa > 0) await attendi(pausa);
     ultimaGdelt = Date.now();
     try {
-      const r = await fetch(url, { signal: AbortSignal.timeout(45_000) });
+      const r = await fetch(url, { signal: AbortSignal.timeout(30_000) });
       const testo = await r.text();
       if (r.status === 429 || testo.startsWith('Please limit')) { log('  GDELT chiede di rallentare'); await attendi(30_000); continue; }
-      gdeltFallimenti = 0;
       if (!testo.trim()) return [];
       return JSON.parse(testo).articles || [];
     } catch (e) {
       log(`  GDELT non risponde (${e.cause?.code || e.name}), riprovo`);
     }
   }
-  // Se GDELT non risponde per molte richieste di fila, si va avanti con i soli feed internazionali.
-  if (++gdeltFallimenti >= 5) { gdeltSpento = true; log('GDELT non risponde: proseguo con i soli feed internazionali.'); }
+  // Se GDELT fallisce la maggior parte delle richieste, non vale la pena insistere.
+  gdeltFallimenti++;
+  if (gdeltRichieste >= 8 && gdeltFallimenti / gdeltRichieste > 0.6) spegniGdelt('troppe richieste senza risposta');
   return null;
 }
 
@@ -188,20 +220,20 @@ async function raccogli(paesi) {
   const voci = (await Promise.all(FEED.map(leggiFeed))).flat();
   const dalMondo = assegna(voci, JSON.parse(await readFile(qui('../dati/paesi.json'), 'utf8')));
 
-  log(`Raccolgo la stampa locale di ${paesi.length} paesi da GDELT (ci vuole circa un'ora)...`);
+  // La stampa locale serve di più dove quella internazionale dice poco: GDELT parte da quei paesi.
+  const ordine = [...paesi].sort((a, b) => (dalMondo[a.id]?.length || 0) - (dalMondo[b.id]?.length || 0));
+  log(`Raccolgo la stampa locale da GDELT (al massimo ${GDELT_MINUTI} minuti)...`);
   const raccolta = {};
-  for (const [i, p] of paesi.entries()) {
+  for (const [i, p] of ordine.entries()) {
     const visti = new Set();
     // prima la stampa internazionale (ha anche un breve sommario), poi quella locale
-    const estero = pulisci(dalMondo[p.id] || [], visti).slice(0, 8);
-    let locale = pulisci(await gdelt(`sourcecountry:${p.fips}`, 50), visti);
-    // Pochi giornali locali indicizzati e poca stampa internazionale: cerchiamo il nome del paese.
-    if (locale.length + estero.length < 6 && !gdeltSpento) {
-      locale = locale.concat(pulisci(await gdelt(`"${p.en}" sourcelang:english`, 20), visti));
-    }
+    const estero = pulisci(dalMondo[p.id] || [], visti).slice(0, 10);
+    const locale = gdeltSpento ? [] : pulisci(await gdelt(`sourcecountry:${p.fips}`, 50), visti);
     raccolta[p.id] = [...estero, ...locale].slice(0, 22);
-    log(`[${i + 1}/${paesi.length}] ${p.nome}: ${estero.length} internazionali, ${locale.length} locali`);
+    if (!gdeltSpento || i % 25 === 0) log(`[${i + 1}/${paesi.length}] ${p.nome}: ${estero.length} internazionali, ${locale.length} locali`);
   }
+  const coperti = Object.values(raccolta).filter(v => v.length).length;
+  log(`Paesi con almeno una notizia: ${coperti} su ${paesi.length}`);
   return raccolta;
 }
 

@@ -22,7 +22,7 @@ concurrency:
 jobs:
   notiziario:
     runs-on: ubuntu-latest
-    timeout-minutes: 180
+    timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -34,7 +34,7 @@ jobs:
           SOLO: ${{ inputs.solo }}
         run: |
           if [ -n "$SOLO" ]; then
-            node mondo/sorgenti/genera.mjs --solo "$SOLO"
+            GDELT_MINUTI=3 node mondo/sorgenti/genera.mjs --solo "$SOLO"
             echo "### Prova su $SOLO" >> "$GITHUB_STEP_SUMMARY"
             echo '```json' >> "$GITHUB_STEP_SUMMARY"
             head -c 60000 mondo/sorgenti/.prova-it.json >> "$GITHUB_STEP_SUMMARY"

@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Il mondo stamattina</title>
+<meta name="description" content="Ogni mattina un breve notiziario per ogni paese del mondo. Gira il globo, tocca un paese e leggi cosa succede.">
+<meta property="og:title" content="Il mondo stamattina">
+<meta property="og:description" content="Gira il globo, tocca un paese e leggi cosa succede oggi.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#070d18">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Ccircle%20cx%3D%2232%22%20cy%3D%2232%22%20r%3D%2228%22%20fill%3D%22%230e1a2e%22%20stroke%3D%22%23f2b84b%22%20stroke-width%3D%224%22%2F%3E%3Cpath%20d%3D%22M4%2032h56M32%204c-10%2010-10%2046%200%2056M32%204c10%2010%2010%2046%200%2056%22%20fill%3D%22none%22%20stroke%3D%22%23f2b84b%22%20stroke-width%3D%223%22%2F%3E%3C%2Fsvg%3E">
+<style>
+:root{
+  --notte:#070d18; --mare:#0b1729; --superficie:rgba(12,21,38,.92); --bordo:rgba(255,255,255,.1);
+  --testo:#e9edf3; --tenue:#9aa6b8; --oro:#f2b84b;
+  --i0:#2b3a52; --i1:#6f8fb0; --i2:#d9a04a; --i3:#f0603c; --vuoto:#18212f;
+  --serif:Georgia,"Times New Roman",serif; --sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0;height:100%;background:var(--notte);color:var(--testo);font-family:var(--sans);overflow:hidden}
+#globo{position:fixed;inset:0}
+a{color:inherit}
+button{font:inherit;color:inherit}
+.vetro{background:var(--superficie);border:1px solid var(--bordo);border-radius:16px;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+
+/* testata */
+header{position:fixed;top:max(16px,env(safe-area-inset-top));left:16px;right:16px;display:flex;gap:12px;align-items:center;justify-content:flex-start;flex-wrap:wrap;pointer-events:none;z-index:2}
+header>*{pointer-events:auto}
+.testata{padding:12px 16px}
+.testata h1{margin:0;font:italic 400 24px/1.1 var(--serif);letter-spacing:.01em}
+.testata h1 b{color:var(--oro);font-weight:400}
+.testata p{margin:4px 0 0;font-size:13px;color:var(--tenue)}
+.comandi{display:flex;gap:8px;flex-wrap:wrap}
+.bottone{padding:10px 14px;border-radius:999px;cursor:pointer;font-size:14px;white-space:nowrap}
+.bottone:hover{border-color:rgba(242,184,75,.5)}
+.bottone.primario{background:var(--oro);color:#1a1205;border-color:var(--oro);font-weight:600}
+.cerca{position:relative}
+.cerca input{width:190px;padding:10px 14px;border-radius:999px;font:inherit;font-size:14px;color:var(--testo);outline:none}
+.cerca input::placeholder{color:var(--tenue)}
+.cerca input:focus{border-color:var(--oro)}
+.suggerimenti{position:absolute;top:calc(100% + 6px);left:0;width:240px;max-height:300px;overflow:auto;padding:6px;margin:0;list-style:none}
+.suggerimenti li{padding:8px 10px;border-radius:10px;cursor:pointer;font-size:14px}
+.suggerimenti li[aria-selected=true],.suggerimenti li:hover{background:rgba(255,255,255,.08)}
+
+/* legenda */
+.legenda{position:fixed;left:16px;bottom:max(16px,env(safe-area-inset-bottom));padding:10px 14px;font-size:12px;color:var(--tenue);z-index:1}
+.legenda .scala{display:flex;gap:10px;margin-top:6px;flex-wrap:wrap}
+.legenda span{display:inline-flex;align-items:center;gap:5px}
+.legenda i{width:10px;height:10px;border-radius:3px;display:inline-block}
+
+/* pannello */
+.pannello{position:fixed;z-index:3;top:max(16px,env(safe-area-inset-top));right:16px;bottom:16px;width:min(420px,calc(100vw - 32px));display:flex;flex-direction:column;transform:translateX(calc(100% + 32px));transition:transform .35s ease;overflow:hidden}
+.pannello.aperto{transform:none}
+.pannello .capo{padding:18px 20px 12px;border-bottom:1px solid var(--bordo);display:flex;gap:12px;align-items:flex-start}
+.pannello .capo h2{margin:0;font:400 26px/1.15 var(--serif);flex:1}
+.pannello .capo .sopra{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--tenue);margin-bottom:4px}
+.chiudi{width:36px;height:36px;border-radius:50%;border:1px solid var(--bordo);background:transparent;cursor:pointer;font-size:20px;line-height:1;flex:none}
+.chiudi:hover{border-color:var(--oro)}
+.corpo{padding:16px 20px 20px;overflow:auto;flex:1;font-size:15px;line-height:1.55}
+.corpo h3{font:400 20px/1.3 var(--serif);margin:0 0 12px}
+.etichette{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 14px}
+.etichetta{font-size:12px;padding:3px 9px;border-radius:999px;border:1px solid var(--bordo);color:var(--tenue)}
+.etichetta.livello{color:#111;border:0;font-weight:600}
+.punti{margin:0 0 18px;padding:0;list-style:none}
+.punti li{padding:10px 0 10px 16px;border-left:2px solid var(--oro);margin-bottom:8px}
+.rif{font-size:11px;vertical-align:super;margin-left:3px;color:var(--oro);text-decoration:none}
+.rif+.rif::before{content:",";margin-right:2px;color:var(--tenue)}
+.rif:hover{text-decoration:underline}
+.sezione{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--tenue);margin:18px 0 8px}
+.fonti{margin:0;padding:0;list-style:none;counter-reset:f}
+.fonti li{counter-increment:f;margin-bottom:10px;display:flex;gap:10px;font-size:14px;line-height:1.4}
+.fonti li::before{content:counter(f);color:var(--oro);font-size:12px;min-width:14px;padding-top:2px}
+.fonti a{text-decoration:none}
+.fonti a:hover{text-decoration:underline}
+.fonti small{display:block;color:var(--tenue);font-size:12px;margin-top:2px}
+.fonti li:target{background:rgba(242,184,75,.1);border-radius:6px}
+.avviso{font-size:12px;color:var(--tenue);border-top:1px solid var(--bordo);padding-top:12px;margin-top:18px}
+.vuoto{color:var(--tenue)}
+.notizia{padding:14px 0;border-bottom:1px solid var(--bordo)}
+.notizia:last-of-type{border-bottom:0}
+.notizia h3{font-size:18px;margin-bottom:6px}
+.notizia p{margin:0 0 8px}
+.paesino{font-size:13px;padding:4px 10px;border-radius:999px;border:1px solid var(--bordo);background:transparent;cursor:pointer;margin:0 6px 6px 0}
+.paesino:hover{border-color:var(--oro)}
+
+.etichetta-globo{font:13px/1.35 var(--sans);background:var(--superficie);border:1px solid var(--bordo);color:var(--testo);padding:8px 10px;border-radius:10px;max-width:240px}
+.etichetta-globo b{font-family:var(--serif);font-weight:400;font-size:15px}
+.etichetta-globo span{display:block;color:var(--tenue);margin-top:2px}
+
+.stato{position:fixed;inset:0;display:grid;place-items:center;pointer-events:none;z-index:1;color:var(--tenue);font-size:14px}
+
+@media (max-width:640px){
+  header{flex-direction:column;align-items:stretch}
+  .testata{padding:10px 14px}
+  .testata h1{font-size:21px}
+  .comandi{justify-content:stretch}
+  .cerca{flex:1}
+  .cerca input{width:100%}
+  .suggerimenti{left:0;width:auto}
+  .legenda{display:none}
+  .pannello{top:auto;left:0;right:0;bottom:0;width:auto;max-height:72vh;border-radius:20px 20px 0 0;transform:translateY(105%);padding-bottom:env(safe-area-inset-bottom)}
+}
+@media (prefers-reduced-motion:reduce){.pannello{transition:none}}
+</style>
+</head>
+<body>
+<div id="globo" aria-hidden="true"></div>
+<div class="stato" id="stato">Il globo si sta preparando…</div>
+
+<header>
+  <div class="testata vetro">
+    <h1>Il mondo <b>stamattina</b></h1>
+    <p id="data">&nbsp;</p>
+  </div>
+  <div class="comandi">
+    <div class="cerca">
+      <input class="vetro" id="cerca" type="search" placeholder="Cerca un paese" autocomplete="off"
+        role="combobox" aria-expanded="false" aria-controls="suggerimenti" aria-label="Cerca un paese">
+      <ul class="suggerimenti vetro" id="suggerimenti" role="listbox" hidden></ul>
+    </div>
+    <button class="bottone primario" id="apri-mondo" type="button">Il mondo in breve</button>
+  </div>
+</header>
+
+<div class="legenda vetro" aria-label="Legenda">
+  Quanto succede oggi
+  <div class="scala">
+    <span><i style="background:var(--i0)"></i>poco</span>
+    <span><i style="background:var(--i1)"></i>ordinario</span>
+    <span><i style="background:var(--i2)"></i>importante</span>
+    <span><i style="background:var(--i3)"></i>crisi</span>
+  </div>
+</div>
+
+<aside class="pannello vetro" id="pannello" aria-live="polite" aria-labelledby="pannello-titolo">
+  <div class="capo">
+    <div style="flex:1">
+      <div class="sopra" id="pannello-sopra"></div>
+      <h2 id="pannello-titolo"></h2>
+    </div>
+    <button class="chiudi" id="chiudi" type="button" aria-label="Chiudi">×</button>
+  </div>
+  <div class="corpo" id="pannello-corpo"></div>
+</aside>
+
+<script src="lib/globe.gl.min.js"></script>
+<script>
+(async () => {
+  const LINGUA = 'it';
+  const COLORI = ['#2b3a52', '#6f8fb0', '#d9a04a', '#f0603c'];
+  const VUOTO = '#18212f';
+  const LIVELLI = ['Poche notizie', 'Giornata ordinaria', 'Notizie importanti', 'Crisi o fatto internazionale'];
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const linkSicuro = u => /^https?:\/\//i.test(u || '') ? u : '#';
+  const prendi = async u => { const r = await fetch(u, { cache: 'no-cache' }); if (!r.ok) throw new Error(r.status); return r.json(); };
+
+  const [paesi, confini, notiziario] = await Promise.all([
+    prendi('dati/paesi.json'),
+    prendi('dati/confini.json'),
+    prendi(`dati/oggi-${LINGUA}.json`).catch(() => null),
+  ]);
+  const perId = new Map(paesi.map(p => [p.id, p]));
+  const notizie = notiziario?.paesi || {};
+  const voce = id => notizie[id];
+  const colore = id => (!id || !perId.has(id)) ? VUOTO : (voce(id) ? COLORI[voce(id).intensita || 0] : COLORI[0]);
+
+  // data del notiziario
+  const fmt = d => new Date(d + 'T12:00:00').toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' });
+  if (notiziario) {
+    const oggi = new Date().toLocaleDateString('sv-SE', { timeZone: 'Europe/Rome' });
+    $('data').textContent = (notiziario.data === oggi ? '' : 'Ultimo notiziario: ') + fmt(notiziario.data);
+    $('stato').hidden = true;
+  } else {
+    $('data').textContent = 'Il primo notiziario arriverà domattina';
+    $('stato').textContent = '';
+    $('apri-mondo').hidden = true;
+  }
+
+  // ---------- globo ----------
+  let selezionato = null, sopra = null;
+  const altezza = f => f === sopra || f.properties.id === selezionato ? 0.035 : 0.008;
+  const globo = Globe()($('globo'))
+    .backgroundColor('#070d18')
+    .showAtmosphere(true).atmosphereColor('#7fa8e8').atmosphereAltitude(0.18)
+    .polygonsData(confini.features)
+    .polygonCapColor(f => colore(f.properties.id))
+    .polygonSideColor(() => 'rgba(0,0,0,.25)')
+    .polygonStrokeColor(f => f.properties.id === selezionato ? '#ffffff' : 'rgba(7,13,24,.9)')
+    .polygonAltitude(altezza)
+    .polygonsTransitionDuration(250)
+    .polygonLabel(f => etichetta(f.properties.id, f.properties.nome))
+    .onPolygonHover(f => {
+      sopra = f && f.properties.id ? f : null;
+      globo.polygonAltitude(altezza);
+      $('globo').style.cursor = sopra ? 'pointer' : 'grab';
+    })
+    .onPolygonClick(f => f.properties.id && apriPaese(f.properties.id))
+    .pointsData(paesi.filter(p => p.piccolo))
+    .pointLat('lat').pointLng('lng')
+    .pointColor(p => colore(p.id))
+    .pointAltitude(0.012).pointRadius(0.45).pointResolution(16)
+    .pointLabel(p => etichetta(p.id, p.nome))
+    .onPointClick(p => apriPaese(p.id));
+  globo.globeMaterial().color.set('#0b1729');
+  globo.controls().autoRotate = true;
+  globo.controls().autoRotateSpeed = 0.35;
+  globo.pointOfView({ lat: 30, lng: 12, altitude: innerWidth > 640 ? 2.3 : 3.1 });
+  const adatta = () => globo.width(innerWidth).height(innerHeight);
+  addEventListener('resize', adatta); adatta();
+  $('globo').addEventListener('pointerdown', () => { globo.controls().autoRotate = false; }, { once: true });
+
+  function etichetta(id, nome) {
+    const v = voce(id), p = perId.get(id);
+    const riga = !p ? '' : v?.titolo ? v.titolo : v?.soloTitoli ? 'Solo titoli originali' : 'Nessuna notizia rilevante';
+    return `<div class="etichetta-globo"><b>${esc(p?.nome || nome)}</b>${riga ? `<span>${esc(riga)}</span>` : ''}</div>`;
+  }
+
+  // ---------- pannello ----------
+  const pannello = $('pannello');
+  function apri(sopraTesto, titolo, html) {
+    $('pannello-sopra').textContent = sopraTesto;
+    $('pannello-titolo').textContent = titolo;
+    $('pannello-corpo').innerHTML = html;
+    $('pannello-corpo').scrollTop = 0;
+    pannello.classList.add('aperto');
+  }
+  function chiudi() {
+    pannello.classList.remove('aperto');
+    selezionato = null;
+    globo.polygonAltitude(altezza).polygonStrokeColor(globo.polygonStrokeColor());
+    if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+  }
+  $('chiudi').onclick = chiudi;
+  addEventListener('keydown', e => { if (e.key === 'Escape') chiudi(); });
+
+  const AVVISO = '<p class="avviso">Riassunto scritto automaticamente da un\'intelligenza artificiale a partire dai titoli dei giornali: può contenere errori o imprecisioni. Per approfondire, apri le fonti.</p>';
+
+  function apriPaese(id) {
+    const p = perId.get(id); if (!p) return;
+    selezionato = id;
+    globo.controls().autoRotate = false;
+    globo.polygonAltitude(altezza).polygonStrokeColor(f => f.properties.id === selezionato ? '#ffffff' : 'rgba(7,13,24,.9)');
+    const vista = innerWidth > 640 ? { lat: p.lat, lng: p.lng + 18, altitude: 1.7 } : { lat: p.lat - 22, lng: p.lng, altitude: 2.8 };
+    globo.pointOfView(vista, 900);
+    history.replaceState(null, '', '#' + id);
+
+    const v = voce(id);
+    const sopraTesto = notiziario ? fmt(notiziario.data) : '';
+    if (!notiziario) return apri(sopraTesto, p.nome, '<p class="vuoto">Il primo notiziario non è ancora pronto. Torna domattina.</p>');
+    if (!v || (!v.punti.length && !v.soloTitoli && !v.fonti.length)) {
+      return apri(sopraTesto, p.nome, '<p class="vuoto">Oggi non abbiamo trovato notizie rilevanti su questo paese.</p>');
+    }
+    let html = '';
+    if (v.punti.length) {
+      html += `<h3>${esc(v.titolo)}</h3><div class="etichette">` +
+        `<span class="etichetta livello" style="background:${COLORI[v.intensita]}">${LIVELLI[v.intensita]}</span>` +
+        v.temi.map(t => `<span class="etichetta">${esc(t)}</span>`).join('') + '</div>' +
+        '<ul class="punti">' + v.punti.map(x => `<li>${esc(x.testo)}` +
+          x.fonti.map(n => `<a class="rif" href="#fonte-${n}" data-fonte="${n}" aria-label="Fonte ${n + 1}">${n + 1}</a>`).join('') + '</li>').join('') + '</ul>';
+    } else if (v.soloTitoli) {
+      html += '<p class="vuoto">Il riassunto di oggi non è disponibile: ecco i titoli originali, nella loro lingua.</p>';
+    } else {
+      html += '<p class="vuoto">Oggi nessuna notizia rilevante. Questi sono i titoli raccolti.</p>';
+    }
+    if (v.fonti.length) {
+      html += '<div class="sezione">Approfondisci sulle fonti</div><ol class="fonti">' + v.fonti.map((f, n) =>
+        `<li id="fonte-${n}"><div><a href="${esc(linkSicuro(f.u))}" target="_blank" rel="noopener noreferrer">${esc(f.t)}</a><small>${esc(f.d)}</small></div></li>`).join('') + '</ol>';
+    }
+    if (v.punti.length) html += AVVISO;
+    apri(sopraTesto, p.nome, html);
+  }
+
+  // i numeri delle fonti scorrono alla fonte dentro il pannello, senza cambiare l'indirizzo
+  $('pannello-corpo').addEventListener('click', e => {
+    const a = e.target.closest('[data-fonte]');
+    if (a) { e.preventDefault(); const el = $('fonte-' + a.dataset.fonte); el.scrollIntoView({ behavior: 'smooth', block: 'center' }); el.animate([{ background: 'rgba(242,184,75,.25)' }, { background: 'transparent' }], { duration: 1600 }); }
+    const b = e.target.closest('[data-paese]');
+    if (b) apriPaese(b.dataset.paese);
+  });
+
+  function apriMondo() {
+    const n = notiziario?.mondo || [];
+    selezionato = null;
+    globo.polygonAltitude(altezza);
+    const html = n.length ? n.map(x => `<div class="notizia"><h3>${esc(x.titolo)}</h3><p>${esc(x.testo)}</p>` +
+      x.paesi.filter(id => perId.has(id)).map(id => `<button class="paesino" type="button" data-paese="${id}">${esc(perId.get(id).nome)}</button>`).join('') + '</div>').join('') + AVVISO
+      : '<p class="vuoto">Il riepilogo dal mondo oggi non è disponibile. Tocca un paese sul globo.</p>';
+    apri(fmt(notiziario.data), 'Il mondo in breve', html);
+  }
+  $('apri-mondo').onclick = apriMondo;
+
+  // ---------- ricerca ----------
+  const cerca = $('cerca'), lista = $('suggerimenti');
+  const semplice = s => s.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase();
+  let risultati = [], attivo = -1;
+  function mostra() {
+    const q = semplice(cerca.value.trim());
+    risultati = q ? paesi.filter(p => semplice(p.nome).includes(q) || semplice(p.en).includes(q))
+      .sort((a, b) => semplice(a.nome).indexOf(q) - semplice(b.nome).indexOf(q)).slice(0, 8) : [];
+    attivo = risultati.length ? 0 : -1;
+    lista.innerHTML = risultati.map((p, i) => `<li role="option" id="s-${i}" aria-selected="${i === attivo}" data-id="${p.id}">${esc(p.nome)}</li>`).join('');
+    lista.hidden = !risultati.length;
+    cerca.setAttribute('aria-expanded', String(!!risultati.length));
+    cerca.setAttribute('aria-activedescendant', attivo >= 0 ? 's-0' : '');
+  }
+  function scegli(id) { cerca.value = ''; mostra(); cerca.blur(); apriPaese(id); }
+  cerca.addEventListener('input', mostra);
+  cerca.addEventListener('keydown', e => {
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      e.preventDefault(); if (!risultati.length) return;
+      attivo = (attivo + (e.key === 'ArrowDown' ? 1 : -1) + risultati.length) % risultati.length;
+      [...lista.children].forEach((li, i) => li.setAttribute('aria-selected', String(i === attivo)));
+      cerca.setAttribute('aria-activedescendant', 's-' + attivo);
+    } else if (e.key === 'Enter' && attivo >= 0) { e.preventDefault(); scegli(risultati[attivo].id); }
+  });
+  lista.addEventListener('pointerdown', e => { const li = e.target.closest('li'); if (li) { e.preventDefault(); scegli(li.dataset.id); } });
+  cerca.addEventListener('blur', () => setTimeout(() => { lista.hidden = true; }, 100));
+
+  // apertura diretta da link: .../mondo/#IT
+  const daLink = location.hash.slice(1).toUpperCase();
+  if (perId.has(daLink)) apriPaese(daLink);
+})().catch(err => {
+  document.getElementById('stato').textContent = 'Il globo non si è caricato. Riprova tra poco.';
+  console.error(err);
+});
+</script>
+</body>
+</html>

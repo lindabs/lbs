@@ -1,0 +1,54 @@
+# Il mondo stamattina: ogni mattina raccoglie le notizie e scrive il notiziario.
+# Serve il secret GEMINI_API_KEY (Settings → Secrets and variables → Actions).
+name: Il mondo stamattina
+
+on:
+  schedule:
+    - cron: '37 3 * * *'   # 03:37 UTC, cioè 4:37 in inverno e 5:37 in estate in Italia
+  workflow_dispatch:
+    inputs:
+      solo:
+        description: 'Solo alcuni paesi, per una prova (es. IT,FR,SD). Vuoto = tutto il mondo'
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+
+concurrency:
+  group: mondo
+  cancel-in-progress: false
+
+jobs:
+  notiziario:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Raccoglie e riassume le notizie
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          SOLO: ${{ inputs.solo }}
+        run: |
+          if [ -n "$SOLO" ]; then
+            node mondo/sorgenti/genera.mjs --solo "$SOLO"
+            echo "### Prova su $SOLO" >> "$GITHUB_STEP_SUMMARY"
+            echo '```json' >> "$GITHUB_STEP_SUMMARY"
+            head -c 60000 mondo/sorgenti/.prova-it.json >> "$GITHUB_STEP_SUMMARY"
+            echo '```' >> "$GITHUB_STEP_SUMMARY"
+          else
+            node mondo/sorgenti/genera.mjs
+          fi
+      - name: Pubblica il notiziario
+        if: ${{ !inputs.solo }}
+        run: |
+          git config user.name "il-mondo-stamattina[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add mondo/dati/oggi-*.json mondo/dati/archivio
+          git diff --cached --quiet && exit 0
+          git commit -m "Il mondo stamattina: notiziario del $(TZ=Europe/Rome date +%F)"
+          for i in 1 2 3; do git pull --rebase && git push && exit 0; sleep 10; done
+          exit 1

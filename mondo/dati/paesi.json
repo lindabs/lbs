@@ -1,0 +1,1674 @@
+[
+ {
+  "id": "AF",
+  "nome": "Afghanistan",
+  "en": "Afghanistan",
+  "fips": "AF",
+  "lat": 34.16,
+  "lng": 66.5
+ },
+ {
+  "id": "AL",
+  "nome": "Albania",
+  "en": "Albania",
+  "fips": "AL",
+  "lat": 40.65,
+  "lng": 20.11
+ },
+ {
+  "id": "DZ",
+  "nome": "Algeria",
+  "en": "Algeria",
+  "fips": "AG",
+  "lat": 27.4,
+  "lng": 2.81
+ },
+ {
+  "id": "AD",
+  "nome": "Andorra",
+  "en": "Andorra",
+  "fips": "AN",
+  "lat": 42.55,
+  "lng": 1.54,
+  "piccolo": true
+ },
+ {
+  "id": "AO",
+  "nome": "Angola",
+  "en": "Angola",
+  "fips": "AO",
+  "lat": -12.18,
+  "lng": 17.98
+ },
+ {
+  "id": "AG",
+  "nome": "Antigua e Barbuda",
+  "en": "Antigua and Barbuda",
+  "fips": "AC",
+  "lat": 17.35,
+  "lng": -61.79,
+  "piccolo": true
+ },
+ {
+  "id": "SA",
+  "nome": "Arabia Saudita",
+  "en": "Saudi Arabia",
+  "fips": "SA",
+  "lat": 23.81,
+  "lng": 44.7
+ },
+ {
+  "id": "AR",
+  "nome": "Argentina",
+  "en": "Argentina",
+  "fips": "AR",
+  "lat": -33.5,
+  "lng": -64.17
+ },
+ {
+  "id": "AM",
+  "nome": "Armenia",
+  "en": "Armenia",
+  "fips": "AM",
+  "lat": 40.46,
+  "lng": 44.8
+ },
+ {
+  "id": "AU",
+  "nome": "Australia",
+  "en": "Australia",
+  "fips": "AS",
+  "lat": -24.13,
+  "lng": 134.05
+ },
+ {
+  "id": "AT",
+  "nome": "Austria",
+  "en": "Austria",
+  "fips": "AU",
+  "lat": 47.52,
+  "lng": 14.13
+ },
+ {
+  "id": "AZ",
+  "nome": "Azerbaigian",
+  "en": "Azerbaijan",
+  "fips": "AJ",
+  "lat": 40.4,
+  "lng": 47.21
+ },
+ {
+  "id": "BS",
+  "nome": "Bahamas",
+  "en": "The Bahamas",
+  "fips": "BF",
+  "lat": 26.4,
+  "lng": -77.15
+ },
+ {
+  "id": "BH",
+  "nome": "Bahrein",
+  "en": "Bahrain",
+  "fips": "BA",
+  "lat": 26.06,
+  "lng": 50.55,
+  "piccolo": true
+ },
+ {
+  "id": "BD",
+  "nome": "Bangladesh",
+  "en": "Bangladesh",
+  "fips": "BG",
+  "lat": 24.21,
+  "lng": 89.68
+ },
+ {
+  "id": "BB",
+  "nome": "Barbados",
+  "en": "Barbados",
+  "fips": "BB",
+  "lat": 13.16,
+  "lng": -59.57,
+  "piccolo": true
+ },
+ {
+  "id": "BE",
+  "nome": "Belgio",
+  "en": "Belgium",
+  "fips": "BE",
+  "lat": 50.79,
+  "lng": 4.8
+ },
+ {
+  "id": "BZ",
+  "nome": "Belize",
+  "en": "Belize",
+  "fips": "BH",
+  "lat": 17.2,
+  "lng": -88.71
+ },
+ {
+  "id": "BJ",
+  "nome": "Benin",
+  "en": "Benin",
+  "fips": "BN",
+  "lat": 10.32,
+  "lng": 2.35
+ },
+ {
+  "id": "BT",
+  "nome": "Bhutan",
+  "en": "Bhutan",
+  "fips": "BT",
+  "lat": 27.54,
+  "lng": 90.04
+ },
+ {
+  "id": "BY",
+  "nome": "Bielorussia",
+  "en": "Belarus",
+  "fips": "BO",
+  "lat": 53.82,
+  "lng": 28.42
+ },
+ {
+  "id": "MM",
+  "nome": "Birmania",
+  "en": "Myanmar",
+  "fips": "BM",
+  "lat": 21.57,
+  "lng": 95.8
+ },
+ {
+  "id": "BO",
+  "nome": "Bolivia",
+  "en": "Bolivia",
+  "fips": "BL",
+  "lat": -16.67,
+  "lng": -64.59
+ },
+ {
+  "id": "BA",
+  "nome": "Bosnia ed Erzegovina",
+  "en": "Bosnia and Herzegovina",
+  "fips": "BK",
+  "lat": 44.09,
+  "lng": 18.07
+ },
+ {
+  "id": "BW",
+  "nome": "Botswana",
+  "en": "Botswana",
+  "fips": "BC",
+  "lat": -22.1,
+  "lng": 24.18
+ },
+ {
+  "id": "BR",
+  "nome": "Brasile",
+  "en": "Brazil",
+  "fips": "BR",
+  "lat": -12.1,
+  "lng": -49.56
+ },
+ {
+  "id": "BN",
+  "nome": "Brunei",
+  "en": "Brunei",
+  "fips": "BX",
+  "lat": 4.45,
+  "lng": 114.55
+ },
+ {
+  "id": "BG",
+  "nome": "Bulgaria",
+  "en": "Bulgaria",
+  "fips": "BU",
+  "lat": 42.51,
+  "lng": 25.16
+ },
+ {
+  "id": "BF",
+  "nome": "Burkina Faso",
+  "en": "Burkina Faso",
+  "fips": "UV",
+  "lat": 12.67,
+  "lng": -1.36
+ },
+ {
+  "id": "BI",
+  "nome": "Burundi",
+  "en": "Burundi",
+  "fips": "BY",
+  "lat": -3.33,
+  "lng": 29.92
+ },
+ {
+  "id": "KH",
+  "nome": "Cambogia",
+  "en": "Cambodia",
+  "fips": "CB",
+  "lat": 12.65,
+  "lng": 104.5
+ },
+ {
+  "id": "CM",
+  "nome": "Camerun",
+  "en": "Cameroon",
+  "fips": "CM",
+  "lat": 4.59,
+  "lng": 12.47
+ },
+ {
+  "id": "CA",
+  "nome": "Canada",
+  "en": "Canada",
+  "fips": "CA",
+  "lat": 60.32,
+  "lng": -101.91
+ },
+ {
+  "id": "CV",
+  "nome": "Capo Verde",
+  "en": "Cape Verde",
+  "fips": "CV",
+  "lat": 15.07,
+  "lng": -23.64,
+  "piccolo": true
+ },
+ {
+  "id": "TD",
+  "nome": "Ciad",
+  "en": "Chad",
+  "fips": "CD",
+  "lat": 15.14,
+  "lng": 18.65
+ },
+ {
+  "id": "CL",
+  "nome": "Cile",
+  "en": "Chile",
+  "fips": "CI",
+  "lat": -38.15,
+  "lng": -72.32
+ },
+ {
+  "id": "CN",
+  "nome": "Cina",
+  "en": "People's Republic of China",
+  "fips": "CH",
+  "lat": 32.5,
+  "lng": 106.34
+ },
+ {
+  "id": "CY",
+  "nome": "Cipro",
+  "en": "Cyprus",
+  "fips": "CY",
+  "lat": 34.91,
+  "lng": 33.08
+ },
+ {
+  "id": "VA",
+  "nome": "Città del Vaticano",
+  "en": "Vatican City",
+  "fips": "VT",
+  "lat": 41.9,
+  "lng": 12.45,
+  "piccolo": true
+ },
+ {
+  "id": "CO",
+  "nome": "Colombia",
+  "en": "Colombia",
+  "fips": "CO",
+  "lat": 3.37,
+  "lng": -73.17
+ },
+ {
+  "id": "KM",
+  "nome": "Comore",
+  "en": "Comoros",
+  "fips": "CN",
+  "lat": -11.73,
+  "lng": 43.32,
+  "piccolo": true
+ },
+ {
+  "id": "KP",
+  "nome": "Corea del Nord",
+  "en": "North Korea",
+  "fips": "KN",
+  "lat": 39.89,
+  "lng": 126.44
+ },
+ {
+  "id": "KR",
+  "nome": "Corea del Sud",
+  "en": "South Korea",
+  "fips": "KS",
+  "lat": 36.38,
+  "lng": 128.13
+ },
+ {
+  "id": "CI",
+  "nome": "Costa d'Avorio",
+  "en": "Ivory Coast",
+  "fips": "IV",
+  "lat": 7.49,
+  "lng": -5.57
+ },
+ {
+  "id": "CR",
+  "nome": "Costa Rica",
+  "en": "Costa Rica",
+  "fips": "CS",
+  "lat": 10.07,
+  "lng": -84.08
+ },
+ {
+  "id": "HR",
+  "nome": "Croazia",
+  "en": "Croatia",
+  "fips": "HR",
+  "lat": 45.81,
+  "lng": 16.37
+ },
+ {
+  "id": "CU",
+  "nome": "Cuba",
+  "en": "Cuba",
+  "fips": "CU",
+  "lat": 21.33,
+  "lng": -77.98
+ },
+ {
+  "id": "DK",
+  "nome": "Danimarca",
+  "en": "Denmark",
+  "fips": "DA",
+  "lat": 55.97,
+  "lng": 9.02
+ },
+ {
+  "id": "DM",
+  "nome": "Dominica",
+  "en": "Dominica",
+  "fips": "DO",
+  "lat": 15.46,
+  "lng": -61.34,
+  "piccolo": true
+ },
+ {
+  "id": "EC",
+  "nome": "Ecuador",
+  "en": "Ecuador",
+  "fips": "EC",
+  "lat": -1.26,
+  "lng": -78.19
+ },
+ {
+  "id": "EG",
+  "nome": "Egitto",
+  "en": "Egypt",
+  "fips": "EG",
+  "lat": 26.19,
+  "lng": 29.45
+ },
+ {
+  "id": "SV",
+  "nome": "El Salvador",
+  "en": "El Salvador",
+  "fips": "ES",
+  "lat": 13.69,
+  "lng": -88.89
+ },
+ {
+  "id": "AE",
+  "nome": "Emirati Arabi Uniti",
+  "en": "United Arab Emirates",
+  "fips": "AE",
+  "lat": 23.47,
+  "lng": 54.55
+ },
+ {
+  "id": "ER",
+  "nome": "Eritrea",
+  "en": "Eritrea",
+  "fips": "ER",
+  "lat": 15.79,
+  "lng": 38.29
+ },
+ {
+  "id": "EE",
+  "nome": "Estonia",
+  "en": "Estonia",
+  "fips": "EN",
+  "lat": 58.72,
+  "lng": 25.87
+ },
+ {
+  "id": "SZ",
+  "nome": "eSwatini",
+  "en": "Eswatini",
+  "fips": "WZ",
+  "lat": -26.53,
+  "lng": 31.47
+ },
+ {
+  "id": "ET",
+  "nome": "Etiopia",
+  "en": "Ethiopia",
+  "fips": "ET",
+  "lat": 8.03,
+  "lng": 39.09
+ },
+ {
+  "id": "FJ",
+  "nome": "Figi",
+  "en": "Fiji",
+  "fips": "FJ",
+  "lat": -17.83,
+  "lng": 177.98
+ },
+ {
+  "id": "PH",
+  "nome": "Filippine",
+  "en": "Philippines",
+  "fips": "RP",
+  "lat": 11.2,
+  "lng": 122.47
+ },
+ {
+  "id": "FI",
+  "nome": "Finlandia",
+  "en": "Finland",
+  "fips": "FI",
+  "lat": 63.25,
+  "lng": 27.28
+ },
+ {
+  "id": "FR",
+  "nome": "Francia",
+  "en": "France",
+  "fips": "FR",
+  "lat": 46.7,
+  "lng": 2.55
+ },
+ {
+  "id": "GA",
+  "nome": "Gabon",
+  "en": "Gabon",
+  "fips": "GB",
+  "lat": -0.44,
+  "lng": 11.84
+ },
+ {
+  "id": "GM",
+  "nome": "Gambia",
+  "en": "The Gambia",
+  "fips": "GA",
+  "lat": 13.64,
+  "lng": -15
+ },
+ {
+  "id": "GE",
+  "nome": "Georgia",
+  "en": "Georgia",
+  "fips": "GG",
+  "lat": 41.87,
+  "lng": 43.74
+ },
+ {
+  "id": "DE",
+  "nome": "Germania",
+  "en": "Germany",
+  "fips": "GM",
+  "lat": 50.96,
+  "lng": 9.68
+ },
+ {
+  "id": "GH",
+  "nome": "Ghana",
+  "en": "Ghana",
+  "fips": "GH",
+  "lat": 7.72,
+  "lng": -1.04
+ },
+ {
+  "id": "JM",
+  "nome": "Giamaica",
+  "en": "Jamaica",
+  "fips": "JM",
+  "lat": 18.14,
+  "lng": -77.32
+ },
+ {
+  "id": "JP",
+  "nome": "Giappone",
+  "en": "Japan",
+  "fips": "JA",
+  "lat": 36.14,
+  "lng": 138.44
+ },
+ {
+  "id": "DJ",
+  "nome": "Gibuti",
+  "en": "Djibouti",
+  "fips": "DJ",
+  "lat": 11.98,
+  "lng": 42.5
+ },
+ {
+  "id": "JO",
+  "nome": "Giordania",
+  "en": "Jordan",
+  "fips": "JO",
+  "lat": 30.81,
+  "lng": 36.38
+ },
+ {
+  "id": "GR",
+  "nome": "Grecia",
+  "en": "Greece",
+  "fips": "GR",
+  "lat": 39.49,
+  "lng": 21.73
+ },
+ {
+  "id": "GD",
+  "nome": "Grenada",
+  "en": "Grenada",
+  "fips": "GJ",
+  "lat": 12.11,
+  "lng": -61.68,
+  "piccolo": true
+ },
+ {
+  "id": "GL",
+  "nome": "Groenlandia",
+  "en": "Greenland",
+  "fips": "GL",
+  "lat": 74.32,
+  "lng": -39.34
+ },
+ {
+  "id": "GT",
+  "nome": "Guatemala",
+  "en": "Guatemala",
+  "fips": "GT",
+  "lat": 14.98,
+  "lng": -90.5
+ },
+ {
+  "id": "GN",
+  "nome": "Guinea",
+  "en": "Guinea",
+  "fips": "GV",
+  "lat": 10.62,
+  "lng": -10.02
+ },
+ {
+  "id": "GQ",
+  "nome": "Guinea Equatoriale",
+  "en": "Equatorial Guinea",
+  "fips": "EK",
+  "lat": 2.33,
+  "lng": 8.99
+ },
+ {
+  "id": "GW",
+  "nome": "Guinea-Bissau",
+  "en": "Guinea-Bissau",
+  "fips": "PU",
+  "lat": 12.16,
+  "lng": -14.52
+ },
+ {
+  "id": "GY",
+  "nome": "Guyana",
+  "en": "Guyana",
+  "fips": "GY",
+  "lat": 5.12,
+  "lng": -58.94
+ },
+ {
+  "id": "HT",
+  "nome": "Haiti",
+  "en": "Haiti",
+  "fips": "HA",
+  "lat": 19.26,
+  "lng": -72.22
+ },
+ {
+  "id": "HN",
+  "nome": "Honduras",
+  "en": "Honduras",
+  "fips": "HO",
+  "lat": 14.79,
+  "lng": -86.89
+ },
+ {
+  "id": "HK",
+  "nome": "Hong Kong",
+  "en": "Hong Kong",
+  "fips": "HK",
+  "lat": 22.45,
+  "lng": 114.1,
+  "piccolo": true
+ },
+ {
+  "id": "IN",
+  "nome": "India",
+  "en": "India",
+  "fips": "IN",
+  "lat": 22.69,
+  "lng": 79.36
+ },
+ {
+  "id": "ID",
+  "nome": "Indonesia",
+  "en": "Indonesia",
+  "fips": "ID",
+  "lat": -0.95,
+  "lng": 101.89
+ },
+ {
+  "id": "IR",
+  "nome": "Iran",
+  "en": "Iran",
+  "fips": "IR",
+  "lat": 32.17,
+  "lng": 54.93
+ },
+ {
+  "id": "IQ",
+  "nome": "Iraq",
+  "en": "Iraq",
+  "fips": "IZ",
+  "lat": 33.09,
+  "lng": 43.26
+ },
+ {
+  "id": "IE",
+  "nome": "Irlanda",
+  "en": "Ireland",
+  "fips": "EI",
+  "lat": 53.08,
+  "lng": -7.8
+ },
+ {
+  "id": "IS",
+  "nome": "Islanda",
+  "en": "Iceland",
+  "fips": "IC",
+  "lat": 64.78,
+  "lng": -18.67
+ },
+ {
+  "id": "FK",
+  "nome": "Isole Falkland",
+  "en": "Falkland Islands",
+  "fips": "FK",
+  "lat": -51.61,
+  "lng": -58.74
+ },
+ {
+  "id": "MH",
+  "nome": "Isole Marshall",
+  "en": "Marshall Islands",
+  "fips": "RM",
+  "lat": 7.08,
+  "lng": 171.19,
+  "piccolo": true
+ },
+ {
+  "id": "SB",
+  "nome": "Isole Salomone",
+  "en": "Solomon Islands",
+  "fips": "BP",
+  "lat": -8.03,
+  "lng": 159.17
+ },
+ {
+  "id": "IL",
+  "nome": "Israele",
+  "en": "Israel",
+  "fips": "IS",
+  "lat": 30.91,
+  "lng": 34.85
+ },
+ {
+  "id": "IT",
+  "nome": "Italia",
+  "en": "Italy",
+  "fips": "IT",
+  "lat": 44.73,
+  "lng": 11.08
+ },
+ {
+  "id": "KZ",
+  "nome": "Kazakistan",
+  "en": "Kazakhstan",
+  "fips": "KZ",
+  "lat": 49.05,
+  "lng": 68.69
+ },
+ {
+  "id": "KE",
+  "nome": "Kenya",
+  "en": "Kenya",
+  "fips": "KE",
+  "lat": 0.55,
+  "lng": 37.91
+ },
+ {
+  "id": "KG",
+  "nome": "Kirghizistan",
+  "en": "Kyrgyzstan",
+  "fips": "KG",
+  "lat": 41.67,
+  "lng": 74.53
+ },
+ {
+  "id": "KI",
+  "nome": "Kiribati",
+  "en": "Kiribati",
+  "fips": "KR",
+  "lat": 1.82,
+  "lng": -157.38,
+  "piccolo": true
+ },
+ {
+  "id": "XK",
+  "nome": "Kosovo",
+  "en": "Kosovo",
+  "fips": "KV",
+  "lat": 42.59,
+  "lng": 20.86
+ },
+ {
+  "id": "KW",
+  "nome": "Kuwait",
+  "en": "Kuwait",
+  "fips": "KU",
+  "lat": 29.41,
+  "lng": 47.31
+ },
+ {
+  "id": "LA",
+  "nome": "Laos",
+  "en": "Laos",
+  "fips": "LA",
+  "lat": 19.43,
+  "lng": 102.53
+ },
+ {
+  "id": "LS",
+  "nome": "Lesotho",
+  "en": "Lesotho",
+  "fips": "LT",
+  "lat": -29.48,
+  "lng": 28.25
+ },
+ {
+  "id": "LV",
+  "nome": "Lettonia",
+  "en": "Latvia",
+  "fips": "LG",
+  "lat": 57.07,
+  "lng": 25.46
+ },
+ {
+  "id": "LB",
+  "nome": "Libano",
+  "en": "Lebanon",
+  "fips": "LE",
+  "lat": 34.13,
+  "lng": 35.99
+ },
+ {
+  "id": "LR",
+  "nome": "Liberia",
+  "en": "Liberia",
+  "fips": "LI",
+  "lat": 6.45,
+  "lng": -9.46
+ },
+ {
+  "id": "LY",
+  "nome": "Libia",
+  "en": "Libya",
+  "fips": "LY",
+  "lat": 26.64,
+  "lng": 18.01
+ },
+ {
+  "id": "LI",
+  "nome": "Liechtenstein",
+  "en": "Liechtenstein",
+  "fips": "LS",
+  "lat": 47.11,
+  "lng": 9.56,
+  "piccolo": true
+ },
+ {
+  "id": "LT",
+  "nome": "Lituania",
+  "en": "Lithuania",
+  "fips": "LH",
+  "lat": 55.1,
+  "lng": 24.09
+ },
+ {
+  "id": "LU",
+  "nome": "Lussemburgo",
+  "en": "Luxembourg",
+  "fips": "LU",
+  "lat": 49.73,
+  "lng": 6.08
+ },
+ {
+  "id": "MO",
+  "nome": "Macao",
+  "en": "Macau",
+  "fips": "MC",
+  "lat": 22.13,
+  "lng": 113.56,
+  "piccolo": true
+ },
+ {
+  "id": "MK",
+  "nome": "Macedonia del Nord",
+  "en": "North Macedonia",
+  "fips": "MK",
+  "lat": 41.56,
+  "lng": 21.56
+ },
+ {
+  "id": "MG",
+  "nome": "Madagascar",
+  "en": "Madagascar",
+  "fips": "MA",
+  "lat": -18.63,
+  "lng": 46.7
+ },
+ {
+  "id": "MW",
+  "nome": "Malawi",
+  "en": "Malawi",
+  "fips": "MI",
+  "lat": -13.39,
+  "lng": 33.61
+ },
+ {
+  "id": "MY",
+  "nome": "Malaysia",
+  "en": "Malaysia",
+  "fips": "MY",
+  "lat": 2.53,
+  "lng": 113.84
+ },
+ {
+  "id": "MV",
+  "nome": "Maldive",
+  "en": "Maldives",
+  "fips": "MV",
+  "lat": 4.17,
+  "lng": 73.51,
+  "piccolo": true
+ },
+ {
+  "id": "ML",
+  "nome": "Mali",
+  "en": "Mali",
+  "fips": "ML",
+  "lat": 18.69,
+  "lng": -2.04
+ },
+ {
+  "id": "MT",
+  "nome": "Malta",
+  "en": "Malta",
+  "fips": "MT",
+  "lat": 35.89,
+  "lng": 14.43,
+  "piccolo": true
+ },
+ {
+  "id": "MA",
+  "nome": "Marocco",
+  "en": "Morocco",
+  "fips": "MO",
+  "lat": 31.65,
+  "lng": -7.19
+ },
+ {
+  "id": "MR",
+  "nome": "Mauritania",
+  "en": "Mauritania",
+  "fips": "MR",
+  "lat": 19.59,
+  "lng": -9.74
+ },
+ {
+  "id": "MU",
+  "nome": "Mauritius",
+  "en": "Mauritius",
+  "fips": "MP",
+  "lat": -20.3,
+  "lng": 57.57,
+  "piccolo": true
+ },
+ {
+  "id": "MX",
+  "nome": "Messico",
+  "en": "Mexico",
+  "fips": "MX",
+  "lat": 23.92,
+  "lng": -102.29
+ },
+ {
+  "id": "MD",
+  "nome": "Moldavia",
+  "en": "Moldova",
+  "fips": "MD",
+  "lat": 47.43,
+  "lng": 28.49
+ },
+ {
+  "id": "MN",
+  "nome": "Mongolia",
+  "en": "Mongolia",
+  "fips": "MG",
+  "lat": 46,
+  "lng": 104.15
+ },
+ {
+  "id": "ME",
+  "nome": "Montenegro",
+  "en": "Montenegro",
+  "fips": "MJ",
+  "lat": 42.8,
+  "lng": 19.14
+ },
+ {
+  "id": "MZ",
+  "nome": "Mozambico",
+  "en": "Mozambique",
+  "fips": "MZ",
+  "lat": -13.94,
+  "lng": 37.84
+ },
+ {
+  "id": "NA",
+  "nome": "Namibia",
+  "en": "Namibia",
+  "fips": "WA",
+  "lat": -20.58,
+  "lng": 17.11
+ },
+ {
+  "id": "NR",
+  "nome": "Nauru",
+  "en": "Nauru",
+  "fips": "NR",
+  "lat": -0.52,
+  "lng": 166.93,
+  "piccolo": true
+ },
+ {
+  "id": "NP",
+  "nome": "Nepal",
+  "en": "Nepal",
+  "fips": "NP",
+  "lat": 28.3,
+  "lng": 83.64
+ },
+ {
+  "id": "NI",
+  "nome": "Nicaragua",
+  "en": "Nicaragua",
+  "fips": "NU",
+  "lat": 12.67,
+  "lng": -85.07
+ },
+ {
+  "id": "NE",
+  "nome": "Niger",
+  "en": "Niger",
+  "fips": "NG",
+  "lat": 17.45,
+  "lng": 9.5
+ },
+ {
+  "id": "NG",
+  "nome": "Nigeria",
+  "en": "Nigeria",
+  "fips": "NI",
+  "lat": 9.44,
+  "lng": 7.5
+ },
+ {
+  "id": "NO",
+  "nome": "Norvegia",
+  "en": "Norway",
+  "fips": "NO",
+  "lat": 61.36,
+  "lng": 9.68
+ },
+ {
+  "id": "NC",
+  "nome": "Nuova Caledonia",
+  "en": "New Caledonia",
+  "fips": "NC",
+  "lat": -21.06,
+  "lng": 165.08
+ },
+ {
+  "id": "NZ",
+  "nome": "Nuova Zelanda",
+  "en": "New Zealand",
+  "fips": "NZ",
+  "lat": -39.76,
+  "lng": 172.79
+ },
+ {
+  "id": "OM",
+  "nome": "Oman",
+  "en": "Oman",
+  "fips": "MU",
+  "lat": 22.12,
+  "lng": 57.34
+ },
+ {
+  "id": "NL",
+  "nome": "Paesi Bassi",
+  "en": "Netherlands",
+  "fips": "NL",
+  "lat": 52.42,
+  "lng": 5.61
+ },
+ {
+  "id": "PK",
+  "nome": "Pakistan",
+  "en": "Pakistan",
+  "fips": "PK",
+  "lat": 29.33,
+  "lng": 68.55
+ },
+ {
+  "id": "PW",
+  "nome": "Palau",
+  "en": "Palau",
+  "fips": "PS",
+  "lat": 7.52,
+  "lng": 134.58,
+  "piccolo": true
+ },
+ {
+  "id": "PS",
+  "nome": "Palestina",
+  "en": "Palestine",
+  "fips": "WE",
+  "lat": 32.05,
+  "lng": 35.29
+ },
+ {
+  "id": "PA",
+  "nome": "Panama",
+  "en": "Panama",
+  "fips": "PM",
+  "lat": 8.72,
+  "lng": -80.35
+ },
+ {
+  "id": "PG",
+  "nome": "Papua Nuova Guinea",
+  "en": "Papua New Guinea",
+  "fips": "PP",
+  "lat": -5.7,
+  "lng": 143.91
+ },
+ {
+  "id": "PY",
+  "nome": "Paraguay",
+  "en": "Paraguay",
+  "fips": "PA",
+  "lat": -21.67,
+  "lng": -60.15
+ },
+ {
+  "id": "PE",
+  "nome": "Perù",
+  "en": "Peru",
+  "fips": "PE",
+  "lat": -12.98,
+  "lng": -72.9
+ },
+ {
+  "id": "PF",
+  "nome": "Polinesia francese",
+  "en": "French Polynesia",
+  "fips": "FP",
+  "lat": -17.63,
+  "lng": -149.46,
+  "piccolo": true
+ },
+ {
+  "id": "PL",
+  "nome": "Polonia",
+  "en": "Poland",
+  "fips": "PL",
+  "lat": 51.99,
+  "lng": 19.49
+ },
+ {
+  "id": "PR",
+  "nome": "Porto Rico",
+  "en": "Puerto Rico",
+  "fips": "RQ",
+  "lat": 18.23,
+  "lng": -66.48
+ },
+ {
+  "id": "PT",
+  "nome": "Portogallo",
+  "en": "Portugal",
+  "fips": "PO",
+  "lat": 39.61,
+  "lng": -8.27
+ },
+ {
+  "id": "MC",
+  "nome": "Principato di Monaco",
+  "en": "Monaco",
+  "fips": "MN",
+  "lat": 43.74,
+  "lng": 7.4,
+  "piccolo": true
+ },
+ {
+  "id": "QA",
+  "nome": "Qatar",
+  "en": "Qatar",
+  "fips": "QA",
+  "lat": 25.24,
+  "lng": 51.14
+ },
+ {
+  "id": "GB",
+  "nome": "Regno Unito",
+  "en": "United Kingdom",
+  "fips": "UK",
+  "lat": 54.4,
+  "lng": -2.12
+ },
+ {
+  "id": "CZ",
+  "nome": "Repubblica Ceca",
+  "en": "Czech Republic",
+  "fips": "EZ",
+  "lat": 49.88,
+  "lng": 15.38
+ },
+ {
+  "id": "CF",
+  "nome": "Repubblica Centrafricana",
+  "en": "Central African Republic",
+  "fips": "CT",
+  "lat": 6.99,
+  "lng": 20.91
+ },
+ {
+  "id": "CG",
+  "nome": "Repubblica del Congo",
+  "en": "Republic of the Congo",
+  "fips": "CF",
+  "lat": 0.14,
+  "lng": 15.9
+ },
+ {
+  "id": "CD",
+  "nome": "Repubblica Democratica del Congo",
+  "en": "Democratic Republic of the Congo",
+  "fips": "CG",
+  "lat": -1.86,
+  "lng": 23.46
+ },
+ {
+  "id": "DO",
+  "nome": "Repubblica Dominicana",
+  "en": "Dominican Republic",
+  "fips": "DR",
+  "lat": 19.1,
+  "lng": -70.65
+ },
+ {
+  "id": "RO",
+  "nome": "Romania",
+  "en": "Romania",
+  "fips": "RO",
+  "lat": 45.73,
+  "lng": 24.97
+ },
+ {
+  "id": "RW",
+  "nome": "Ruanda",
+  "en": "Rwanda",
+  "fips": "RW",
+  "lat": -1.9,
+  "lng": 30.1
+ },
+ {
+  "id": "RU",
+  "nome": "Russia",
+  "en": "Russia",
+  "fips": "RS",
+  "lat": 58.25,
+  "lng": 44.69
+ },
+ {
+  "id": "EH",
+  "nome": "Sahara Occidentale",
+  "en": "Western Sahara",
+  "fips": "WI",
+  "lat": 23.97,
+  "lng": -12.63
+ },
+ {
+  "id": "KN",
+  "nome": "Saint Kitts e Nevis",
+  "en": "Saint Kitts and Nevis",
+  "fips": "SC",
+  "lat": 17.34,
+  "lng": -62.76,
+  "piccolo": true
+ },
+ {
+  "id": "LC",
+  "nome": "Saint Lucia",
+  "en": "Saint Lucia",
+  "fips": "ST",
+  "lat": 13.89,
+  "lng": -60.98,
+  "piccolo": true
+ },
+ {
+  "id": "VC",
+  "nome": "Saint Vincent e Grenadine",
+  "en": "Saint Vincent and the Grenadines",
+  "fips": "VC",
+  "lat": 13.09,
+  "lng": -61.34,
+  "piccolo": true
+ },
+ {
+  "id": "WS",
+  "nome": "Samoa",
+  "en": "Samoa",
+  "fips": "WS",
+  "lat": -13.64,
+  "lng": -172.44,
+  "piccolo": true
+ },
+ {
+  "id": "SM",
+  "nome": "San Marino",
+  "en": "San Marino",
+  "fips": "SM",
+  "lat": 43.93,
+  "lng": 12.44,
+  "piccolo": true
+ },
+ {
+  "id": "ST",
+  "nome": "São Tomé e Príncipe",
+  "en": "São Tomé and Príncipe",
+  "fips": "TP",
+  "lat": 0.97,
+  "lng": 7.02,
+  "piccolo": true
+ },
+ {
+  "id": "SN",
+  "nome": "Senegal",
+  "en": "Senegal",
+  "fips": "SG",
+  "lat": 15.14,
+  "lng": -14.78
+ },
+ {
+  "id": "RS",
+  "nome": "Serbia",
+  "en": "Serbia",
+  "fips": "RI",
+  "lat": 44.19,
+  "lng": 20.79
+ },
+ {
+  "id": "SC",
+  "nome": "Seychelles",
+  "en": "Seychelles",
+  "fips": "SE",
+  "lat": -4.68,
+  "lng": 55.48,
+  "piccolo": true
+ },
+ {
+  "id": "SL",
+  "nome": "Sierra Leone",
+  "en": "Sierra Leone",
+  "fips": "SL",
+  "lat": 8.62,
+  "lng": -11.76
+ },
+ {
+  "id": "SG",
+  "nome": "Singapore",
+  "en": "Singapore",
+  "fips": "SN",
+  "lat": 1.37,
+  "lng": 103.82,
+  "piccolo": true
+ },
+ {
+  "id": "SY",
+  "nome": "Siria",
+  "en": "Syria",
+  "fips": "SY",
+  "lat": 35.01,
+  "lng": 38.28
+ },
+ {
+  "id": "SK",
+  "nome": "Slovacchia",
+  "en": "Slovakia",
+  "fips": "LO",
+  "lat": 48.73,
+  "lng": 19.05
+ },
+ {
+  "id": "SI",
+  "nome": "Slovenia",
+  "en": "Slovenia",
+  "fips": "SI",
+  "lat": 46.06,
+  "lng": 14.92
+ },
+ {
+  "id": "SO",
+  "nome": "Somalia",
+  "en": "Somalia",
+  "fips": "SO",
+  "lat": 3.57,
+  "lng": 45.19
+ },
+ {
+  "id": "ES",
+  "nome": "Spagna",
+  "en": "Spain",
+  "fips": "SP",
+  "lat": 40.09,
+  "lng": -3.46
+ },
+ {
+  "id": "LK",
+  "nome": "Sri Lanka",
+  "en": "Sri Lanka",
+  "fips": "CE",
+  "lat": 7.58,
+  "lng": 80.7
+ },
+ {
+  "id": "FM",
+  "nome": "Stati Federati di Micronesia",
+  "en": "Federated States of Micronesia",
+  "fips": "FM",
+  "lat": 6.89,
+  "lng": 158.23,
+  "piccolo": true
+ },
+ {
+  "id": "US",
+  "nome": "Stati Uniti d'America",
+  "en": "United States of America",
+  "fips": "US",
+  "lat": 39.54,
+  "lng": -97.48
+ },
+ {
+  "id": "ZA",
+  "nome": "Sudafrica",
+  "en": "South Africa",
+  "fips": "SF",
+  "lat": -29.71,
+  "lng": 23.67
+ },
+ {
+  "id": "SD",
+  "nome": "Sudan",
+  "en": "Sudan",
+  "fips": "SU",
+  "lat": 16.33,
+  "lng": 29.26
+ },
+ {
+  "id": "SS",
+  "nome": "Sudan del Sud",
+  "en": "South Sudan",
+  "fips": "OD",
+  "lat": 7.23,
+  "lng": 30.39
+ },
+ {
+  "id": "SR",
+  "nome": "Suriname",
+  "en": "Suriname",
+  "fips": "NS",
+  "lat": 4.14,
+  "lng": -55.91
+ },
+ {
+  "id": "SE",
+  "nome": "Svezia",
+  "en": "Sweden",
+  "fips": "SW",
+  "lat": 65.86,
+  "lng": 19.02
+ },
+ {
+  "id": "CH",
+  "nome": "Svizzera",
+  "en": "Switzerland",
+  "fips": "SZ",
+  "lat": 46.72,
+  "lng": 7.46
+ },
+ {
+  "id": "TJ",
+  "nome": "Tagikistan",
+  "en": "Tajikistan",
+  "fips": "TI",
+  "lat": 38.2,
+  "lng": 72.59
+ },
+ {
+  "id": "TW",
+  "nome": "Taiwan",
+  "en": "Taiwan",
+  "fips": "TW",
+  "lat": 23.65,
+  "lng": 120.87
+ },
+ {
+  "id": "TZ",
+  "nome": "Tanzania",
+  "en": "Tanzania",
+  "fips": "TZ",
+  "lat": -6.05,
+  "lng": 34.96
+ },
+ {
+  "id": "TH",
+  "nome": "Thailandia",
+  "en": "Thailand",
+  "fips": "TH",
+  "lat": 15.46,
+  "lng": 101.07
+ },
+ {
+  "id": "TL",
+  "nome": "Timor Est",
+  "en": "East Timor",
+  "fips": "TT",
+  "lat": -8.8,
+  "lng": 125.85
+ },
+ {
+  "id": "TG",
+  "nome": "Togo",
+  "en": "Togo",
+  "fips": "TO",
+  "lat": 8.81,
+  "lng": 1.06
+ },
+ {
+  "id": "TO",
+  "nome": "Tonga",
+  "en": "Tonga",
+  "fips": "TN",
+  "lat": -21.21,
+  "lng": -175.16,
+  "piccolo": true
+ },
+ {
+  "id": "TT",
+  "nome": "Trinidad e Tobago",
+  "en": "Trinidad and Tobago",
+  "fips": "TD",
+  "lat": 11,
+  "lng": -60.92
+ },
+ {
+  "id": "TN",
+  "nome": "Tunisia",
+  "en": "Tunisia",
+  "fips": "TS",
+  "lat": 33.69,
+  "lng": 9.01
+ },
+ {
+  "id": "TR",
+  "nome": "Turchia",
+  "en": "Turkey",
+  "fips": "TU",
+  "lat": 39.35,
+  "lng": 34.51
+ },
+ {
+  "id": "TM",
+  "nome": "Turkmenistan",
+  "en": "Turkmenistan",
+  "fips": "TX",
+  "lat": 39.86,
+  "lng": 58.68
+ },
+ {
+  "id": "TV",
+  "nome": "Tuvalu",
+  "en": "Tuvalu",
+  "fips": "TV",
+  "lat": -8.51,
+  "lng": 179.21,
+  "piccolo": true
+ },
+ {
+  "id": "UA",
+  "nome": "Ucraina",
+  "en": "Ukraine",
+  "fips": "UP",
+  "lat": 49.72,
+  "lng": 32.14
+ },
+ {
+  "id": "UG",
+  "nome": "Uganda",
+  "en": "Uganda",
+  "fips": "UG",
+  "lat": 1.97,
+  "lng": 32.95
+ },
+ {
+  "id": "HU",
+  "nome": "Ungheria",
+  "en": "Hungary",
+  "fips": "HU",
+  "lat": 47.09,
+  "lng": 19.45
+ },
+ {
+  "id": "UY",
+  "nome": "Uruguay",
+  "en": "Uruguay",
+  "fips": "UY",
+  "lat": -32.96,
+  "lng": -55.97
+ },
+ {
+  "id": "UZ",
+  "nome": "Uzbekistan",
+  "en": "Uzbekistan",
+  "fips": "UZ",
+  "lat": 41.69,
+  "lng": 64.01
+ },
+ {
+  "id": "VU",
+  "nome": "Vanuatu",
+  "en": "Vanuatu",
+  "fips": "NH",
+  "lat": -15.37,
+  "lng": 166.91
+ },
+ {
+  "id": "VE",
+  "nome": "Venezuela",
+  "en": "Venezuela",
+  "fips": "VE",
+  "lat": 7.18,
+  "lng": -64.6
+ },
+ {
+  "id": "VN",
+  "nome": "Vietnam",
+  "en": "Vietnam",
+  "fips": "VM",
+  "lat": 21.72,
+  "lng": 105.39
+ },
+ {
+  "id": "YE",
+  "nome": "Yemen",
+  "en": "Yemen",
+  "fips": "YM",
+  "lat": 15.33,
+  "lng": 45.87
+ },
+ {
+  "id": "ZM",
+  "nome": "Zambia",
+  "en": "Zambia",
+  "fips": "ZA",
+  "lat": -14.66,
+  "lng": 26.4
+ },
+ {
+  "id": "ZW",
+  "nome": "Zimbabwe",
+  "en": "Zimbabwe",
+  "fips": "ZI",
+  "lat": -18.91,
+  "lng": 29.93
+ }
+]

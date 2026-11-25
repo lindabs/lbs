@@ -160,6 +160,34 @@ details.full .read{padding:0 14px 14px}
 .followups details > div{padding:0 14px 14px;font-family:var(--f-read);font-size:1.02rem;line-height:1.55}
 .slot{border:1px dashed var(--accent);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:6px}
 footer{font-size:.8rem;color:var(--muted);border-top:1px solid var(--line);padding-top:12px;margin-top:8px}
+/* LEGGI */
+.toc{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px}
+.tocbtn{font:inherit;text-align:left;border:1px solid var(--line);background:var(--sheet);color:var(--ink);border-radius:8px;padding:8px 10px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:6px;min-width:0;font-size:.88rem;font-weight:600}
+.tocbtn[aria-current="true"]{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.tocbtn .ck{font-family:var(--f-mono);font-size:.7rem;color:var(--ok);font-weight:500}
+.reader-bar{position:sticky;top:calc(env(safe-area-inset-top,0px) + var(--hdr,132px) - 1px);z-index:3;background:var(--paper);display:flex;gap:10px;align-items:center;padding-block:6px;border-bottom:1px solid var(--line)}
+.subtoc{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;min-width:0;flex:1}
+.subtoc::-webkit-scrollbar{display:none}
+.subtoc a{flex:0 0 auto;font-family:var(--f-mono);font-size:.75rem;color:var(--muted);text-decoration:none;border:1px solid var(--line);border-radius:99px;padding:3px 9px;white-space:nowrap;background:var(--sheet)}
+.reader{--rs:1.12rem;font-family:var(--f-read);font-size:var(--rs);line-height:1.65;max-width:68ch;display:flex;flex-direction:column;gap:.85em}
+.reader > *{margin:0}
+.reader h2{font-size:1.8em;line-height:1.15;margin-top:.2em}
+.reader h3{font-family:var(--f-read);font-weight:600;font-size:1.3em;line-height:1.25;margin-top:1.1em;padding-top:.8em;border-top:1px solid var(--line);scroll-margin-top:calc(var(--hdr,132px) + 60px)}
+.reader h4{font-family:var(--f-ui);font-weight:600;font-size:.95em;margin-top:.6em;scroll-margin-top:calc(var(--hdr,132px) + 60px)}
+.reader strong{font-weight:600}
+.reader ul,.reader ol{padding-left:1.3em;display:flex;flex-direction:column;gap:.35em;margin:0}
+.reader li > ul,.reader li > ol{margin-top:.35em}
+.reader blockquote{margin:0;border-left:3px solid var(--accent);background:var(--accent-soft);border-radius:0 8px 8px 0;padding:12px 16px;display:flex;flex-direction:column;gap:.6em}
+.reader blockquote > *{margin:0}
+.reader hr{border:0;border-top:1px solid var(--line);width:100%}
+.reader .tbl{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--sheet)}
+.reader table{border-collapse:collapse;width:100%;font-family:var(--f-ui);font-size:.82em;line-height:1.45}
+.reader th,.reader td{text-align:left;vertical-align:top;padding:8px 10px;border-bottom:1px solid var(--line);min-width:120px}
+.reader th{background:var(--paper);font-weight:600}
+.reader tr:last-child td{border-bottom:0}
+.reader code{font-family:var(--f-mono);font-size:.85em}
+.reader-foot{display:flex;gap:8px;flex-wrap:wrap;justify-content:space-between}
+.reader-foot .btn.isdone{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
 @media (max-width:520px){
   h2{font-size:1.55rem}
   .scale{grid-template-columns:1fr}
@@ -184,6 +212,7 @@ footer{font-size:.8rem;color:var(--muted);border-top:1px solid var(--line);paddi
       <a href="#oggi">Oggi</a>
       <a href="#filo">Il filo</a>
       <a href="#capitoli">Capitoli</a>
+      <a href="#leggi">Leggi</a>
       <a href="#allenamento">Allenamento</a>
       <a href="#relatrice">Domande commissione</a>
       <a href="#discorso">Discorso</a>
@@ -251,6 +280,28 @@ footer{font-size:.8rem;color:var(--muted);border-top:1px solid var(--line);paddi
     <button type="button" data-l="2" aria-pressed="false">Commissione</button>
   </div>
   <article class="sheet" id="chview" style="display:flex;flex-direction:column;gap:16px"></article>
+</section>
+
+<!-- LEGGI -->
+<section class="view" id="v-leggi" hidden>
+  <div>
+    <div class="eyebrow">La tesi raccontata</div>
+    <h2>Leggi un capitolo alla volta</h2>
+  </div>
+  <div class="toc" id="toc" role="list"></div>
+  <div class="reader-bar">
+    <div class="row" style="gap:6px">
+      <button class="btn small ghost" type="button" id="fs-down" aria-label="Testo più piccolo">A−</button>
+      <button class="btn small ghost" type="button" id="fs-up" aria-label="Testo più grande">A+</button>
+    </div>
+    <div class="subtoc" id="subtoc"></div>
+  </div>
+  <article class="reader" id="reader"><p class="hint">Caricamento del testo…</p></article>
+  <div class="reader-foot">
+    <button class="btn" type="button" id="r-prev">← Precedente</button>
+    <button class="btn primary" type="button" id="r-done">Segna come letto</button>
+    <button class="btn" type="button" id="r-next">Successivo →</button>
+  </div>
 </section>
 
 <!-- ALLENAMENTO -->
@@ -337,6 +388,7 @@ footer{font-size:.8rem;color:var(--muted);border-top:1px solid var(--line);paddi
 <footer class="wrap" style="padding-block:0 32px">Tutti i contenuti sono ricavati dalla tesi «Nuovi profili di vulnerabilità nell'ambiente digitale» (Univ. di Padova, a.a. 2025/2026). I progressi dell'allenamento restano solo in questo browser.</footer>
 </main>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.3.0/marked.min.js"></script>
 <script>
 (function(){
 "use strict";
@@ -529,7 +581,7 @@ const BLOCKS = [
 ];
 
 /* ---------- ROUTING ---------- */
-const VIEWS = ["oggi","filo","capitoli","allenamento","relatrice","discorso"];
+const VIEWS = ["oggi","filo","capitoli","leggi","allenamento","relatrice","discorso"];
 function route(){
   const h = (location.hash||"").replace("#","");
   const v = VIEWS.includes(h) ? h : "oggi";
@@ -539,6 +591,7 @@ function route(){
   });
   if(v==="oggi") renderToday();
   if(v==="allenamento") renderCard();
+  if(v==="leggi") openReader();
   window.scrollTo(0,0);
 }
 window.addEventListener("hashchange", route);
@@ -613,11 +666,75 @@ function renderCh(){
              : `<div class="read" style="font-size:1.04rem">${c.l2}</div>`;
   const kw = Object.entries(c.kw).map(([k,v])=>`<dt>${k}</dt><dd class="mono">${v}</dd>`).join("");
   const s = counts(c.id);
-  $("#chview").innerHTML = `<div><div class="eyebrow">${c.n}</div><h3 style="font-family:var(--f-read);font-weight:500;font-size:1.4rem;margin-top:4px">${c.t}</h3></div>${body}<dl class="kw">${kw}</dl><div class="row"><a class="btn small primary" href="#allenamento" data-train="${c.id}">Allenati su questo capitolo</a><span class="hint">${s.k} di ${s.tot} carte sapute</span></div>`;
+  $("#chview").innerHTML = `<div><div class="eyebrow">${c.n}</div><h3 style="font-family:var(--f-read);font-weight:500;font-size:1.4rem;margin-top:4px">${c.t}</h3></div>${body}<dl class="kw">${kw}</dl><div class="row"><a class="btn small" href="#leggi" data-read="${c.id}">Leggi il capitolo raccontato</a><a class="btn small primary" href="#allenamento" data-train="${c.id}">Allenati su questo capitolo</a><span class="hint">${s.k} di ${s.tot} carte sapute</span></div>`;
 }
 $("#chlist")?.addEventListener("click", e=>{ const b=e.target.closest(".chbtn"); if(!b) return; curCh=b.dataset.c; store.set("tesi.ch",curCh); renderChList(); renderCh(); });
 document.getElementById("levels").addEventListener("click", e=>{ const b=e.target.closest("button"); if(!b) return; curL=+b.dataset.l; store.set("tesi.lvl",curL); renderCh(); });
-document.getElementById("chview").addEventListener("click", e=>{ const a=e.target.closest("[data-train]"); if(!a) return; deckFilter=a.dataset.train; store.set("tesi.deck",deckFilter); $("#deck-filter").value=deckFilter; queue=null; });
+document.getElementById("chview").addEventListener("click", e=>{
+  const r=e.target.closest("[data-read]"); if(r){ pendingCh=r.dataset.read; return; }
+  const a=e.target.closest("[data-train]"); if(!a) return; deckFilter=a.dataset.train; store.set("tesi.deck",deckFilter); $("#deck-filter").value=deckFilter; queue=null; });
+
+/* ---------- LEGGI ---------- */
+const SRC = [
+  {file:"raccontata/parte-1.md", skip:[]},
+  {file:"raccontata/parte-2.md", skip:["Come usare questo documento"]}
+];
+const SHORT = t => { const m=t.match(/^Capitolo (\d)/); if(m) return "Cap. "+m[1]; if(/^La catena/.test(t)) return "Catena Parte I"; if(/^Conclusioni/.test(t)) return "Conclusioni"; if(/^Indice delle fonti/.test(t)) return "Indice fonti"; return t.slice(0,22); };
+const CHOF = t => { const m=t.match(/^Capitolo (\d)/); if(m) return "c"+m[1]; if(/^Conclusioni/.test(t)) return "cc"; return ""; };
+let pendingCh = null, SECS = [], curSec = store.get("tesi.sec",0), readDone = store.get("tesi.read",{}), fs = store.get("tesi.fs",1.12), loadState = "idle";
+function splitMd(md, skip){
+  const out=[]; let cur=null;
+  md.split("\n").forEach(line=>{
+    const h = line.match(/^## (.+)$/);
+    if(h){ cur={title:h[1].trim(), body:[line]}; if(!skip.includes(cur.title)) out.push(cur); return; }
+    if(cur) cur.body.push(line);
+  });
+  return out.map(s=>({title:s.title, short:SHORT(s.title), ch:CHOF(s.title), md:s.body.join("\n")}));
+}
+async function loadSecs(){
+  if(loadState==="ok"||loadState==="loading") return;
+  loadState="loading";
+  try{
+    const texts = await Promise.all(SRC.map(s=>fetch(s.file).then(r=>{ if(!r.ok) throw new Error(r.status); return r.text(); })));
+    SECS = texts.flatMap((t,i)=>splitMd(t, SRC[i].skip));
+    loadState="ok";
+  }catch(e){ loadState="error"; }
+}
+function slug(t,i){ return "s"+i+"-"+t.toLowerCase().normalize("NFD").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,40); }
+function renderToc(){
+  $("#toc").innerHTML = SECS.map((s,i)=>`<button class="tocbtn" type="button" role="listitem" data-s="${i}" aria-current="${i===curSec}"><span>${s.short}</span>${readDone[s.title]?'<span class="ck">✓ letto</span>':''}</button>`).join("");
+}
+function renderReader(){
+  const s = SECS[curSec]; if(!s) return;
+  const box = $("#reader");
+  box.style.setProperty("--rs", fs+"rem");
+  const html = (window.marked && window.marked.parse) ? window.marked.parse(s.md, {mangle:false, headerIds:false}) : `<pre style="white-space:pre-wrap">${s.md.replace(/&/g,"&amp;").replace(/</g,"&lt;")}</pre>`;
+  box.innerHTML = html;
+  box.querySelectorAll("table").forEach(t=>{ const w=document.createElement("div"); w.className="tbl"; t.parentNode.insertBefore(w,t); w.appendChild(t); });
+  const heads = [...box.querySelectorAll("h3")];
+  heads.forEach((h,i)=>{ h.id = slug(h.textContent,i); });
+  $("#subtoc").innerHTML = heads.map(h=>{ const m=h.textContent.match(/^(\d+(\.\d+)?( e \d+\.\d+)?|\d\.)/); const lab = m ? "§ "+m[1].replace(/\.$/,"") : h.textContent.slice(0,18)+"…"; return `<a href="#leggi" data-h="${h.id}">${lab}</a>`; }).join("");
+  $("#r-prev").disabled = curSec<=0; $("#r-next").disabled = curSec>=SECS.length-1;
+  const d=$("#r-done"); const done=!!readDone[s.title];
+  d.textContent = done ? "✓ Letto" : "Segna come letto"; d.classList.toggle("isdone", done); d.classList.toggle("primary", !done);
+  renderToc();
+}
+async function openReader(){
+  if(loadState!=="ok"){
+    await loadSecs();
+    if(loadState!=="ok"){ $("#reader").innerHTML = `<p class="read">Non riesco a caricare il testo raccontato. Controlla la connessione e riapri questa sezione.</p>`; loadState="idle"; return; }
+  }
+  if(pendingCh){ const i=SECS.findIndex(x=>x.ch===pendingCh); if(i>=0){ curSec=i; store.set("tesi.sec",curSec); } pendingCh=null; }
+  if(curSec>=SECS.length) curSec=0;
+  renderReader();
+}
+$("#toc").addEventListener("click", e=>{ const b=e.target.closest("[data-s]"); if(!b) return; curSec=+b.dataset.s; store.set("tesi.sec",curSec); renderReader(); $("#v-leggi").scrollIntoView(); });
+$("#subtoc").addEventListener("click", e=>{ const a=e.target.closest("[data-h]"); if(!a) return; e.preventDefault(); const h=document.getElementById(a.dataset.h); if(h) h.scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"}); });
+$("#r-prev").onclick = ()=>{ if(curSec>0){ curSec--; store.set("tesi.sec",curSec); renderReader(); $("#v-leggi").scrollIntoView(); } };
+$("#r-next").onclick = ()=>{ if(curSec<SECS.length-1){ curSec++; store.set("tesi.sec",curSec); renderReader(); $("#v-leggi").scrollIntoView(); } };
+$("#r-done").onclick = ()=>{ const s=SECS[curSec]; if(!s) return; readDone[s.title]=!readDone[s.title]; store.set("tesi.read",readDone); renderReader(); };
+$("#fs-up").onclick = ()=>{ fs=Math.min(1.5, +(fs+0.06).toFixed(2)); store.set("tesi.fs",fs); $("#reader").style.setProperty("--rs", fs+"rem"); };
+$("#fs-down").onclick = ()=>{ fs=Math.max(0.94, +(fs-0.06).toFixed(2)); store.set("tesi.fs",fs); $("#reader").style.setProperty("--rs", fs+"rem"); };
 
 /* ---------- ALLENAMENTO ---------- */
 let deckFilter = store.get("tesi.deck","tutti");
@@ -713,6 +830,8 @@ function showRuns(){
 }
 
 /* ---------- AVVIO ---------- */
+function setHdr(){ const h=document.querySelector("header.top"); if(h) document.documentElement.style.setProperty("--hdr", h.offsetHeight+"px"); }
+setHdr(); window.addEventListener("resize", setHdr); if(document.fonts&&document.fonts.ready) document.fonts.ready.then(setHdr);
 renderCountdown(); renderFilo(); renderChList(); renderCh(); renderDeckFilter(); renderBlocks(); updateClock(); showRuns();
 route();
 })();

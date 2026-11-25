@@ -72,7 +72,7 @@ di Gemini, il lavoro lo fa GitHub Actions e il sito resta su GitHub Pages.
 
 - Ogni mattina alle 3:37 UTC (4:37 in inverno, 5:37 in estate) parte `.github/workflows/mondo.yml`.
   Raccoglie i titoli delle ultime 24 ore dai feed RSS pubblici di alcune testate internazionali (BBC,
-  Al Jazeera, DW, France 24, ANSA…) e la stampa locale paese per paese da GDELT (al massimo un'ora: se è lento si prosegue con i soli feed),
+  Al Jazeera, DW, New York Times, ANSA…) e la stampa locale paese per paese da GDELT (al massimo un'ora: se è lento si prosegue con i soli feed),
   li fa riassumere a Gemini e salva `mondo/dati/oggi-it.json`.
 - Serve il secret `GEMINI_API_KEY` (Settings → Secrets and variables → Actions), creato su Google AI Studio
   con un account senza fatturazione: così non può mai costare nulla. La chiave non va mai scritta nei file.

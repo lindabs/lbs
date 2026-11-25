@@ -1,0 +1,840 @@
+<title>Tesi in tasca</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="Studio della tesi: piano, filo del ragionamento, capitoli, tesi raccontata, flashcard e discorso.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: una "interfaccia" che mette in scena la tesi — barra a schede in alto, colonna di lettura stretta, pulsanti a due pesi (accetta/rifiuta) come motivo ricorrente. Accento: il rosso bordeaux dell'Università di Padova. */
+:root{
+  --paper:#f5f5f2; --sheet:#ffffff; --ink:#1b1d22; --muted:#5d606a; --line:#dcdcd6;
+  --accent:#9b0a1d; --accent-soft:#f4e3e5; --accent-ink:#ffffff;
+  --ok:#2f6b3a; --ok-soft:#e3efe4; --warn:#8a5a00; --warn-soft:#f6ecd6; --bad:#9b0a1d; --bad-soft:#f4e3e5;
+  --f-ui:"Instrument Sans", "Helvetica Neue", Arial, sans-serif;
+  --f-read:"Newsreader", Georgia, "Times New Roman", serif;
+  --f-mono:"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#14151a; --sheet:#1c1e24; --ink:#ecebe6; --muted:#a3a5ad; --line:#2e3038;
+  --accent:#e0566a; --accent-soft:#3a1d23; --accent-ink:#14151a;
+  --ok:#7fc28b; --ok-soft:#1f3123; --warn:#e0b45a; --warn-soft:#3a2f17; --bad:#e0566a; --bad-soft:#3a1d23;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#14151a; --sheet:#1c1e24; --ink:#ecebe6; --muted:#a3a5ad; --line:#2e3038;
+  --accent:#e0566a; --accent-soft:#3a1d23; --accent-ink:#14151a;
+  --ok:#7fc28b; --ok-soft:#1f3123; --warn:#e0b45a; --warn-soft:#3a2f17; --bad:#e0566a; --bad-soft:#3a1d23;
+  color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-ui);font-size:16px;line-height:1.5}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--paper)}
+.wrap{max-width:760px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 64px}
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--paper);border-bottom:1px solid var(--line)}
+.top-inner{max-width:760px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:12px 0}
+.brand{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.brand h1{font-family:var(--f-read);font-weight:500;font-size:1.45rem;margin:0;letter-spacing:-.01em}
+.brand h1 em{font-style:italic;color:var(--accent)}
+.count{font-family:var(--f-mono);font-size:.8rem;color:var(--muted)}
+.count b{color:var(--accent);font-weight:500}
+nav.tabs{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;margin-top:10px}
+nav.tabs::-webkit-scrollbar{display:none}
+nav.tabs a{flex:0 0 auto;text-decoration:none;color:var(--muted);font-weight:500;font-size:.92rem;padding:8px 12px 10px;border-bottom:2px solid transparent}
+nav.tabs a[aria-current="page"]{color:var(--ink);border-bottom-color:var(--accent)}
+nav.tabs a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+section.view{display:flex;flex-direction:column;gap:20px;padding-top:24px}
+h2{font-family:var(--f-read);font-weight:500;font-size:1.9rem;line-height:1.15;margin:0;text-wrap:balance;letter-spacing:-.015em}
+h3{font-family:var(--f-ui);font-weight:600;font-size:1.05rem;margin:0;text-wrap:balance}
+.eyebrow{font-size:.75rem;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.lead{font-family:var(--f-read);font-size:1.15rem;color:var(--muted);margin:0;max-width:62ch}
+p{margin:0}
+.read{font-family:var(--f-read);font-size:1.12rem;line-height:1.6;max-width:65ch}
+.read p+p{margin-top:.7em}
+.read ul,.read ol{margin:.4em 0 0;padding-left:1.2em;display:flex;flex-direction:column;gap:.35em}
+.read b{font-weight:600}
+.sheet{background:var(--sheet);border:1px solid var(--line);border-radius:var(--r);padding:18px}
+.mono{font-family:var(--f-mono);font-size:.82rem}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-family:var(--f-mono);font-size:.78rem;border:1px solid var(--line);border-radius:999px;padding:3px 10px;color:var(--muted);background:var(--sheet)}
+.chip.acc{border-color:var(--accent);color:var(--accent)}
+/* pulsanti: il motivo "accetta / rifiuta" */
+.btn{font:inherit;font-weight:600;font-size:.95rem;border-radius:8px;padding:10px 16px;cursor:pointer;border:1px solid var(--line);background:var(--sheet);color:var(--ink)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.ghost{background:transparent}
+.btn.small{padding:6px 10px;font-size:.85rem}
+.btn:disabled{opacity:.45;cursor:default}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+/* OGGI */
+.days{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.day{border:1px solid var(--line);border-radius:var(--r);padding:12px;background:var(--sheet);display:flex;flex-direction:column;gap:4px;min-width:0}
+.day .d{font-family:var(--f-mono);font-size:.75rem;color:var(--muted)}
+.day .t{font-weight:600;font-size:.95rem}
+.day .s{font-size:.85rem;color:var(--muted)}
+.day.today{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.day.today .d{color:var(--accent)}
+.day.past{opacity:.55}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stat{border-top:2px solid var(--line);padding-top:8px}
+.stat .n{font-family:var(--f-read);font-size:2rem;line-height:1;font-variant-numeric:tabular-nums}
+.stat .l{font-size:.8rem;color:var(--muted)}
+.stat.k{border-top-color:var(--ok)} .stat.q{border-top-color:var(--warn)} .stat.x{border-top-color:var(--bad)}
+.bars{display:flex;flex-direction:column;gap:8px}
+.bar{display:grid;grid-template-columns:110px 1fr 44px;gap:10px;align-items:center;font-size:.85rem}
+.bar .track{height:8px;background:var(--line);border-radius:99px;overflow:hidden;display:flex}
+.bar .track i{display:block;height:100%}
+.bar .pct{font-family:var(--f-mono);font-size:.78rem;text-align:right;color:var(--muted)}
+/* FILO */
+.chain{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.link{display:grid;grid-template-columns:34px 1fr;gap:12px;position:relative;padding-bottom:14px}
+.link::before{content:"";position:absolute;left:16px;top:30px;bottom:0;width:2px;background:var(--line)}
+.link:last-child::before{display:none}
+.knot{width:34px;height:34px;border-radius:50%;border:2px solid var(--accent);color:var(--accent);display:grid;place-items:center;font-family:var(--f-mono);font-size:.8rem;background:var(--paper);position:relative;z-index:1}
+.link .q{font-family:var(--f-read);font-size:1.15rem;line-height:1.35;font-weight:500}
+.link .where{font-family:var(--f-mono);font-size:.72rem;color:var(--muted);margin-top:2px}
+.link .a{margin-top:8px;font-family:var(--f-read);font-size:1.05rem;line-height:1.55;border-left:2px solid var(--accent);padding-left:12px}
+.link .reveal{margin-top:8px}
+/* CAPITOLI */
+.chlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px}
+.chbtn{text-align:left;font:inherit;border:1px solid var(--line);background:var(--sheet);color:var(--ink);border-radius:var(--r);padding:12px;cursor:pointer;display:flex;flex-direction:column;gap:2px;min-width:0}
+.chbtn .n{font-family:var(--f-mono);font-size:.72rem;color:var(--muted)}
+.chbtn .t{font-weight:600;font-size:.95rem;line-height:1.25}
+.chbtn[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.chbtn[aria-pressed="true"] .n{color:var(--accent)}
+.levels{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;width:max-content;max-width:100%}
+.levels button{font:inherit;font-size:.88rem;font-weight:600;padding:8px 12px;border:0;background:var(--sheet);color:var(--muted);cursor:pointer}
+.levels button+button{border-left:1px solid var(--line)}
+.levels button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.quote{font-family:var(--f-read);font-style:italic;font-size:1.1rem;line-height:1.55;border-left:2px solid var(--accent);padding-left:14px;max-width:65ch}
+.kw{display:grid;grid-template-columns:110px 1fr;gap:6px 12px;font-size:.9rem}
+.kw dt{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;padding-top:3px}
+.kw dd{margin:0;min-width:0}
+/* ALLENAMENTO */
+.card{background:var(--sheet);border:1px solid var(--line);border-radius:14px;padding:22px;display:flex;flex-direction:column;gap:16px;min-height:260px}
+.card .meta{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.card .qtext{font-family:var(--f-read);font-size:1.35rem;line-height:1.35;font-weight:500;text-wrap:balance}
+.card .atext{font-family:var(--f-read);font-size:1.1rem;line-height:1.55;border-top:1px dashed var(--line);padding-top:14px}
+.grade{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.grade .btn{padding:12px 8px}
+.grade .g0{border-color:var(--bad);color:var(--bad);background:var(--bad-soft)}
+.grade .g1{border-color:var(--warn);color:var(--warn);background:var(--warn-soft)}
+.grade .g2{border-color:var(--ok);color:var(--ok);background:var(--ok-soft)}
+.pill{font-family:var(--f-mono);font-size:.72rem;padding:2px 8px;border-radius:99px;border:1px solid currentColor}
+.pill.k{color:var(--ok)} .pill.q{color:var(--warn)} .pill.x{color:var(--bad)} .pill.n{color:var(--muted)}
+select{font:inherit;font-size:.9rem;padding:8px 10px;border-radius:8px;border:1px solid var(--line);background:var(--sheet);color:var(--ink);max-width:100%}
+.hint{font-size:.85rem;color:var(--muted)}
+/* DISCORSO */
+.timer{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;background:var(--ink);color:var(--paper);border-radius:14px;padding:16px 18px}
+.timer .clock{font-family:var(--f-mono);font-size:2.4rem;font-variant-numeric:tabular-nums;line-height:1}
+.timer .sub{font-size:.8rem;opacity:.75}
+.timer .btn{background:transparent;color:var(--paper);border-color:rgba(127,127,127,.5)}
+.timer .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.blocks{display:flex;flex-direction:column;gap:8px}
+.block{border:1px solid var(--line);border-radius:var(--r);background:var(--sheet);padding:14px;display:grid;grid-template-columns:1fr auto;gap:6px 12px;align-items:start}
+.block.cur{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.block.done{opacity:.65}
+.block .bt{font-weight:600}
+.block .tg{font-family:var(--f-mono);font-size:.78rem;color:var(--muted);text-align:right;white-space:nowrap}
+.block .kws{grid-column:1/-1;font-family:var(--f-read);font-size:1.02rem;line-height:1.5}
+.block .lap{font-family:var(--f-mono);font-size:.78rem}
+.block .lap.over{color:var(--bad)} .block .lap.in{color:var(--ok)}
+.block .tip{grid-column:1/-1;font-size:.85rem;color:var(--warn);background:var(--warn-soft);border-radius:6px;padding:6px 10px}
+details.full{border:1px solid var(--line);border-radius:var(--r);background:var(--sheet)}
+details.full summary{cursor:pointer;padding:12px 14px;font-weight:600}
+details.full .read{padding:0 14px 14px}
+/* RELATRICE */
+.args{counter-reset:a;list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.args li{counter-increment:a;display:grid;grid-template-columns:30px 1fr;gap:10px}
+.args li::before{content:counter(a);font-family:var(--f-mono);font-size:.8rem;width:26px;height:26px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center}
+.args li > div{min-width:0}
+.scale{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.scale > div{border:1px solid var(--line);border-radius:var(--r);padding:12px;background:var(--sheet);display:flex;flex-direction:column;gap:6px;min-width:0}
+.scale .mock{display:flex;gap:6px;align-items:center;flex-wrap:wrap;min-height:34px}
+.mock span{font-size:.75rem;font-weight:600;border-radius:6px;padding:5px 9px;border:1px solid var(--line)}
+.mock .yes{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.mock .no{color:var(--muted)}
+.mock .tiny{font-size:.6rem;padding:3px 6px;opacity:.7}
+.mock .gone{text-decoration:line-through;opacity:.4}
+.scale .nm{font-weight:700}
+.scale .ds{font-size:.85rem;color:var(--muted)}
+.followups{display:flex;flex-direction:column;gap:8px}
+.followups details{border:1px solid var(--line);border-radius:var(--r);background:var(--sheet)}
+.followups summary{cursor:pointer;padding:12px 14px;font-family:var(--f-read);font-size:1.05rem}
+.followups details > div{padding:0 14px 14px;font-family:var(--f-read);font-size:1.02rem;line-height:1.55}
+.slot{border:1px dashed var(--accent);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:6px}
+footer{font-size:.8rem;color:var(--muted);border-top:1px solid var(--line);padding-top:12px;margin-top:8px}
+/* LEGGI */
+.toc{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px}
+.tocbtn{font:inherit;text-align:left;border:1px solid var(--line);background:var(--sheet);color:var(--ink);border-radius:8px;padding:8px 10px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:6px;min-width:0;font-size:.88rem;font-weight:600}
+.tocbtn[aria-current="true"]{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.tocbtn .ck{font-family:var(--f-mono);font-size:.7rem;color:var(--ok);font-weight:500}
+.reader-bar{position:sticky;top:calc(env(safe-area-inset-top,0px) + var(--hdr,132px) - 1px);z-index:3;background:var(--paper);display:flex;gap:10px;align-items:center;padding-block:6px;border-bottom:1px solid var(--line)}
+.subtoc{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;min-width:0;flex:1}
+.subtoc::-webkit-scrollbar{display:none}
+.subtoc a{flex:0 0 auto;font-family:var(--f-mono);font-size:.75rem;color:var(--muted);text-decoration:none;border:1px solid var(--line);border-radius:99px;padding:3px 9px;white-space:nowrap;background:var(--sheet)}
+.reader{--rs:1.12rem;font-family:var(--f-read);font-size:var(--rs);line-height:1.65;max-width:68ch;display:flex;flex-direction:column;gap:.85em}
+.reader > *{margin:0}
+.reader h2{font-size:1.8em;line-height:1.15;margin-top:.2em}
+.reader h3{font-family:var(--f-read);font-weight:600;font-size:1.3em;line-height:1.25;margin-top:1.1em;padding-top:.8em;border-top:1px solid var(--line);scroll-margin-top:calc(var(--hdr,132px) + 60px)}
+.reader h4{font-family:var(--f-ui);font-weight:600;font-size:.95em;margin-top:.6em;scroll-margin-top:calc(var(--hdr,132px) + 60px)}
+.reader strong{font-weight:600}
+.reader ul,.reader ol{padding-left:1.3em;display:flex;flex-direction:column;gap:.35em;margin:0}
+.reader li > ul,.reader li > ol{margin-top:.35em}
+.reader blockquote{margin:0;border-left:3px solid var(--accent);background:var(--accent-soft);border-radius:0 8px 8px 0;padding:12px 16px;display:flex;flex-direction:column;gap:.6em}
+.reader blockquote > *{margin:0}
+.reader hr{border:0;border-top:1px solid var(--line);width:100%}
+.reader .tbl{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--sheet)}
+.reader table{border-collapse:collapse;width:100%;font-family:var(--f-ui);font-size:.82em;line-height:1.45}
+.reader th,.reader td{text-align:left;vertical-align:top;padding:8px 10px;border-bottom:1px solid var(--line);min-width:120px}
+.reader th{background:var(--paper);font-weight:600}
+.reader tr:last-child td{border-bottom:0}
+.reader code{font-family:var(--f-mono);font-size:.85em}
+.reader-foot{display:flex;gap:8px;flex-wrap:wrap;justify-content:space-between}
+.reader-foot .btn.isdone{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+@media (max-width:520px){
+  h2{font-size:1.55rem}
+  .scale{grid-template-columns:1fr}
+  .stats{grid-template-columns:repeat(3,1fr)}
+  .kw{grid-template-columns:1fr}
+  .bar{grid-template-columns:88px 1fr 40px}
+  .card .qtext{font-size:1.2rem}
+}
+@media (prefers-reduced-motion:no-preference){
+  .card,.link .a{animation:in .25s ease-out}
+  @keyframes in{from{transform:translateY(4px)}to{transform:none}}
+}
+</style>
+
+<header class="top">
+  <div class="top-inner">
+    <div class="brand">
+      <h1>Tesi <em>in tasca</em></h1>
+      <span class="count" id="countdown">Discussione: 4 dicembre</span>
+    </div>
+    <nav class="tabs" aria-label="Sezioni">
+      <a href="#oggi">Oggi</a>
+      <a href="#filo">Il filo</a>
+      <a href="#capitoli">Capitoli</a>
+      <a href="#leggi">Leggi</a>
+      <a href="#allenamento">Allenamento</a>
+      <a href="#relatrice">Domande commissione</a>
+      <a href="#discorso">Discorso</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- OGGI -->
+<section class="view" id="v-oggi">
+  <div>
+    <div class="eyebrow">Nuovi profili di vulnerabilità nell'ambiente digitale</div>
+    <h2 id="today-title">Il piano fino al 4 dicembre</h2>
+  </div>
+  <p class="lead" id="today-lead">Ogni giorno ha un solo obiettivo. Studi dalla "tesi raccontata", poi vieni qui a verificare con l'allenamento.</p>
+  <div class="days" id="days"></div>
+  <div class="sheet" style="display:flex;flex-direction:column;gap:14px">
+    <div class="row" style="justify-content:space-between">
+      <h3>Come stai andando</h3>
+      <a class="btn small primary" href="#allenamento">Allenati ora</a>
+    </div>
+    <div class="stats">
+      <div class="stat k"><div class="n" id="s-k">0</div><div class="l">le sai</div></div>
+      <div class="stat q"><div class="n" id="s-q">0</div><div class="l">quasi</div></div>
+      <div class="stat x"><div class="n" id="s-x">0</div><div class="l">da rivedere</div></div>
+    </div>
+    <div class="bars" id="bars"></div>
+    <p class="hint" id="s-new"></p>
+  </div>
+  <div class="sheet read" style="font-size:1.02rem">
+    <p><b>Il metodo in tre mosse.</b></p>
+    <ol>
+      <li><b>Capire</b>: leggi il capitolo del giorno nella "tesi raccontata" (Parte I o Parte II).</li>
+      <li><b>Richiamare</b>: chiudi tutto e ripeti ad alta voce "il capitolo in un minuto" (sezione Capitoli, livello 30 secondi).</li>
+      <li><b>Verificare</b>: fai le flashcard del capitolo. Quelle che non sai tornano finché non le sai.</li>
+    </ol>
+  </div>
+</section>
+
+<!-- FILO -->
+<section class="view" id="v-filo" hidden>
+  <div>
+    <div class="eyebrow">La tesi come catena di domande</div>
+    <h2>Se sai raccontare il filo, sai raccontare la tesi</h2>
+  </div>
+  <p class="lead">Ogni risposta fa nascere la domanda successiva. Prova a rispondere a voce prima di scoprire la risposta.</p>
+  <div class="row">
+    <button class="btn small" id="filo-all" type="button">Mostra tutte le risposte</button>
+    <button class="btn small ghost" id="filo-none" type="button">Nascondi tutte</button>
+  </div>
+  <ol class="chain" id="chain"></ol>
+</section>
+
+<!-- CAPITOLI -->
+<section class="view" id="v-capitoli" hidden>
+  <div>
+    <div class="eyebrow">Tre livelli per capitolo</div>
+    <h2>Dal riassunto alla risposta da commissione</h2>
+  </div>
+  <div class="chlist" id="chlist"></div>
+  <div class="levels" role="group" aria-label="Livello" id="levels">
+    <button type="button" data-l="0" aria-pressed="true">30 secondi</button>
+    <button type="button" data-l="1" aria-pressed="false">Semplice</button>
+    <button type="button" data-l="2" aria-pressed="false">Commissione</button>
+  </div>
+  <article class="sheet" id="chview" style="display:flex;flex-direction:column;gap:16px"></article>
+</section>
+
+<!-- LEGGI -->
+<section class="view" id="v-leggi" hidden>
+  <div>
+    <div class="eyebrow">La tesi raccontata</div>
+    <h2>Leggi un capitolo alla volta</h2>
+  </div>
+  <div class="toc" id="toc" role="list"></div>
+  <div class="reader-bar">
+    <div class="row" style="gap:6px">
+      <button class="btn small ghost" type="button" id="fs-down" aria-label="Testo più piccolo">A−</button>
+      <button class="btn small ghost" type="button" id="fs-up" aria-label="Testo più grande">A+</button>
+    </div>
+    <div class="subtoc" id="subtoc"></div>
+  </div>
+  <article class="reader" id="reader"><p class="hint">Caricamento del testo…</p></article>
+  <div class="reader-foot">
+    <button class="btn" type="button" id="r-prev">← Precedente</button>
+    <button class="btn primary" type="button" id="r-done">Segna come letto</button>
+    <button class="btn" type="button" id="r-next">Successivo →</button>
+  </div>
+</section>
+
+<!-- ALLENAMENTO -->
+<section class="view" id="v-allenamento" hidden>
+  <div>
+    <div class="eyebrow">Ripasso attivo</div>
+    <h2>Rispondi prima di guardare</h2>
+  </div>
+  <div class="row">
+    <label class="hint" for="deck-filter">Capitolo</label>
+    <select id="deck-filter"></select>
+    <button class="btn small ghost" id="reset" type="button">Azzera progressi</button>
+  </div>
+  <div class="card" id="card"></div>
+  <p class="hint">"Non sapevo" fa tornare la carta dopo 2 carte, "Quasi" dopo 6, "Sapevo" la mette in fondo. I progressi restano salvati in questo browser.</p>
+</section>
+
+<!-- DOMANDE COMMISSIONE -->
+<section class="view" id="v-relatrice" hidden>
+  <div>
+    <div class="eyebrow">Domanda della relatrice · § 4.1</div>
+    <h2>Perché il nudge non può essere una fattispecie giuridica?</h2>
+  </div>
+  <p class="quote">«La nozione di nudge, una volta spostata al di fuori del contesto per il quale è stata elaborata, non identifica più una categoria definita di comportamenti: non può, in altri termini, valere come fattispecie.»</p>
+  <div class="sheet" style="display:flex;flex-direction:column;gap:14px">
+    <h3>La risposta in quattro argomenti</h3>
+    <ol class="args">
+      <li><div class="read" style="font-size:1.05rem"><b>È definito in negativo.</b> Thaler e Sunstein (2008) dicono che cosa il nudge <i>non</i> fa: non vieta opzioni e non cambia in modo significativo gli incentivi economici. Tutto il peso grava sui due limiti, e i limiti vengono da fuori del diritto: l'insieme delle opzioni dalla teoria della scelta razionale, l'incentivo dall'analisi economica.</div></li>
+      <li><div class="read" style="font-size:1.05rem"><b>Online i confini cedono.</b> L'architettura digitale si nutre di dati, cambia senza costi e si adatta al singolo (Helberger 2022). L'opzione si <i>nasconde</i> invece di vietarla. Il prezzo personalizzato toglie il termine di confronto per dire che l'incentivo "non cambia". <i>«Il supporto non è neutrale rispetto alla nozione: la modifica.»</i></div></li>
+      <li><div class="read" style="font-size:1.05rem"><b>Cede anche dall'interno.</b> Hausman e Welch (2010) notano che Thaler e Sunstein chiamano nudge la pubblicazione delle emissioni e perfino lo scambio di quote, e così ogni imposta sarebbe un nudge. E "economici" nella definizione è <i>«a slip»</i>, una svista.</div></li>
+      <li><div class="read" style="font-size:1.05rem"><b>Una definizione migliore non salva la nozione.</b> Le definizioni sono incompatibili proprio sui punti decisivi. Sull'<b>attrito</b>, l'art. 25, par. 3, DSA nomina tre pratiche e due sono attrito: con la definizione ampia le chiameremmo "nudge", cioè lievi. Sulla <b>valutazione</b>, Selinger e Whyte (2011) mettono nella definizione bias, occultamento e beneficio, e così ogni spinta sarebbe manipolativa per definizione. <i>Chi mette nella definizione gli elementi di valutazione ha già deciso che cosa è lecito prima di avere il criterio.</i></div></li>
+    </ol>
+  </div>
+  <div class="sheet" style="display:flex;flex-direction:column;gap:12px">
+    <h3>Che cosa metti al suo posto: la scala</h3>
+    <p class="hint">Non chiede più "è un nudge?" ma "che cosa è successo all'opzione?"</p>
+    <div class="scale">
+      <div><div class="mock"><span class="yes">Accetta</span><span class="no gone">Rifiuta</span></div><div class="nm">Vincolo</div><div class="ds">Elimina l'opzione. Non è un nudge: è una regola.</div></div>
+      <div><div class="mock"><span class="yes">Accetta</span><span class="no">Rifiuta → 3 passaggi</span></div><div class="nm">Ostacolo</div><div class="ds">L'opzione resta ma costa di più (tempo, fatica). È il più insidioso: supera ogni controllo che verifica solo se l'opzione esiste.</div></div>
+      <div><div class="mock"><span class="yes">Accetta</span><span class="no tiny">rifiuta</span></div><div class="nm">Spinta</div><div class="ds">Stessa opzione, stesso costo, cambia solo l'evidenza. È il nudge in senso stretto (default compreso).</div></div>
+    </div>
+    <p class="read" style="font-size:1.02rem">La scala è un <b>vocabolario, non un criterio</b>: nessuna tecnica è illecita in sé. Al centro va messo il <b>potere di plasmare l'ambiente</b> in cui altri decidono, di cui la spinta è solo uno degli esercizi.</p>
+  </div>
+  <div class="sheet" style="display:flex;flex-direction:column;gap:10px">
+    <h3>Detto in un minuto</h3>
+    <p class="quote" style="font-style:normal">«Il nudge nasce nell'economia comportamentale ed è definito in negativo: non vieta opzioni e non cambia gli incentivi. Ma quei due limiti vengono da fuori del diritto e online cedono: l'opzione si può nascondere invece che vietare, e se il prezzo è personalizzato manca il termine di confronto per dire che l'incentivo non cambia. Già Hausman e Welch mostrano che il confine è instabile. E le definizioni alternative sono incompatibili proprio sui punti decisivi: se l'attrito è nudge, chiamiamo lieve ciò che l'articolo 25 del DSA nomina espressamente; se nella definizione mettiamo bias e occultamento, ogni spinta diventa manipolativa per definizione. Per questo sposto la domanda: non se una tecnica sia un nudge, ma che cosa faccia all'opzione: la elimina, la rende più costosa o solo meno visibile. E il giudizio lo dà poi il criterio.»</p>
+  </div>
+  <div class="followups">
+    <h3>Se ti incalzano</h3>
+    <details><summary>«Allora il nudge per il giurista è inutile?»</summary><div>No. Descrive bene il fenomeno ma non seleziona le condotte. Nella tesi diventa altro: il <b>contenuto di un obbligo</b> del professionista (cap. 6), non la fattispecie. Al § 3.6 lo annunci: il nudge come «il più contenuto fra gli interventi strutturali possibili».</div></details>
+    <details><summary>«Perché la definizione ristretta, se prevale quella ampia?»</summary><div>Non per diffusione, ma perché la definizione ampia riunisce sotto un nome rassicurante proprio le condotte che il diritto positivo tratta con più severità (l'attrito: richieste ripetute e disdetta più difficile, art. 25, par. 3, DSA).</div></details>
+    <details><summary>«Perché non applicare all'impresa i criteri del nudge pubblico?» (§ 4.3)</summary><div>Il criterio "as judged by themselves" presuppone chi persegue l'interesse altrui; l'impresa persegue, legittimamente, il proprio. Il regolatore è legittimato dal <b>procedimento</b> (consultazione, valutazione d'impatto, motivazione, controllo), mentre l'impresa non ha nessuno di questi presidi. Quindi l'ordinamento non chiede all'impresa il bene del consumatore, ma di <b>non superare una soglia</b>: si giudicano le modalità, non lo scopo.</div></details>
+    <details><summary>«Non è paternalismo?» (§ 4.4)</summary><div>L'obiezione presuppone un ambiente neutro da cui l'intervento toglierebbe libertà. Online quell'ambiente non esiste, perché è già conformato dalla controparte. Imporre una conformazione <b>non toglie libertà al consumatore, limita il potere dell'impresa</b>, come la disciplina delle clausole vessatorie. Il limite dichiarato: il default imposto dalla legge.</div></details>
+    <details><summary>«Perché l'ostacolo sarebbe più insidioso del vincolo?»</summary><div>Perché il vincolo si vede (l'opzione manca) e la spinta si vede (lo squilibrio è sulla pagina), mentre l'ostacolo no: l'opzione esiste, è accessibile e non costa denaro, quindi passa ogni controllo formale. È per questo che il legislatore europeo ha dovuto nominarlo (art. 25 DSA) invece di affidarsi alla clausola generale. Insidioso però non vuol dire più grave: la tecnica da sola non fonda alcun giudizio.</div></details>
+  </div>
+  <div class="slot">
+    <div class="eyebrow" style="color:var(--accent)">Domanda della correlatrice</div>
+    <p class="read" style="font-size:1.05rem">Arriverà pochi giorni prima. Appena la sai, scrivila a Claude: preparo qui la stessa scheda, con la risposta in quattro punti, la versione da un minuto e le domande di approfondimento.</p>
+  </div>
+</section>
+
+<!-- DISCORSO -->
+<section class="view" id="v-discorso" hidden>
+  <div>
+    <div class="eyebrow">20 minuti con le domande · obiettivo 14 minuti</div>
+    <h2>Il discorso a blocchi</h2>
+  </div>
+  <p class="lead">Impara i blocchi e le parole chiave, non il testo parola per parola. Avvia il timer e tocca "Blocco successivo" ogni volta che passi al blocco dopo.</p>
+  <div class="timer">
+    <div>
+      <div class="clock" id="clock">00:00</div>
+      <div class="sub" id="clock-sub">Blocco 1 di 12 · obiettivo totale 14:00</div>
+    </div>
+    <div class="row">
+      <button class="btn primary" id="t-start" type="button">Avvia</button>
+      <button class="btn" id="t-next" type="button" disabled>Blocco successivo</button>
+      <button class="btn" id="t-reset" type="button">Azzera</button>
+    </div>
+  </div>
+  <div class="blocks" id="blocks"></div>
+  <p class="hint" id="last-run"></p>
+</section>
+
+<footer class="wrap" style="padding-block:0 32px">Tutti i contenuti sono ricavati dalla tesi «Nuovi profili di vulnerabilità nell'ambiente digitale» (Univ. di Padova, a.a. 2025/2026). I progressi dell'allenamento restano solo in questo browser.</footer>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.3.0/marked.min.js"></script>
+<script>
+(function(){
+"use strict";
+const store = {
+  get(k, d){ try{ const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; }catch(e){ return d; } },
+  set(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+};
+const $ = s => document.querySelector(s);
+const esc = s => s; // contenuti statici scritti a mano
+
+/* ---------- DATI ---------- */
+const CH = [
+ {id:"c1", n:"Cap. 1 · pp. 7–26", t:"Dalla debolezza tipizzata alla vulnerabilità come condizione",
+  l0:`Il codice civile protegge il debole per categorie (l'incapacità come eccezione); dove la debolezza è situazionale, la tutela scatta solo per la condotta della controparte: malafede (art. 428), approfittamento (art. 1448), abuso di dipendenza economica. Fineman: siamo tutti vulnerabili. Allora il criterio non sta nella persona ma nella situazione: la vulnerabilità rileva quando l'architettura di scelta, predisposta unilateralmente da una parte, fa leva sulla suscettibilità dell'altra. Non è una categoria nuova: è la rilettura di tecniche esistenti, attraverso la buona fede.`,
+  l1:`<p>Il codice ragiona così: dai 18 anni sei capace, salvo eccezioni (minore, interdetto, incapace naturale). È una tutela "per etichette".</p><p>Ma in alcune norme conta già <b>come si è comportato l'altro</b>: il contratto dell'incapace naturale si annulla se l'altro era in malafede, la rescissione richiede che l'altro abbia approfittato del tuo bisogno.</p><p>Fineman dice: tutti siamo vulnerabili, perché abbiamo un corpo. Bene, ma se lo siamo tutti, chi proteggiamo? La tesi risponde: <b>non scegliamo le persone, scegliamo le situazioni</b>. Conta chi ha costruito l'ambiente in cui decidi e se l'ha costruito per sfruttare la tua suscettibilità.</p><p>Esempio: chiunque può essere stanco o di fretta (vulnerabilità di tutti). Diventa rilevante quando qualcuno costruisce la pagina proprio per approfittarne.</p>`,
+  l2:`<ul><li><b>Tre tecniche del codice</b>: stato (artt. 414, 415, 404 ss., 428; annullabilità art. 1425), anomalia dello scambio (artt. 1447–1448), posizione nel rapporto (nullità di protezione, art. 36 cod. cons.). Artt. 1341–1342 c.c. per chiunque ma formali; art. 33 cod. cons. sostanziale ma solo per il consumatore: la tutela più recente è <b>più intensa e più ristretta</b>.</li><li><b>Fineman</b>: vulnerabilità universale (embodiment), socialmente costruita nelle particolarità; Grear (imprese transnazionali); categoria euristica, non operativa. Corte EDU: Timmer, «rivoluzione silenziosa», ma per gruppi.</li><li><b>§ 1.3</b>: Battelli, senso ampio (fondamento) e senso stretto (applicazione); Helberger, vulnerabilità disposizionale e attuale. L'attualizzazione si <b>oggettivizza nel design</b>, da cui il criterio relazionale.</li><li><b>§ 1.4</b>: rilettura, non categoria autonoma. Veicolo: la buona fede. Cass. SU 23726/2007 (costituzionalizzazione, art. 2 Cost.); Cass. 20106/2009 (abuso del diritto: modalità di esercizio, controllo relazionale, senza intento di nuocere). Limiti: si tratta di contratti già conclusi, da cui l'art. 1337; Cass. SU 26724/2007, regole di comportamento → responsabilità, non invalidità.</li></ul>`,
+  kw:{Norme:"artt. 2, 404 ss., 409, 414, 415, 428, 1425, 1447, 1448, 1337, 1341–1342 c.c.; artt. 33, 36 cod. cons.; art. 9 l. 192/1998", Sentenze:"Cass. SU 23726/2007; Cass. 20106/2009; Cass. SU 26724/2007", Autori:"Fineman, Grear, Giolo, Timmer, Peroni, Battelli, Helberger, Zorzi Galgano"}},
+ {id:"c2", n:"Cap. 2 · pp. 27–56", t:"Il modello europeo di tutela e i limiti del suo oggetto",
+  l0:`Il consumatore medio nasce nella giurisprudenza sulla libera circolazione come limite alla tutela e funziona come criterio di allocazione del rischio. Il consumatore vulnerabile (art. 5, par. 3, dir. 2005/29) sposta il metro su un gruppo, ma guarda solo a caratteristiche della persona, e la prevedibilità online si rovescia. L'informazione è a sua volta una forma che orienta. Compass Banca (2024) ammette i bias, ma senza criterio. Tutti guardano al destinatario: nessuno qualifica la condotta di chi costruisce l'ambiente. «L'ambiente digitale non comunica: dispone.»`,
+  l1:`<p>Il diritto UE misura la scorrettezza su un consumatore immaginario, "normalmente informato e ragionevolmente attento". Questo modello nacque per impedire agli Stati di vietare troppo, non per proteggere.</p><p>Poi c'è il consumatore vulnerabile (anziano, malato, ingenuo): ma bisogna che sia un <b>gruppo riconoscibile</b>, mentre online ognuno è profilato da solo. Inoltre conta solo se il professionista "poteva prevederlo": oggi lo misura con i test, quindi lo sa per certo.</p><p>La cura classica è l'informazione. Ma informare significa scegliere come presentare, e anche quello orienta.</p><p>Compass Banca: polizza proposta insieme al prestito, firme contestuali. La Corte dice che i bias "non sono esclusi", ma non dà un criterio.</p>`,
+  l2:`<ul><li><b>§ 2.1</b>: Gut Springenheide (1998), Estée Lauder; parametro in negativo; dir. 2005/29 art. 5, par. 2, cons. 18 («non è statistica», «numero significativo»); art. 20, c. 2, cod. cons.: diligence test + materiality test; art. 18, lett. e): decisione «che non avrebbe altrimenti preso» (formula controfattuale). Funzione: distribuire il rischio, soglia de minimis. Profilo «frantumato» (Rossi Carleo) e «frastagliato» (Pagliantini). Limite: la pratica intesa come messaggio (Purpura).</li><li><b>§ 2.2</b>: art. 5, par. 3 / art. 20, c. 3: «gruppo chiaramente individuabile», infermità, età, ingenuità, prevedibilità. Orientamenti 2021: «dinamica e situazionale». Quattro criticità: gruppo, oggetto soggettivo, soft law (Spagna), prevedibilità rovesciata (A/B test).</li><li><b>§ 2.3</b>: Simon, euristiche, framing, ancoraggio, overload. Artt. 6, 7, 9 dir.; l'informazione ha la stessa natura del problema. Caterina: serve una teoria normativa dei limiti. Due errori: tutela senza condizioni (art. 10 CEDU, art. 11 Carta, de minimis) e indifferenza alla forma. Protezione mediante l'autonomia, non contro (Conly).</li><li><b>§ 2.4</b>: CGUE 14/11/2024, C-646/22: AGCM, 4,7 mln; AG Emiliou (razionalità limitata, pp. 38, 40, 44, 49); Corte: «non esclude… non esclude» (pp. 52–53), niente aggressività per sola contestualità (pp. 72–75), periodo di riflessione proporzionato.</li></ul>`,
+  kw:{Norme:"dir. 2005/29: artt. 5, 6, 7, 9, cons. 18–19, all. I; artt. 18, 20 cod. cons.", Sentenze:"Gut Springenheide; Estée Lauder; Compass Banca C-646/22 (2024)", Autori:"Camilleri, Magliari, Purpura, Simon, Senigaglia, Amidei, Caterina, Kotler, Conly"}},
+ {id:"c3", n:"Cap. 3 · pp. 57–92", t:"La vulnerabilità nell'ambiente digitale",
+  l0:`Online l'asimmetria diventa architetturale: il professionista coincide con l'ambiente, che è data-driven, dinamico e personalizzabile. La vulnerabilità può essere preesistente, individuata o generata (TikTok, AGCM 2024). L'intento non distingue questi casi: il diritto UE usa lo schema "scopo o effetto" e trasforma l'occultamento in opacità oggettiva. Il GDPR dà il modello di precetto (art. 25); il DSA qualifica la condotta ma ignora la vulnerabilità e arretra nel consumo; l'AI Act fa il contrario. Il criterio relazionale c'è già, ma frammentato: manca la soglia.`,
+  l1:`<p>Prima il venditore sapeva di più sul prodotto. Ora sa di più <b>su di te</b>, e soprattutto costruisce lo spazio in cui scegli.</p><p>Esempi: un'app che alza il prezzo quando la batteria del telefono è quasi scarica; un social che mostra pubblicità agli adolescenti nei momenti di insicurezza; TikTok, il cui algoritmo spingeva una sfida di autolesionismo per "monetizzare l'addiction".</p><p>Non serve provare che l'impresa "volesse" manipolare: le norme europee dicono "intenzionalmente <b>o di fatto</b>", "scopo <b>o effetto</b>".</p><p>Il GDPR insegna a regolare la progettazione prima del danno (privacy by design). La casella dei cookie già spuntata non è consenso (Planet49).</p>`,
+  l2:`<ul><li><b>§ 3.1</b>: due stagioni (sapere sulla persona → potere di plasmare); tre proprietà; «una delle parti coincide con l'ambiente». Il potere di conformazione è la fisiologia; il diritto dei consumi lo coglie solo di riflesso.</li><li><b>§ 3.2</b>: art. 4, n. 4, GDPR; Duivenvoorde (adolescenti, batteria); preesistente, individuata, generata; AGCM TikTok, «cicatrice française», indebito condizionamento.</li><li><b>§ 3.3</b>: Susser, Roessler, Nissenbaum (influenza occulta); «concetto di risultato»; Sunstein; cons. 67 DSA, art. 5, lett. a) e b), AI Act, Orientamenti: schema disgiuntivo; opacità; obiezione della responsabilità oggettiva respinta (effetto rilevante, diligenza, condotte conformi).</li><li><b>§ 3.4</b>: art. 25 GDPR (by design/by default), artt. 24 e 35; Planet49, Orange România, cons. 32; art. 65 cod. cons.; WP29 (squilibrio); cons. 43; CGUE reti sociali (onere sul titolare); art. 7, par. 1; correttezza art. 5, par. 1, lett. a) = art. 1175 c.c.; «norme in bianco»; difetto di conformità; azioni rappresentative.</li><li><b>§ 3.5</b>: art. 25 DSA (tre verbi, niente consumatore medio, par. 2 → «rete di protezione a tutela di un'altra rete»; solo piattaforme; 6% del fatturato); art. 34; AI Act art. 5, lett. b) (catalogo chiuso, doppia soglia), art. 7, par. 2, lett. h) (squilibrio di potere). Digital Fairness Act.</li><li><b>§ 3.6</b>: cinque ambiti, quattro discipline; <b>quattro elementi</b> del criterio; idoneità misurata sulla classe di destinatari con i dati dell'operatore; rimedi: art. 27, c. 15-bis, cod. cons., art. 54 DSA, art. 82 GDPR.</li></ul>`,
+  kw:{Norme:"GDPR artt. 4 n. 4, 5, 7, 22, 24, 25, 35, 82, cons. 32, 43, 75; DSA artt. 25, 34, 54, cons. 67; AI Act artt. 5, 7; cod. cons. artt. 27 c. 15-bis, 65", Casi:"AGCM TikTok (2024); Planet49 (2019); Orange România; CGUE reti sociali (Meta)", Autori:"Helberger, Duivenvoorde, Susser-Roessler-Nissenbaum, Sunstein, Malgieri-Niklas"}},
+ {id:"c4", n:"Cap. 4 · pp. 95–116", t:"L'architettura di scelta come oggetto del diritto",
+  l0:`Il nudge non può essere una fattispecie: è definito in negativo, i suoi confini vengono da fuori del diritto, online cedono, e le definizioni sono incompatibili proprio sull'attrito. Al suo posto, la scala vincolo, ostacolo, spinta, dove l'ostacolo è il più insidioso. Nessun design è neutro: la norma può essere solo conformativa (art. 25 GDPR), l'imputazione segue il potere e non l'intento, il limite è la libertà d'impresa. I criteri del nudge pubblico non valgono per l'impresa. Il paternalismo perde forza: regolare l'ambiente limita il potere dell'impresa, non la libertà del consumatore.`,
+  l1:`<p>Il banner dei cookie con "Accetta" grande e "Rifiuta" piccolo è un nudge? Per Thaler e Sunstein sì, ed è "gentile". Ma la disdetta in tre passaggi sarebbe anche lei un nudge, cioè lieve, mentre il DSA la nomina come pratica da contrastare.</p><p>Allora la tesi cambia domanda: <b>che cosa è successo al tasto "Rifiuta"?</b> È sparito (vincolo), costa più fatica (ostacolo) o è solo meno visibile (spinta)?</p><p>Nessuna pagina è neutra: un pulsante deve avere un colore. Quindi non si può vietare di influenzare, si può solo dire <b>come</b> costruire.</p><p>E l'impresa non deve fare il bene del consumatore: deve solo non superare una soglia.</p>`,
+  l2:`<ul><li><b>§ 4.1</b>: vedi la sezione "Domande commissione". Thaler-Sunstein 2008; Hausman-Welch 2010; Selinger-Whyte 2011; Thaler 2018 «Nudge, not sludge»; Peer 2020 (personalizzazione 4 volte più efficace); Bhatt-Seetharaman 2023; scala; l'informazione resta fuori.</li><li><b>§ 4.2</b>: l'informazione è una species della spinta (Compass: il rimedio sono 7 giorni, non più informazioni). Tre corollari: (1) norma conformativa, modello art. 25 GDPR; (2) imputazione per titolarità del potere, art. 1176, c. 2, c.c., non responsabilità oggettiva; (3) limite: art. 41 Cost., art. 16 Carta, test di proporzionalità di Compass. Art. 1337: c'è il principio, manca la forma. Art. 25 DSA = divieto che rinvia a un criterio di cui non dispone.</li><li><b>§ 4.3</b>: scopo («as judged by themselves»), controllo (procedimento: Rangone), obiezione epistemica (si capovolge; resta l'autonomia deliberativa). Dilemma: la soglia della distorsione significativa misura altro. Il criterio è mal posto (dottrina della regolazione ottimale, non dei limiti): sì alla soglia, no al bene del consumatore.</li><li><b>§ 4.4</b>: Mitchell («ossimoro»); mezzi e fini (present bias); protezione mediante l'autonomia (Roppo); Conly; Caterina (bias di legislatore e giudice); paternalismo asimmetrico. Nodo: non esiste un ambiente neutro. Eccezione: il default imposto dalla legge.</li></ul>`,
+  kw:{Norme:"art. 25 GDPR; art. 25, parr. 1 e 3, DSA; artt. 1176, c. 2, e 1337 c.c.; art. 41 Cost.; art. 16 Carta UE", Sentenze:"Compass Banca C-646/22", Autori:"Thaler, Sunstein, Hausman, Welch, Selinger, Whyte, Bhatt-Seetharaman, Peer, Rangone, Caterina, Roppo, Conly, Mitchell"}},
+ {id:"c5", n:"Cap. 5 · pp. 117–136", t:"Il criterio di liceità della conformazione",
+  l0:`Il criterio non può essere l'intenzione, né la tecnica, né l'effetto, né la reazione del consumatore medio. Si ricava in negativo dalle pratiche già vietate, che hanno un tratto comune: un'asimmetria che rende sistematicamente più difficile esercitare una facoltà riconosciuta (rifiutare, revocare, recedere). Si verifica sulla pagina con cinque indici: simmetria dei costi, parità di percepibilità, neutralità della formulazione, reversibilità, non reiterazione. Diventa manipolazione quando l'asimmetria è occulta, cioè non riconoscibile dalla pagina (art. 5 AI Act).`,
+  l1:`<p>Per capire se una pagina supera il limite non guardiamo la testa di chi l'ha progettata, né la mente del consumatore. <b>Guardiamo la pagina.</b></p><p>Cinque domande: i due tasti costano la stessa fatica? Si vedono allo stesso modo? Le parole sono neutre o colpevolizzano ("No, non voglio risparmiare")? Posso tornare indietro? Se ho detto no, smettono di chiedermelo?</p><p>E la manipolazione? Una disdetta lunga la vedo, la subisco ma la vedo. Un'impostazione predefinita sfavorevole non la vedo mai: lì c'è l'occultamento.</p>`,
+  l2:`<ul><li><b>§ 5.1</b>: l'intento è irrilevante (cons. 67 DSA); la tecnica no (il default è vietato in Planet49 e imposto dall'art. 25 GDPR); l'effetto no (non provabile); il consumatore medio no (online non esiste un'interfaccia comune).</li><li><b>§ 5.2</b>: il dark pattern come criterio negativo; tratto comune: l'asimmetria contro l'esercizio di una facoltà riconosciuta dall'ordinamento, non la semplice preferenza commerciale.</li><li><b>§ 5.3</b>: cinque indici, ciascuno già nel diritto positivo: simmetria (art. 7, par. 3, GDPR; art. 25 DSA, disdetta); percepibilità (art. 25 DSA, risalto); neutralità (correttezza del trattamento); reversibilità (revoca art. 7; Garante: revoca «anche in unica soluzione»); non reiterazione (sollecitazioni ripetute, all. I dir. 2005/29; art. 25 DSA). Garante, linee guida cookie 10 giugno 2021, n. 231; EDPB, linee guida 3/2022 v. 2.0 (14 febbraio 2023). Gli indici misurano anche la <b>direzione</b> del vantaggio (la conferma prima di cancellare un account è un attrito protettivo).</li><li><b>§ 5.4</b>: soglia dell'occultamento: l'asimmetria non è riconoscibile dalla pagina; art. 5 AI Act («senza che una persona ne sia consapevole»); accertabile perché l'assetto resta ed è riproducibile.</li></ul>`,
+  kw:{Norme:"cons. 67 e art. 25 DSA; artt. 7 e 25 GDPR; all. I dir. 2005/29; art. 5 AI Act", Fonti:"Garante, linee guida cookie 2021 (provv. n. 231); EDPB, linee guida 3/2022", Casi:"Planet49"}},
+ {id:"c6", n:"Cap. 6 · pp. 137–170", t:"Il nudge come contenuto di un obbligo di protezione",
+  l0:`Un limite non basta, perché il potere di conformare non ammette astensione: serve un dovere. Il fondamento è la titolarità del potere (modello art. 2087 c.c.), non la debolezza del consumatore né il contratto. Il contenuto minimo: rispettare gli indici e fare in modo che l'inerzia abbia effetto conservativo (art. 25, par. 2, GDPR; artt. 65 e 66-quinquies cod. cons.; Planet49). Dove la legge tace, la misura è la diligenza professionale (art. 20 cod. cons.). Rimedi: niente nullità generale (SU 2007), ma risarcimento, rimedi testuali, dolo, e soprattutto l'inibitoria. Limite: la personalizzazione.`,
+  l1:`<p>Chi fa un sito <b>deve</b> decidere che cosa succede se tu non fai nulla. Non può "non decidere".</p><p>Allora non basta dirgli "non esagerare": bisogna dirgli <b>come</b> costruire. Due regole minime: rispetta i cinque indici; e se non scegli, resti dove eri (nessun abbonamento attivato in silenzio, nessuna casella già spuntata).</p><p>Se la regola è violata, il contratto di solito non è nullo, ma puoi chiedere i danni. Però il danno di ciascuno è piccolo e spesso nessuno se ne accorge: per questo serve l'<b>inibitoria</b>, che obbliga a correggere la pagina per tutti, come per le clausole vessatorie.</p>`,
+  l2:`<ul><li><b>§ 6.1</b>: il limite non basta; fondamento nel potere; art. 2087 c.c. come <b>modello</b>, non analogia (dovere sull'ambiente, prima del danno); differenze: manca il rapporto, i beni protetti sono diversi.</li><li><b>§ 6.2</b>: dal rimedio informativo a quello strutturale; forma minima: elemento comparativo (indici) e non comparativo (inerzia conservativa o scelta attiva).</li><li><b>§ 6.3</b>: default di fonte legale: art. 25, par. 2, GDPR; art. 65 cod. cons. (restituzione); art. 66-quinquies (fornitura non richiesta: il silenzio non è consenso). «L'inerzia non è volontà.» Il paternalismo riemerge qui, mitigato.</li><li><b>§ 6.4</b>: diligenza professionale art. 20 cod. cons. + art. 18, lett. h), come fonte di obblighi di protezione; regge con la lettura di Camilleri e con quella di Piraino; art. 1176, c. 2, nei rapporti instaurati; art. 1337 insufficiente; art. 25 DSA limitato (par. 2).</li><li><b>§ 6.5</b>: niente nullità (SU 26724/2007; servirebbe art. 1418, c. 3); risarcimento contrattuale per obblighi di protezione; art. 27, c. 15-bis (riduzione del prezzo, risoluzione); annullamento per dolo (reso configurabile dall'occultamento); art. 82 GDPR. Problema: la prova del danno.</li><li><b>§ 6.6</b>: illecito seriale e impercettibile → inibitoria collettiva o delle autorità; paradigma delle clausole vessatorie: «la conformazione sta all'ambiente decisionale come la clausola predisposta sta al regolamento contrattuale».</li><li><b>§ 6.7</b>: evidenze empiriche deboli sui nudge (soprattutto su quelli informativi); il dovere non dipende dall'efficacia; indice fragile: non reiterazione; limite aperto: personalizzazione.</li></ul>`,
+  kw:{Norme:"artt. 2087, 1176, 1337, 1418 c.c.; artt. 18 lett. h, 20, 27 c. 15-bis, 65, 66-quinquies cod. cons.; art. 25 par. 2 e art. 82 GDPR", Sentenze:"Cass. SU 26724/2007; Planet49", Autori:"Camilleri, Piraino"}},
+ {id:"c7", n:"Cap. 7 · pp. 171–190", t:"I pulsanti del contratto online",
+  l0:`Il dovere di conformazione è già scritto in due comandi. Il pulsante d'ordine (art. 51, c. 2, cod. cons., dir. 2011/83): senza «ordine con obbligo di pagare» il consumatore non è vincolato (Fuhrmann-2, Conny). La funzione di recesso (art. 54-bis, dir. 2023/2673, dal 19 giugno 2026): recedere facile quanto concludere. Ma c'è un'asimmetria: all'ingresso la violazione incide sul contratto, all'uscita no; e la funzione copre i 14 giorni, non la disdetta dell'abbonamento. Proprio dove l'impresa ha più interesse a trattenere, il consumatore ha gli strumenti più deboli.`,
+  l1:`<p>Quando compri online, il pulsante finale deve dire chiaramente "ordine con obbligo di pagare". Se dice solo "Avanti" o "Prenota", non sei vincolato: la Corte guarda <b>il pulsante</b>, non se "si capiva dal contesto".</p><p>Dal giugno 2026 c'è anche il pulsante per il recesso (i 14 giorni per ripensarci), che deve essere facile quanto comprare.</p><p>Però se manca il pulsante d'uscita il contratto resta valido. E la disdetta di un abbonamento (dopo i 14 giorni) non è coperta. In Germania sì, dal 2022.</p>`,
+  l2:`<ul><li><b>§ 7.1</b>: perché questi due comandi: il dovere è positivizzato, la legge regola l'interfaccia e si possono vedere i rimedi. Pulsante d'ordine dal 13 giugno 2014, funzione di recesso dal 19 giugno 2026.</li><li><b>§§ 7.2–7.3</b>: art. 51, c. 2; Fuhrmann-2 (2022, prenotazione alberghiera: la conformità non si ricava dalle circostanze); Conny (2024, recupero crediti per conduttori: legittimazione del terzo, il consumatore può conservare il contratto, punto discusso). «Non vincolo» letto come <b>nullità di protezione</b> relativa (come art. 36), eccezione espressa ex art. 1418, c. 3, c.c.; alternative: contratto non concluso, consenso inesistente, inefficacia.</li><li><b>§ 7.4</b>: art. 54-bis: funzione di recesso ben visibile, conferma; il passaggio di conferma è un attrito protettivo.</li><li><b>§ 7.5</b>: asimmetria dei rimedi: se manca la funzione, il consumatore recede comunque (modulo o dichiarazione), chiede il risarcimento, segnala all'AGCM; proroga di 12 mesi ex art. 53 (non pacifica).</li><li><b>§ 7.6</b>: la simmetria come regola di settore: art. 59-undecies cod. cons. (servizi finanziari a distanza: percepibilità, non reiterazione, reversibilità scritte in legge); comunicazioni elettroniche; Germania 2022 (Kündigungsbutton).</li><li><b>§ 7.7</b>: conferme e questioni aperte: la disdetta non è armonizzata, l'Italia può introdurla come regola del contratto.</li></ul>`,
+  kw:{Norme:"artt. 51 c. 2, 53, 54-bis, 59-undecies cod. cons.; dir. 2011/83; dir. 2023/2673; art. 1418 c. 3 c.c.", Sentenze:"Fuhrmann-2 (2022); Conny (2024)", Date:"13 giugno 2014; 19 giugno 2026"}},
+ {id:"cc", n:"Conclusioni · pp. 191–196", t:"Conclusioni e de iure condendo",
+  l0:`La vulnerabilità digitale non si governa scegliendo chi proteggere, ma disciplinando il potere di conformare l'ambiente in cui altri decidono. Il modello regge perché non richiede la prova dell'effetto, non dipende dalla tecnica e non dipende dalle dimensioni dell'operatore. I limiti: evidenze empiriche deboli, la non reiterazione, la personalizzazione. Al Digital Fairness Act (proposto l'11 novembre 2026) si chiede non un altro elenco, ma una regola generale di progettazione sul modello dell'art. 25, par. 2, GDPR, con requisiti verificabili e un rimedio che incida sul rapporto.`,
+  l1:`<p>Il contributo originale: <b>spostare lo sguardo da chi subisce a chi costruisce</b>, e da lì ricavare un dovere con un contenuto minimo verificabile.</p><p>Perché non un elenco di pratiche vietate? Perché le tecniche cambiano più in fretta delle leggi, e la stessa forma (una conferma) può essere vietata o dovuta a seconda della direzione.</p><p>Il limite che resta: se ognuno vede una pagina diversa, nessuno da solo vede l'asimmetria. Servono autorità che possano entrare nei sistemi e confrontare.</p>`,
+  l2:`<ul><li><b>Catena</b>: relazione → potere di predisporre → non se ma come → asimmetria e cinque indici, occultamento → dovere fondato sul potere → inibitoria → artt. 51 e 54-bis → regola di progettazione generale.</li><li><b>Regge</b>: non richiede la prova dell'effetto; misura relazioni e non elementi grafici (vale anche per chatbot e assistenti vocali); costa meno rispettarlo che violarlo (con la scala cresce il beneficio dell'inadempimento, non il costo dell'adempimento).</li><li><b>De iure condendo</b>: estendere l'art. 25, par. 2, GDPR a ogni ambiente decisionale: inerzia conservativa salvo scelta attiva, percorsi simmetrici; requisiti verificabili sull'assetto; rimedio sul rapporto; autorità con accesso ai sistemi. Fitness check 2024 sull'equità digitale.</li><li><b>Frase finale</b>: «non decidere al posto del consumatore, ma costruire l'ambiente in modo che la decisione resti sua».</li></ul>`,
+  kw:{Riferimenti:"Digital Fairness Act (proposta 11/11/2026, sostituirebbe la dir. 2005/29); fitness check 2024; art. 25 par. 2 GDPR"}}
+];
+
+const FILO = [
+ {q:"Chi protegge il codice civile?", a:"L'incapace, con una debolezza tipizzata come eccezione alla capacità presunta (art. 2 c.c.). Ma dove la debolezza è situazionale, la tutela scatta per la condotta della controparte: malafede (art. 428), approfittamento (art. 1448), abuso di dipendenza economica.", w:"§ 1.1"},
+ {q:"Se, come dice Fineman, siamo tutti vulnerabili, chi selezioniamo?", a:"Il problema non è l'universalità, ma dove cerchiamo il criterio. Non nella persona, ma nella situazione: senso ampio (fondamento) e senso stretto (applicazione); vulnerabilità disposizionale e attuale.", w:"§§ 1.2–1.3"},
+ {q:"Qual è il criterio?", a:"La vulnerabilità rileva quando l'architettura di scelta, predisposta unilateralmente da una parte, è conformata in modo da fare leva sulla suscettibilità dell'altra. Si selezionano situazioni, non persone.", w:"§ 1.3"},
+ {q:"È una categoria nuova?", a:"No: è la rilettura di tecniche già usate dal diritto, attraverso la buona fede (SU 23726/2007; Cass. 20106/2009). Ma la violazione è di una regola di comportamento, quindi genera responsabilità, non invalidità (SU 26724/2007).", w:"§ 1.4"},
+ {q:"Il diritto europeo dei consumi accoglie il criterio?", a:"No. Consumatore medio (nato come limite), consumatore vulnerabile (gruppo, tratti personali), informazione (che orienta a sua volta) e Compass Banca (bias ammessi senza criterio) guardano tutti al destinatario. L'ambiente digitale non comunica: dispone.", w:"cap. 2"},
+ {q:"Che cosa cambia online?", a:"L'asimmetria diventa architetturale: una parte coincide con l'ambiente, data-driven, dinamico, personalizzabile. La vulnerabilità può essere preesistente, individuata o generata.", w:"§§ 3.1–3.2"},
+ {q:"Serve provare l'intento?", a:"No. Il diritto UE è disgiuntivo: «intenzionalmente o di fatto» (cons. 67 DSA), «scopo o effetto» (art. 5 AI Act). L'occultamento diventa opacità, un dato oggettivo.", w:"§ 3.3"},
+ {q:"Il diritto positivo ha già i pezzi?", a:"Sì, sparsi: art. 25 GDPR (modello di precetto), art. 25 DSA (qualifica la condotta ma senza vulnerabilità, e arretra nel consumo), AI Act (vulnerabilità nel divieto, ma per categorie; relazionale all'art. 7). Manca la soglia.", w:"§§ 3.4–3.6"},
+ {q:"Il nudge può tracciare il confine?", a:"No, non è una fattispecie: definito in negativo, confini extragiuridici che online cedono, definizioni incompatibili. Al suo posto la scala: vincolo, ostacolo, spinta.", w:"§ 4.1"},
+ {q:"Allora che cosa può pretendere il diritto?", a:"Nessuna interfaccia è neutra: la domanda non è se l'impresa orienti, ma come. Una norma conformativa; l'imputazione segue il potere; il limite è la libertà d'impresa. All'impresa non si chiede il bene del consumatore, ma di non superare una soglia.", w:"§§ 4.2–4.4"},
+ {q:"Con quale criterio si misura la soglia?", a:"Non intento, tecnica, effetto o consumatore medio. Si ricava in negativo: asimmetria che rende più difficile esercitare una facoltà riconosciuta. Cinque indici, verificabili sulla pagina.", w:"§§ 5.1–5.3"},
+ {q:"Quando il condizionamento diventa manipolazione?", a:"Con l'occultamento: quando chi subisce l'asimmetria non può riconoscerla dalla pagina che ha davanti. La disdetta lunga si vede, il default sfavorevole no. Art. 5 AI Act: «senza che una persona ne sia consapevole».", w:"§ 5.4"},
+ {q:"Basta un limite?", a:"No: il potere non ammette astensione. Serve un dovere di conformazione fondato sul potere (modello art. 2087 c.c.), con contenuto minimo: gli indici + l'inerzia conservativa. Dove la legge tace: la diligenza professionale (art. 20 cod. cons.).", w:"§§ 6.1–6.4"},
+ {q:"Chi lo fa valere?", a:"Niente nullità generale (SU 2007). Risarcimento, rimedi testuali, dolo; ma l'illecito è seriale e impercettibile, quindi serve l'inibitoria, come per le clausole vessatorie.", w:"§§ 6.5–6.6"},
+ {q:"È solo teoria?", a:"No: art. 51, c. 2 (pulsante d'ordine, Fuhrmann) e art. 54-bis (funzione di recesso) lo scrivono già. Ma c'è un'asimmetria: all'ingresso la violazione incide sul contratto, all'uscita no.", w:"cap. 7"},
+ {q:"Che cosa chiedere al legislatore?", a:"Non un altro elenco, ma una regola generale di progettazione sul modello dell'art. 25, par. 2, GDPR: requisiti verificabili e un rimedio che incida sul rapporto. È la direzione del Digital Fairness Act.", w:"Conclusioni"}
+];
+
+const CARDS = [
+ // cap 1
+ ["c1","Qual è la premessa da cui il codice civile costruisce la tutela del soggetto debole?","La capacità di agire presunta (art. 2 c.c.): il soggetto è astratto e uniforme, e ogni tutela è una deroga, un'eccezione tipizzata ex ante."],
+ ["c1","Quali sono le tre tecniche di tutela del debole individuate al § 1.1?","Stato del soggetto (incapacità legale e naturale, amministrazione di sostegno); anomalia dello scambio (rescissione, artt. 1447–1448); posizione nel rapporto (consumatore, subfornitura; nullità di protezione)."],
+ ["c1","In quali norme del codice conta già la condotta della controparte?","Art. 428 (malafede nell'incapacità naturale), art. 1448 (approfittamento dello stato di bisogno), art. 9 l. 192/1998 (abuso di dipendenza economica, valutato sulle alternative di mercato)."],
+ ["c1","Perché la tutela consumeristica è «più intensa ma più ristretta»?","Gli artt. 1341–1342 c.c. valgono per chiunque subisca la predisposizione, ma sono formali; l'art. 33 cod. cons. va sulla sostanza (significativo squilibrio), ma solo per il consumatore persona fisica."],
+ ["c1","Che cosa sostiene Fineman e qual è il suo limite per il giurista?","La vulnerabilità è una condizione universale (abbiamo un corpo), socialmente costruita nelle particolarità. Il limite: è una categoria critica ed euristica, non uno strumento operativo per selezionare i protetti."],
+ ["c1","Distingui vulnerabilità disposizionale e attuale (Helberger).","Disposizionale: la suscettibilità a essere profilati, che riguarda tutti. Attuale: quando l'operatore si rivolge a quella suscettibilità per influenzare la condotta; è lì che nasce la scorrettezza."],
+ ["c1","Enuncia il criterio della Parte I.","La vulnerabilità rileva quando l'architettura di scelta, predisposta unilateralmente da una parte, è conformata in modo da fare leva sulla suscettibilità dell'altra."],
+ ["c1","Perché, secondo la tesi, il criterio può guardare all'architettura e non all'atto dell'operatore?","Perché online l'attualizzazione non è un gesto puntuale: si oggettivizza nel design, ed è una proprietà verificabile della struttura."],
+ ["c1","La vulnerabilità è una categoria autonoma o una rilettura?","Una rilettura: dà un nome unico a una tecnica che il diritto già applica in casi sparsi (rescissione, incapacità naturale, dipendenza economica), senza bisogno dello status."],
+ ["c1","Che cosa ricavi da Cass. 20106/2009 per la tesi?","Tre corollari: si sindaca l'esercizio concreto dell'autonomia, non il modello di business; il controllo è relazionale (asimmetria); prescinde dall'intento di nuocere."],
+ ["c1","Perché le Sezioni Unite n. 26724/2007 sono decisive per i rimedi?","Distinguono regole di validità e regole di comportamento: la violazione di doveri di condotta nelle trattative genera responsabilità, non invalidità. Il criterio della tesi è una regola di comportamento."],
+ // cap 2
+ ["c2","Dove nasce la nozione di consumatore medio e con quale funzione?","Nella giurisprudenza della Corte di giustizia sulla libera circolazione delle merci (Gut Springenheide, 1998): come limite alla tutela, per valutare se i divieti nazionali fossero proporzionati."],
+ ["c2","Quali sono i due test del giudizio di scorrettezza dell'art. 20, c. 2, cod. cons.?","Il diligence test (contrarietà alla diligenza professionale, art. 18, lett. h) e il materiality test (idoneità a falsare in misura apprezzabile il comportamento del consumatore medio)."],
+ ["c2","Perché la formula dell'art. 18, lett. e), cod. cons. è importante per la tesi?","Perché è controfattuale: decisione «che non avrebbe altrimenti preso». È un appiglio per una soglia oggettiva, e ricompare identica nell'art. 5, lett. a), AI Act."],
+ ["c2","Qual è la funzione concreta del consumatore medio?","Distribuire il rischio: segna il confine tra autoresponsabilità e illecito del professionista. È la soglia de minimis del sistema."],
+ ["c2","Dov'è il vero limite del consumatore medio, se già conosce i bias?","Li considera solo per valutare i tratti del destinatario o la pratica come messaggio (Purpura); non intercetta la conformazione dell'ambiente e chi ne risponde. «L'ambiente digitale non comunica: dispone.»"],
+ ["c2","Elenca le quattro criticità del consumatore vulnerabile (art. 5, par. 3).","1) Tecnica del gruppo «chiaramente individuabile» contro la personalizzazione; 2) oggetto solo soggettivo; 3) Orientamenti come soft law; 4) prevedibilità rovesciata dai test A/B."],
+ ["c2","Perché la prevedibilità «si rovescia» online?","Era una garanzia per il professionista, che conosceva il pubblico solo a grandi linee. Con il monitoraggio e i test A/B l'effetto è misurato e prodotto, quindi nessuna eccezione di imprevedibilità regge."],
+ ["c2","Perché l'informazione non può essere il rimedio, secondo il § 2.3?","Non per la quantità: informare è rappresentare, e ogni rappresentazione orienta. Il rimedio ha la stessa natura del problema; e quando la forma diventa architettura non c'è un contenuto da rendere trasparente."],
+ ["c2","Quali sono i due errori simmetrici da evitare (§ 2.3)?","1) Proteggere senza condizioni per la razionalità limitata (si comprime la libertà commerciale e si perde la regola de minimis); 2) disinteressarsi della forma in nome dell'autoresponsabilità."],
+ ["c2","Fatti di Compass Banca e perché interessa la tesi?","Prestiti con polizze non collegate al credito, firme contestuali; AGCM 4,7 mln. La contestazione riguardava la sequenza, non le informazioni; il rimedio negli impegni erano 7 giorni tra i due atti, cioè l'architettura."],
+ ["c2","Che cosa ha deciso la Corte in Compass Banca (C-646/22)?","Il consumatore medio resta tale, ma ciò «non esclude» i bias; «normalmente informato» = cognizioni generali; la sola contestualità non è aggressiva; periodo di riflessione ammesso se proporzionato."],
+ ["c2","Perché Compass Banca apre ma non basta?","Apre: niente dovere di auto-informarsi, il rischio passa al professionista. Non basta: doppia negazione e prova uguale al materiality test; il bias è solo un nesso causale e il giudizio resta sul destinatario."],
+ // cap 3
+ ["c3","Qual è la differenza tra asimmetria informativa e architetturale?","Nell'informativa una parte sa di più dentro uno scenario comune; nell'architetturale una parte coincide con l'ambiente in cui l'altra decide (che cosa si vede, l'ordine, i default, quanto costa uscire)."],
+ ["c3","Quali tre proprietà distinguono le architetture digitali?","Sono data-driven, dinamiche e personalizzabili: insieme formano un ciclo continuo di sperimentazione e ottimizzazione."],
+ ["c3","Quali sono le tre ipotesi di vulnerabilità del § 3.2?","Preesistente (rilevata), individuata (scoperta con la profilazione), generata (creata dall'ambiente: dipendenza, tempi accelerati, sovraccarico)."],
+ ["c3","Perché il caso TikTok (AGCM 2024) è emblematico?","L'oggetto è il design (il sistema di raccomandazione che «monetizza l'addiction»), non il pubblico; e l'AGCM ha dovuto usare l'indebito condizionamento, pensato per il singolo rapporto: il diritto vigente arriva solo indirettamente."],
+ ["c3","Quali fonti europee escludono l'intenzionalità?","Cons. 67 DSA («intenzionalmente o di fatto»); art. 5, par. 1, lett. a) e b), AI Act («scopo o effetto»); Orientamenti della Commissione («non richiede l'intenzionalità»)."],
+ ["c3","Perché l'intento non distingue sfruttamento e generazione?","Perché attraversa entrambi: c'è sfruttamento intenzionale senza nuova vulnerabilità (batteria scarica) e generazione involontaria (algoritmi che massimizzano il tempo e creano dipendenza)."],
+ ["c3","Che ruolo resta all'elemento soggettivo?","Alternativo nella fattispecie (con l'intento basta il tentativo, senza serve l'effetto) e criterio di graduazione della sanzione."],
+ ["c3","Perché non è responsabilità oggettiva?","Tre ragioni: serve un effetto rilevante (de minimis); il giudizio è sulla diligenza, con misure appropriate e prova liberatoria; le condotte conformi al diritto UE non sono dark pattern."],
+ ["c3","Perché l'art. 25 GDPR è il «modello di precetto»?","Impone misure tecniche e organizzative fin dalla progettazione e per impostazione predefinita: agisce ex ante, senza danno e senza intento. È il passaggio da un modello reattivo a uno proattivo."],
+ ["c3","Che cosa dicono Planet49 e il considerando 32 GDPR?","La casella preselezionata non è consenso valido: «il silenzio, l'inattività o la preselezione di caselle» non manifestano volontà. Il carattere inequivoco del consenso dipende dalla configurazione grafica scelta dal titolare."],
+ ["c3","Qual è il paradosso dell'art. 25, par. 2, DSA?","Il divieto non si applica alle pratiche già coperte dalla dir. 2005/29, che copre i dark pattern più diffusi: la norma più vicina alla tesi arretra proprio nei rapporti di consumo. È «una rete di protezione a tutela di un'altra rete»."],
+ ["c3","In che senso DSA e AI Act hanno lacune speculari?","Il DSA qualifica la condotta ma ignora la vulnerabilità; l'AI Act fa della vulnerabilità un elemento del divieto, ma per categorie chiuse e con doppia soglia. Ciascuno ha il pezzo che manca all'altro."],
+ ["c3","Perché l'art. 7, par. 2, lett. h), AI Act è il «dato decisivo»?","Valuta lo «squilibrio di potere» e la posizione vulnerabile rispetto al deployer: la concezione relazionale è già nel diritto UE; manca solo che diventi presupposto del divieto."],
+ ["c3","Quali sono i quattro elementi del criterio di rilevanza (§ 3.6)?","1) Predisposizione unilaterale; 2) conformazione che fa leva su una suscettibilità; 3) idoneità a falsare in modo significativo il comportamento; 4) accertamento sulla conformazione oggettiva."],
+ ["c3","Come si misura l'idoneità a falsare (terzo elemento)?","Non sul singolo né sul consumatore medio, ma sulla classe di destinatari a cui l'architettura è rivolta, con i dati dell'operatore: il test A/B che dice quale versione funziona ne prova l'idoneità."],
+ // cap 4
+ ["c4","Come definiscono il nudge Thaler e Sunstein?","Qualsiasi aspetto dell'architettura di scelta che modifica il comportamento in modo prevedibile, senza vietare opzioni e senza mutare in modo significativo gli incentivi economici."],
+ ["c4","Perché il nudge non è una fattispecie? (quattro argomenti)","1) Definizione in negativo con confini extragiuridici; 2) online i confini cedono (opzione nascosta, prezzo personalizzato); 3) cedono anche dall'interno (Hausman-Welch); 4) le definizioni alternative sono incompatibili sui punti decisivi."],
+ ["c4","Su che cosa divergono Thaler-Sunstein e Hausman-Welch?","Sull'attrito: per i primi è nudge (non cambia incentivi economici), per i secondi no (rende l'opzione più costosa in tempo e disturbo)."],
+ ["c4","Che cosa c'entra l'art. 25, par. 3, DSA con il nudge?","Delle tre pratiche che indica, due sono attrito (richieste ripetute, disdetta più difficile): con la definizione ampia le chiameremmo nudge, cioè interventi lievi."],
+ ["c4","Perché scartare la definizione di Selinger e Whyte?","Aggiunge bias, occultamento e beneficio: ogni spinta sarebbe manipolativa per definizione, e il nudge d'impresa una contraddizione. Sono elementi di valutazione, non di descrizione."],
+ ["c4","Descrivi la scala vincolo, ostacolo, spinta.","Vincolo: elimina l'opzione. Ostacolo: la lascia ma ne aumenta il costo. Spinta: lascia opzione e costo, cambia solo l'evidenza (default compreso)."],
+ ["c4","Perché l'ostacolo è il più insidioso?","Perché è l'unico che non si vede: l'opzione esiste, è accessibile e non costa denaro, quindi supera ogni controllo formale. Per questo il DSA ha dovuto nominarlo."],
+ ["c4","Quali sono i tre corollari dell'assenza di design neutrale (§ 4.2)?","1) La norma può essere solo conformativa (modello art. 25 GDPR); 2) l'imputazione segue la titolarità del potere, non intento o colpa (art. 1176, c. 2); 3) il limite è la libertà d'impresa (proporzionalità di Compass)."],
+ ["c4","Perché l'informazione è una «species della spinta»?","Perché arriva sempre in una forma (lunghezza, posizione, link, ordine, momento) che condiziona l'esito come la disposizione dei comandi."],
+ ["c4","Perché il criterio «as judged by themselves» non vale per l'impresa?","Presuppone chi persegue l'interesse altrui; l'impresa persegue legittimamente il proprio. E manca il procedimento che legittima il regolatore (consultazione, valutazione d'impatto, motivazione)."],
+ ["c4","Qual è la risposta decisiva all'obiezione paternalistica?","L'obiezione presuppone un ambiente neutro, che online non esiste. Imporre una conformazione non toglie libertà al consumatore: limita il potere dell'impresa, come la disciplina delle clausole vessatorie."],
+ ["c4","Dove il paternalismo riemerge, secondo la tesi?","Nel default imposto dalla legge, che mira a un risultato per il consumatore: lì riemerge, mitigato dalla possibilità di discostarsene."],
+ // cap 5
+ ["c5","Che cosa non può fondare il criterio di liceità (§ 5.1)?","L'intenzione (cons. 67 DSA), la tecnica (il default è vietato in Planet49 e imposto dall'art. 25 GDPR), l'effetto (non provabile), la reazione del consumatore medio (online non esiste)."],
+ ["c5","Qual è il tratto comune delle pratiche già vietate?","Un'asimmetria che rende sistematicamente più difficile esercitare una facoltà riconosciuta dall'ordinamento: rifiutare, revocare un consenso, recedere."],
+ ["c5","Elenca i cinque indici.","Simmetria dei costi, parità di percepibilità, neutralità della formulazione, reversibilità, non reiterazione."],
+ ["c5","Da quali norme vengono simmetria dei costi e non reiterazione?","Simmetria: art. 7, par. 3, GDPR (revocare facile quanto prestare) e art. 25 DSA (disdetta). Non reiterazione: sollecitazioni ripetute (all. I dir. 2005/29) e art. 25 DSA."],
+ ["c5","La conferma prima di cancellare un account viola gli indici?","È un'asimmetria, ma protettiva: va a beneficio di chi la subisce. Gli indici misurano anche la direzione del vantaggio."],
+ ["c5","Dove sta la soglia della manipolazione?","Nell'occultamento: quando chi subisce l'asimmetria non può riconoscerla dalla pagina. La disdetta lunga si vede, il default sfavorevole no (art. 5 AI Act: «senza che una persona ne sia consapevole»)."],
+ ["c5","Quali linee guida traducono già gli indici in prescrizioni?","Le linee guida cookie del Garante (provv. 10 giugno 2021, n. 231) e le linee guida EDPB 3/2022 sui modelli di progettazione ingannevoli (v. 2.0, 14 febbraio 2023)."],
+ // cap 6
+ ["c6","Perché un limite non basta (§ 6.1)?","Perché un divieto presuppone che si possa non fare, mentre chi costruisce un'interfaccia non può astenersi: deve decidere che cosa accade se il consumatore non fa nulla."],
+ ["c6","Su che cosa si fonda il dovere di conformazione?","Sulla titolarità del potere di predisporre l'ambiente, non sulla debolezza del consumatore (spesso prodotta dall'interfaccia) né sul contratto (spesso non ancora concluso)."],
+ ["c6","Come usi l'art. 2087 c.c.?","Come modello, non per analogia: mostra che l'ordinamento conosce doveri che hanno per oggetto un ambiente, gravano su chi lo organizza e operano prima del danno."],
+ ["c6","Qual è il contenuto minimo del dovere?","Un elemento comparativo (rispettare gli indici) e uno non comparativo (se l'inerzia produce un effetto, che sia conservativo, oppure si chiede una scelta attiva)."],
+ ["c6","Dove l'ordinamento conosce già l'inerzia conservativa?","Art. 25, par. 2, GDPR (solo dati necessari per default); art. 65 cod. cons. (restituzione per opzioni preselezionate); art. 66-quinquies (fornitura non richiesta); Planet49."],
+ ["c6","Da dove viene il dovere dove la legge tace?","Dalla diligenza professionale dell'art. 20 cod. cons. letta con correttezza e buona fede (art. 18, lett. h); regge sia con la lettura di Camilleri sia con quella di Piraino, perché il fondamento è il potere."],
+ ["c6","Perché non la nullità del contratto?","La violazione di una regola di condotta genera responsabilità (SU 26724/2007); servirebbe una previsione espressa (art. 1418, c. 3); e la nullità è inadatta (imprescrittibile, lesiva dei terzi)."],
+ ["c6","Quali rimedi individuali restano?","Risarcimento per violazione di obblighi di protezione, rimedi testuali (art. 65), risoluzione e riduzione del prezzo (art. 27, c. 15-bis), annullamento per dolo (configurabile grazie all'occultamento), art. 82 GDPR."],
+ ["c6","Perché l'inibitoria?","Perché l'illecito è seriale e impercettibile: danno minimo per ciascuno, spesso ignorato. L'inibitoria corregge l'interfaccia per tutti, come per le clausole vessatorie."],
+ ["c6","Quali sono i limiti dichiarati del modello (§ 6.7)?","Evidenze empiriche deboli sull'efficacia dei nudge (ma il dovere non dipende da esse); la non reiterazione è l'indice più fragile; la personalizzazione è il limite senza risposta."],
+ // cap 7
+ ["c7","Che cosa prevede l'art. 51, c. 2, cod. cons.?","Il pulsante d'ordine deve indicare in modo inequivocabile che l'ordine implica l'obbligo di pagare («ordine con obbligo di pagare»); altrimenti il consumatore non è vincolato."],
+ ["c7","Che cosa ha deciso la Corte in Fuhrmann-2 (2022)?","La conformità del pulsante non si ricava dalle circostanze dell'ordinazione: si guarda il comando stesso. Un giudizio sull'interfaccia, non sulla mente del consumatore."],
+ ["c7","Come qualifichi il «non vincolo»?","Come nullità di protezione relativa, a favore del consumatore, come l'art. 36 cod. cons.: un'eccezione espressa (art. 1418, c. 3) che conferma la regola delle SU 2007."],
+ ["c7","Che cos'è la funzione di recesso dell'art. 54-bis e da quando si applica?","Introdotta dalla dir. 2023/2673: per i contratti a distanza online il recesso deve passare per una funzione ben visibile, facile quanto concludere. Si applica dal 19 giugno 2026."],
+ ["c7","Qual è l'asimmetria dei rimedi?","All'ingresso la violazione incide sul contratto (non vincolo); all'uscita no. Proprio dove l'impresa ha più interesse a trattenere, il consumatore ha gli strumenti più deboli."],
+ ["c7","Che differenza c'è tra recesso e disdetta?","Il recesso è il ripensamento entro 14 giorni; la disdetta scioglie un contratto di durata dopo. L'art. 54-bis copre solo il recesso."],
+ ["c7","Perché l'art. 59-undecies cod. cons. è importante?","Nei servizi finanziari a distanza scrive in legge tre indici (percepibilità, non reiterazione, reversibilità): è la prova che gli indici non sono inventati."],
+ // conclusioni
+ ["cc","Qual è il contributo originale della tesi?","Spostare l'oggetto della tutela dal soggetto vulnerabile al potere di conformare, e ricavarne un dovere con un contenuto minimo verificabile (indici + inerzia conservativa)."],
+ ["cc","Perché il modello regge? (tre piani)","Non richiede la prova dell'effetto; misura relazioni e non elementi grafici (vale anche per chatbot); non dipende dalle dimensioni dell'operatore (rispettarlo costa meno che violarlo)."],
+ ["cc","Che cosa chiedi al Digital Fairness Act?","Non un nuovo elenco, ma una regola generale di progettazione sul modello dell'art. 25, par. 2, GDPR: inerzia conservativa, percorsi simmetrici, requisiti verificabili e un rimedio sul rapporto."],
+ ["cc","Perché non un catalogo di pratiche vietate?","Perché le stesse forme sono vietate o dovute a seconda della direzione (la conferma), e le tecniche evolvono più in fretta delle norme."],
+ ["cc","Ripeti la frase finale.","La vulnerabilità nell'ambiente digitale non è una nuova categoria di persone: è la condizione di chiunque decida in un ambiente costruito da altri. La regola non chiede all'impresa di decidere al posto del consumatore, ma di costruire l'ambiente in modo che la decisione resti sua."]
+].map((c,i)=>({id:"k"+i, ch:c[0], q:c[1], a:c[2]}));
+
+const PLAN = [
+ {d:"2026-11-25", t:"Cap. 1", s:"Debolezza tipizzata e criterio relazionale", c:"c1"},
+ {d:"2026-11-26", t:"Cap. 2", s:"Consumatore medio, vulnerabile, Compass Banca", c:"c2"},
+ {d:"2026-11-27", t:"Cap. 3", s:"Asimmetria architetturale, intento, GDPR, DSA, AI Act", c:"c3"},
+ {d:"2026-11-28", t:"Cap. 4 + relatrice", s:"Il nudge non è fattispecie; la scala", c:"c4"},
+ {d:"2026-11-29", t:"Cap. 5", s:"Criterio, cinque indici, occultamento", c:"c5"},
+ {d:"2026-11-30", t:"Cap. 6", s:"Dovere di conformazione e rimedi", c:"c6"},
+ {d:"2026-12-01", t:"Cap. 7 + conclusioni", s:"I pulsanti; de iure condendo", c:"c7"},
+ {d:"2026-12-02", t:"Discorso", s:"Tre prove cronometrate; domanda della correlatrice", c:""},
+ {d:"2026-12-03", t:"Ripasso leggero", s:"Il filo, le carte da rivedere, una prova finale", c:""},
+ {d:"2026-12-04", t:"Discussione", s:"Respira. La tesi è tua.", c:""}
+];
+
+const BLOCKS = [
+ {t:"Apertura: la disdetta", sec:55, k:"Un gesto per abbonarsi, tre per disdire. Nessuno impedisce di andarsene, ma qualcuno ha deciso prima quanto costa. La tutela si sposta dalla persona alla situazione. Le due domande: quando l'orientamento smette di essere lecito? Quale regola per chi progetta?"},
+ {t:"Chi protegge il diritto (cap. 1)", sec:100, k:"Il codice conosce l'incapacità, non la vulnerabilità; malafede (art. 428) e approfittamento (art. 1448). Fineman: tutti vulnerabili, quindi chi selezioniamo? Il criterio nella situazione: l'ambiente che fa leva sulla suscettibilità. Orientamenti 2021: «dinamica e situazionale»."},
+ {t:"Il diritto dei consumi (cap. 2–3)", sec:105, k:"Consumatore medio (art. 20 cod. cons.), consumatore vulnerabile (art. 5 dir. 2005/29), «decisione consapevole» (art. 2). Online l'ambiente non comunica: dispone. Profilazione (GDPR): individuare o generare la vulnerabilità. Il diritto guarda ancora alla persona."},
+ {t:"La neutralità impossibile (cap. 4)", sec:50, k:"Un pulsante ha un colore, un elenco un ordine. Cons. 67 DSA: si colpisce la presentazione che compromette scelte libere e informate. La direttiva vieta di falsare, non di influenzare."},
+ {t:"1. Il nudge", sec:45, k:"Thaler-Sunstein: orienta senza vietare e senza cambiare gli incentivi. Può essere una fattispecie? No: definito in negativo, i confini cedono online."},
+ {t:"2. Dallo sludge al criterio (cap. 4–5)", sec:240, k:"Thaler 2018: sludge. Che cosa accade all'opzione: vincolo, spinta, ostacolo (art. 25 DSA). Non ogni attrito è illecito. Non intenzione, non tecnica (Planet49 / art. 25 GDPR), non effetto, non consumatore medio. Criterio in negativo: più difficile esercitare un diritto. Cinque indici: simmetria dei costi, parità di percepibilità, neutralità della formulazione, reversibilità, non reiterazione. Garante 2021. «Il giudizio si fa sulla pagina.»", tip:"È il blocco più lungo: se sfori, nomina gli indici senza citare la norma per ciascuno. Usa i nomi della tesi: «percepibilità» e «non reiterazione»."},
+ {t:"3. La soglia (cap. 5)", sec:45, k:"Disdetta lunga: la vedi, la scelta resta tua. Default sfavorevole: l'alternativa non la incontri mai. Occultamento: art. 5 AI Act, «senza che una persona ne sia consapevole»."},
+ {t:"4. Dal limite al dovere (cap. 6)", sec:150, k:"Il potere non si può non esercitare. Perché: il potere, non la debolezza (art. 2087 c.c.). Che cosa: indici + inerzia conservativa (art. 25 GDPR, art. 65 cod. cons., Planet49). «L'inerzia non è volontà.» Dove la legge tace: non l'art. 1337, non l'art. 25 DSA (par. 2), ma la diligenza dell'art. 20 cod. cons."},
+ {t:"5. I rimedi (cap. 6)", sec:40, k:"Non la nullità (SU 2007): responsabilità. Danno minimo e impercettibile, quindi inibitoria collettiva o delle autorità, come per le clausole vessatorie."},
+ {t:"6. La verifica (cap. 7)", sec:70, k:"Art. 51, c. 2: «ordine con obbligo di pagare», non vincolo, Fuhrmann. Art. 54-bis (dir. 2023/2673), da giugno. Asimmetria: all'ingresso incide sul contratto, all'uscita no. È la disdetta da cui siamo partiti."},
+ {t:"7. Conclusioni", sec:75, k:"Questioni aperte: personalizzazione. Fitness check 2024. Digital Fairness Act (11 novembre): la direzione giusta, purché abbia un contenuto verificabile e un rimedio sul contratto. Frase finale: «costruire l'ambiente in modo che la decisione resti sua»."},
+ {t:"Grazie", sec:5, k:"Pausa. Sguardo alla commissione."}
+];
+
+/* ---------- ROUTING ---------- */
+const VIEWS = ["oggi","filo","capitoli","leggi","allenamento","relatrice","discorso"];
+function route(){
+  const h = (location.hash||"").replace("#","");
+  const v = VIEWS.includes(h) ? h : "oggi";
+  VIEWS.forEach(x=>{ $("#v-"+x).hidden = x!==v; });
+  document.querySelectorAll("nav.tabs a").forEach(a=>{
+    if(a.getAttribute("href")==="#"+v) a.setAttribute("aria-current","page"); else a.removeAttribute("aria-current");
+  });
+  if(v==="oggi") renderToday();
+  if(v==="allenamento") renderCard();
+  if(v==="leggi") openReader();
+  window.scrollTo(0,0);
+}
+window.addEventListener("hashchange", route);
+
+/* ---------- COUNTDOWN ---------- */
+function todayISO(){ const d=new Date(); const z=n=>String(n).padStart(2,"0"); return d.getFullYear()+"-"+z(d.getMonth()+1)+"-"+z(d.getDate()); }
+function daysTo(iso){ const a=new Date(todayISO()+"T00:00:00"), b=new Date(iso+"T00:00:00"); return Math.round((b-a)/86400000); }
+function renderCountdown(){
+  const n = daysTo("2026-12-04");
+  const el = $("#countdown");
+  if(n>1) el.innerHTML = "Discussione tra <b>"+n+" giorni</b> · 4 dicembre";
+  else if(n===1) el.innerHTML = "Discussione <b>domani</b>";
+  else if(n===0) el.innerHTML = "<b>Oggi è il giorno</b>";
+  else el.innerHTML = "Discussione del 4 dicembre";
+}
+
+/* ---------- PROGRESSI ---------- */
+let prog = store.get("tesi.prog", {}); // id -> 0|1|2
+function counts(filter){
+  let k=0,q=0,x=0,n=0;
+  CARDS.forEach(c=>{ if(filter && c.ch!==filter) return; const g=prog[c.id]; if(g===2)k++; else if(g===1)q++; else if(g===0)x++; else n++; });
+  return {k,q,x,n,tot:k+q+x+n};
+}
+function renderToday(){
+  const t = todayISO();
+  const idx = PLAN.findIndex(p=>p.d===t);
+  $("#days").innerHTML = PLAN.map((p,i)=>{
+    const dt = new Date(p.d+"T00:00:00");
+    const lab = dt.toLocaleDateString("it-IT",{weekday:"short", day:"numeric", month:"short"});
+    const cls = p.d===t ? "day today" : (p.d<t ? "day past" : "day");
+    return `<div class="${cls}"><span class="d">${lab}${p.d===t?" · oggi":""}</span><span class="t">${p.t}</span><span class="s">${p.s}</span></div>`;
+  }).join("");
+  if(idx>=0){
+    const p = PLAN[idx];
+    $("#today-title").textContent = "Oggi: " + p.t;
+    $("#today-lead").textContent = p.c ? ("Obiettivo: " + p.s.toLowerCase() + ". Leggi il capitolo raccontato, ripetilo in un minuto, poi fai le sue carte.") : p.s;
+  }
+  const c = counts();
+  $("#s-k").textContent=c.k; $("#s-q").textContent=c.q; $("#s-x").textContent=c.x;
+  $("#s-new").textContent = c.n ? (c.n+" carte su "+c.tot+" non ancora provate.") : "Hai provato tutte le carte.";
+  $("#bars").innerHTML = CH.map(ch=>{
+    const s=counts(ch.id); const w=v=>(s.tot? (v/s.tot*100):0).toFixed(1)+"%";
+    const pct = s.tot? Math.round(s.k/s.tot*100):0;
+    return `<div class="bar"><span>${ch.n.split(" · ")[0]}</span><span class="track" aria-hidden="true"><i style="width:${w(s.k)};background:var(--ok)"></i><i style="width:${w(s.q)};background:var(--warn)"></i><i style="width:${w(s.x)};background:var(--bad)"></i></span><span class="pct">${pct}%</span></div>`;
+  }).join("");
+}
+
+/* ---------- FILO ---------- */
+function renderFilo(){
+  $("#chain").innerHTML = FILO.map((f,i)=>`<li class="link"><span class="knot">${i+1}</span><div><div class="q">${f.q}</div><div class="where">${f.w}</div><div class="a" id="fa${i}" hidden>${f.a}</div><button class="btn small ghost reveal" type="button" data-i="${i}" aria-controls="fa${i}" aria-expanded="false">Mostra la risposta</button></div></li>`).join("");
+  $("#chain").addEventListener("click", e=>{
+    const b = e.target.closest("button.reveal"); if(!b) return;
+    const a = $("#fa"+b.dataset.i); a.hidden = !a.hidden;
+    b.textContent = a.hidden ? "Mostra la risposta" : "Nascondi";
+    b.setAttribute("aria-expanded", String(!a.hidden));
+  });
+  const setAll = show => document.querySelectorAll("#chain .a").forEach((a,i)=>{ a.hidden=!show; const b=document.querySelector(`button.reveal[data-i="${i}"]`); b.textContent=show?"Nascondi":"Mostra la risposta"; b.setAttribute("aria-expanded",String(show)); });
+  $("#filo-all").onclick = ()=>setAll(true);
+  $("#filo-none").onclick = ()=>setAll(false);
+}
+
+/* ---------- CAPITOLI ---------- */
+let curCh = store.get("tesi.ch","c1"), curL = store.get("tesi.lvl",0);
+function renderChList(){
+  $("#chlist").innerHTML = CH.map(c=>`<button class="chbtn" type="button" data-c="${c.id}" aria-pressed="${c.id===curCh}"><span class="n">${c.n}</span><span class="t">${c.t}</span></button>`).join("");
+}
+function renderCh(){
+  const c = CH.find(x=>x.id===curCh) || CH[0];
+  document.querySelectorAll("#levels button").forEach(b=>b.setAttribute("aria-pressed", String(+b.dataset.l===curL)));
+  const body = curL===0 ? `<p class="quote" style="font-style:normal">${c.l0}</p><p class="hint">Ripetilo ad alta voce senza guardare: deve durare circa un minuto.</p>`
+             : curL===1 ? `<div class="read">${c.l1}</div>`
+             : `<div class="read" style="font-size:1.04rem">${c.l2}</div>`;
+  const kw = Object.entries(c.kw).map(([k,v])=>`<dt>${k}</dt><dd class="mono">${v}</dd>`).join("");
+  const s = counts(c.id);
+  $("#chview").innerHTML = `<div><div class="eyebrow">${c.n}</div><h3 style="font-family:var(--f-read);font-weight:500;font-size:1.4rem;margin-top:4px">${c.t}</h3></div>${body}<dl class="kw">${kw}</dl><div class="row"><a class="btn small" href="#leggi" data-read="${c.id}">Leggi il capitolo raccontato</a><a class="btn small primary" href="#allenamento" data-train="${c.id}">Allenati su questo capitolo</a><span class="hint">${s.k} di ${s.tot} carte sapute</span></div>`;
+}
+$("#chlist")?.addEventListener("click", e=>{ const b=e.target.closest(".chbtn"); if(!b) return; curCh=b.dataset.c; store.set("tesi.ch",curCh); renderChList(); renderCh(); });
+document.getElementById("levels").addEventListener("click", e=>{ const b=e.target.closest("button"); if(!b) return; curL=+b.dataset.l; store.set("tesi.lvl",curL); renderCh(); });
+document.getElementById("chview").addEventListener("click", e=>{
+  const r=e.target.closest("[data-read]"); if(r){ pendingCh=r.dataset.read; return; }
+  const a=e.target.closest("[data-train]"); if(!a) return; deckFilter=a.dataset.train; store.set("tesi.deck",deckFilter); $("#deck-filter").value=deckFilter; queue=null; });
+
+/* ---------- LEGGI ---------- */
+const SRC = [
+  {file:"raccontata/parte-1.md", skip:[]},
+  {file:"raccontata/parte-2.md", skip:["Come usare questo documento"]}
+];
+const SHORT = t => { const m=t.match(/^Capitolo (\d)/); if(m) return "Cap. "+m[1]; if(/^La catena/.test(t)) return "Catena Parte I"; if(/^Conclusioni/.test(t)) return "Conclusioni"; if(/^Indice delle fonti/.test(t)) return "Indice fonti"; return t.slice(0,22); };
+const CHOF = t => { const m=t.match(/^Capitolo (\d)/); if(m) return "c"+m[1]; if(/^Conclusioni/.test(t)) return "cc"; return ""; };
+let pendingCh = null, SECS = [], curSec = store.get("tesi.sec",0), readDone = store.get("tesi.read",{}), fs = store.get("tesi.fs",1.12), loadState = "idle";
+function splitMd(md, skip){
+  const out=[]; let cur=null;
+  md.split("\n").forEach(line=>{
+    const h = line.match(/^## (.+)$/);
+    if(h){ cur={title:h[1].trim(), body:[line]}; if(!skip.includes(cur.title)) out.push(cur); return; }
+    if(cur) cur.body.push(line);
+  });
+  return out.map(s=>({title:s.title, short:SHORT(s.title), ch:CHOF(s.title), md:s.body.join("\n")}));
+}
+async function loadSecs(){
+  if(loadState==="ok"||loadState==="loading") return;
+  loadState="loading";
+  try{
+    const texts = await Promise.all(SRC.map(s=>fetch(s.file).then(r=>{ if(!r.ok) throw new Error(r.status); return r.text(); })));
+    SECS = texts.flatMap((t,i)=>splitMd(t, SRC[i].skip));
+    loadState="ok";
+  }catch(e){ loadState="error"; }
+}
+function slug(t,i){ return "s"+i+"-"+t.toLowerCase().normalize("NFD").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,40); }
+function renderToc(){
+  $("#toc").innerHTML = SECS.map((s,i)=>`<button class="tocbtn" type="button" role="listitem" data-s="${i}" aria-current="${i===curSec}"><span>${s.short}</span>${readDone[s.title]?'<span class="ck">✓ letto</span>':''}</button>`).join("");
+}
+function renderReader(){
+  const s = SECS[curSec]; if(!s) return;
+  const box = $("#reader");
+  box.style.setProperty("--rs", fs+"rem");
+  const html = (window.marked && window.marked.parse) ? window.marked.parse(s.md, {mangle:false, headerIds:false}) : `<pre style="white-space:pre-wrap">${s.md.replace(/&/g,"&amp;").replace(/</g,"&lt;")}</pre>`;
+  box.innerHTML = html;
+  box.querySelectorAll("table").forEach(t=>{ const w=document.createElement("div"); w.className="tbl"; t.parentNode.insertBefore(w,t); w.appendChild(t); });
+  const heads = [...box.querySelectorAll("h3")];
+  heads.forEach((h,i)=>{ h.id = slug(h.textContent,i); });
+  $("#subtoc").innerHTML = heads.map(h=>{ const m=h.textContent.match(/^(\d+(\.\d+)?( e \d+\.\d+)?|\d\.)/); const lab = m ? "§ "+m[1].replace(/\.$/,"") : h.textContent.slice(0,18)+"…"; return `<a href="#leggi" data-h="${h.id}">${lab}</a>`; }).join("");
+  $("#r-prev").disabled = curSec<=0; $("#r-next").disabled = curSec>=SECS.length-1;
+  const d=$("#r-done"); const done=!!readDone[s.title];
+  d.textContent = done ? "✓ Letto" : "Segna come letto"; d.classList.toggle("isdone", done); d.classList.toggle("primary", !done);
+  renderToc();
+}
+async function openReader(){
+  if(loadState!=="ok"){
+    await loadSecs();
+    if(loadState!=="ok"){ $("#reader").innerHTML = `<p class="read">Non riesco a caricare il testo raccontato. Controlla la connessione e riapri questa sezione.</p>`; loadState="idle"; return; }
+  }
+  if(pendingCh){ const i=SECS.findIndex(x=>x.ch===pendingCh); if(i>=0){ curSec=i; store.set("tesi.sec",curSec); } pendingCh=null; }
+  if(curSec>=SECS.length) curSec=0;
+  renderReader();
+}
+$("#toc").addEventListener("click", e=>{ const b=e.target.closest("[data-s]"); if(!b) return; curSec=+b.dataset.s; store.set("tesi.sec",curSec); renderReader(); $("#v-leggi").scrollIntoView(); });
+$("#subtoc").addEventListener("click", e=>{ const a=e.target.closest("[data-h]"); if(!a) return; e.preventDefault(); const h=document.getElementById(a.dataset.h); if(h) h.scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"}); });
+$("#r-prev").onclick = ()=>{ if(curSec>0){ curSec--; store.set("tesi.sec",curSec); renderReader(); $("#v-leggi").scrollIntoView(); } };
+$("#r-next").onclick = ()=>{ if(curSec<SECS.length-1){ curSec++; store.set("tesi.sec",curSec); renderReader(); $("#v-leggi").scrollIntoView(); } };
+$("#r-done").onclick = ()=>{ const s=SECS[curSec]; if(!s) return; readDone[s.title]=!readDone[s.title]; store.set("tesi.read",readDone); renderReader(); };
+$("#fs-up").onclick = ()=>{ fs=Math.min(1.5, +(fs+0.06).toFixed(2)); store.set("tesi.fs",fs); $("#reader").style.setProperty("--rs", fs+"rem"); };
+$("#fs-down").onclick = ()=>{ fs=Math.max(0.94, +(fs-0.06).toFixed(2)); store.set("tesi.fs",fs); $("#reader").style.setProperty("--rs", fs+"rem"); };
+
+/* ---------- ALLENAMENTO ---------- */
+let deckFilter = store.get("tesi.deck","tutti");
+let queue = null, shown = false;
+function buildQueue(){
+  const pool = CARDS.filter(c=>deckFilter==="tutti"||c.ch===deckFilter);
+  const rank = c => { const g=prog[c.id]; return g===0?0 : g===undefined?1 : g===1?2 : 3; };
+  queue = pool.slice().sort((a,b)=>rank(a)-rank(b) || (Math.random()-.5));
+}
+function renderDeckFilter(){
+  const sel = $("#deck-filter");
+  sel.innerHTML = `<option value="tutti">Tutta la tesi (${CARDS.length})</option>` + CH.map(c=>`<option value="${c.id}">${c.n.split(" · ")[0]} · ${c.t}</option>`).join("");
+  sel.value = deckFilter;
+  sel.onchange = ()=>{ deckFilter=sel.value; store.set("tesi.deck",deckFilter); queue=null; renderCard(); };
+}
+function pillFor(id){ const g=prog[id]; return g===2?'<span class="pill k">la sai</span>':g===1?'<span class="pill q">quasi</span>':g===0?'<span class="pill x">da rivedere</span>':'<span class="pill n">nuova</span>'; }
+function renderCard(){
+  if(!queue) buildQueue();
+  const box = $("#card");
+  if(!queue.length){ box.innerHTML = `<p class="read">Nessuna carta in questo mazzo.</p>`; return; }
+  const c = queue[0]; const ch = CH.find(x=>x.id===c.ch);
+  const s = counts(deckFilter==="tutti"?null:deckFilter);
+  box.innerHTML = `<div class="meta"><span class="eyebrow">${ch.n.split(" · ")[0]}</span><span class="row" style="gap:8px">${pillFor(c.id)}<span class="mono" style="color:var(--muted)">${s.k}/${s.tot}</span></span></div>
+    <div class="qtext">${c.q}</div>
+    ${shown ? `<div class="atext">${c.a}</div>
+      <div class="grade"><button class="btn g0" type="button" data-g="0">Non sapevo</button><button class="btn g1" type="button" data-g="1">Quasi</button><button class="btn g2" type="button" data-g="2">Sapevo</button></div>`
+      : `<p class="hint">Rispondi a voce, poi controlla.</p><div class="row"><button class="btn primary" type="button" id="show">Mostra la risposta</button><button class="btn ghost" type="button" id="skip">Salta</button></div>`}`;
+  const sh=$("#show"); if(sh) { sh.onclick=()=>{shown=true; renderCard();}; }
+  const sk=$("#skip"); if(sk) { sk.onclick=()=>{ queue.push(queue.shift()); renderCard(); }; }
+  box.querySelectorAll("[data-g]").forEach(b=>b.onclick=()=>grade(+b.dataset.g));
+}
+function grade(g){
+  const c = queue.shift();
+  prog[c.id]=g; store.set("tesi.prog",prog);
+  const pos = g===0?2 : g===1?6 : queue.length;
+  queue.splice(Math.min(pos,queue.length),0,c);
+  shown=false; renderCard();
+}
+document.addEventListener("keydown", e=>{
+  if($("#v-allenamento").hidden || e.target.closest("select,input,textarea")) return;
+  if(!shown && (e.key===" "||e.key==="Enter")){ e.preventDefault(); shown=true; renderCard(); }
+  else if(shown && ["1","2","3"].includes(e.key)){ grade(+e.key-1); }
+});
+let resetArmed=false;
+$("#reset").onclick = ()=>{
+  const b=$("#reset");
+  if(!resetArmed){ resetArmed=true; b.textContent="Tocca di nuovo per confermare"; setTimeout(()=>{resetArmed=false;b.textContent="Azzera progressi";},3000); return; }
+  prog={}; store.set("tesi.prog",prog); resetArmed=false; b.textContent="Progressi azzerati"; queue=null; renderCard();
+  setTimeout(()=>{b.textContent="Azzera progressi";},2000);
+};
+
+/* ---------- DISCORSO ---------- */
+const TARGET = 14*60;
+let t0=0, acc=0, running=false, cur=0, laps=[], tick=null;
+const fmt = s => { s=Math.max(0,Math.round(s)); return String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0"); };
+const plannedTotal = BLOCKS.reduce((a,b)=>a+b.sec,0);
+function elapsed(){ return acc + (running ? (Date.now()-t0)/1000 : 0); }
+function renderBlocks(){
+  let cum=0;
+  $("#blocks").innerHTML = BLOCKS.map((b,i)=>{
+    cum+=b.sec;
+    const lap = laps[i];
+    const lapHtml = lap!==undefined ? `<span class="lap ${lap>b.sec*1.15?'over':'in'}">${fmt(lap)} / ${fmt(b.sec)}</span>` : `<span class="tg">~${fmt(b.sec)} · fino a ${fmt(cum)}</span>`;
+    const cls = "block" + (running||acc>0 ? (i===cur?" cur": i<cur?" done":"") : "");
+    return `<div class="${cls}"><span class="bt">${b.t}</span>${lapHtml}<p class="kws">${b.k}</p>${b.tip?`<p class="tip">${b.tip}</p>`:""}</div>`;
+  }).join("");
+}
+function lapStart(){ let s=0; for(let i=0;i<cur;i++) s+=laps[i]||0; return s; }
+function updateClock(){
+  const e = elapsed();
+  $("#clock").textContent = fmt(e);
+  $("#clock-sub").textContent = (cur<BLOCKS.length ? ("Blocco "+(cur+1)+" di "+BLOCKS.length+" · in questo blocco "+fmt(e-lapStart())) : "Fine") + " · obiettivo "+fmt(TARGET);
+}
+$("#t-start").onclick = ()=>{
+  if(running){ acc=elapsed(); running=false; clearInterval(tick); $("#t-start").textContent="Riprendi"; }
+  else { t0=Date.now(); running=true; tick=setInterval(updateClock,250); $("#t-start").textContent="Pausa"; $("#t-next").disabled=false; }
+  renderBlocks(); updateClock();
+};
+$("#t-next").onclick = ()=>{
+  if(cur>=BLOCKS.length) return;
+  laps[cur] = elapsed()-lapStart(); cur++;
+  if(cur>=BLOCKS.length){
+    acc=elapsed(); running=false; clearInterval(tick); $("#t-start").textContent="Avvia"; $("#t-next").disabled=true;
+    const tot=acc; const runs=store.get("tesi.runs",[]); runs.push({d:todayISO(), s:Math.round(tot)}); store.set("tesi.runs",runs.slice(-10));
+    showRuns();
+  }
+  renderBlocks(); updateClock();
+};
+$("#t-reset").onclick = ()=>{ clearInterval(tick); running=false; acc=0; cur=0; laps=[]; $("#t-start").textContent="Avvia"; $("#t-next").disabled=true; renderBlocks(); updateClock(); };
+function showRuns(){
+  const runs=store.get("tesi.runs",[]);
+  $("#last-run").textContent = runs.length ? ("Ultime prove: " + runs.slice(-5).map(r=>fmt(r.s)+(r.s>TARGET?" (lunga)":"")).join(" · ")) : ("Durata stimata del testo attuale: circa "+fmt(plannedTotal)+". L'obiettivo è stare sui 14 minuti, per lasciare spazio alle domande.");
+}
+
+/* ---------- AVVIO ---------- */
+function setHdr(){ const h=document.querySelector("header.top"); if(h) document.documentElement.style.setProperty("--hdr", h.offsetHeight+"px"); }
+setHdr(); window.addEventListener("resize", setHdr); if(document.fonts&&document.fonts.ready) document.fonts.ready.then(setHdr);
+renderCountdown(); renderFilo(); renderChList(); renderCh(); renderDeckFilter(); renderBlocks(); updateClock(); showRuns();
+route();
+})();
+</script>

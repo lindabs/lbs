@@ -26,6 +26,7 @@ cartolina/sorgenti/ vetrina e script per rigenerare anteprime e miniatura del bi
 cena/index.html     Buon Appetito: percorso a tappe, piano della serata e invito per gli ospiti
 cena/anteprima.jpg  l'immagine di anteprima del link della cena
 mondo/index.html    Il mondo stamattina: il globo e il pannello delle notizie
+mondo/anteprima.jpg l'immagine di anteprima del link del mondo
 mondo/dati/         paesi, confini e il notiziario del giorno (oggi-it.json, più l'archivio di 30 giorni)
 mondo/sorgenti/     lo script del mattino (genera.mjs) e quello che prepara paesi e confini
 mondo/lib/          globe.gl, ospitato in locale

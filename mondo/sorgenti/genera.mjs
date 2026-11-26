@@ -9,8 +9,8 @@
 //   --senza-ai           salta Gemini e salva solo i titoli originali
 //   --riusa-raccolta     non interroga di nuovo GDELT: usa l'ultima raccolta salvata
 //
-// Variabili facoltative: GEMINI_MODEL (predefinito gemini-flash-latest),
-// GEMINI_RISERVA (predefinito gemini-flash-lite-latest), LINGUA (predefinita it),
+// Variabili facoltative: GEMINI_MODEL (predefinito gemini-flash-lite-latest, il più disponibile nel piano gratuito),
+// GEMINI_RISERVA (predefinito gemini-flash-latest), LINGUA (predefinita it),
 // GDELT_MINUTI (tempo massimo per GDELT, predefinito 60; 0 = solo feed internazionali).
 
 import { readFile, writeFile, mkdir, readdir, unlink } from 'node:fs/promises';
@@ -21,7 +21,7 @@ const opz = n => args.includes(n);
 const val = n => { const i = args.indexOf(n); return i >= 0 ? args[i + 1] : null; };
 
 const LINGUA = process.env.LINGUA || 'it';
-const MODELLI = [process.env.GEMINI_MODEL || 'gemini-flash-latest', process.env.GEMINI_RISERVA || 'gemini-flash-lite-latest'];
+const MODELLI = [process.env.GEMINI_MODEL || 'gemini-flash-lite-latest', process.env.GEMINI_RISERVA || 'gemini-flash-latest'];
 const CHIAVE = process.env.GEMINI_API_KEY;
 const PAUSA_GDELT = 8_000;    // GDELT chiede al massimo una richiesta ogni 5 secondi: stiamo larghi
 const PAUSA_GEMINI = 12_000;  // per restare sotto il limite di richieste al minuto del piano gratuito
@@ -79,6 +79,35 @@ const FEED = [
   'https://www.batimes.com.ar/feed',
 ];
 
+// Feed nazionali: le notizie interne dei paesi principali, collegate direttamente al paese
+// (senza cercarne il nome nel testo). La lingua aiuta Gemini a tradurre.
+const FEED_NAZIONALI = {
+  IT: ['Italian', 'https://www.ansa.it/sito/notizie/politica/politica_rss.xml', 'https://www.ansa.it/sito/notizie/cronaca/cronaca_rss.xml', 'https://www.ansa.it/sito/notizie/economia/economia_rss.xml'],
+  GB: ['English', 'https://feeds.bbci.co.uk/news/uk/rss.xml', 'https://feeds.bbci.co.uk/news/politics/rss.xml'],
+  US: ['English', 'https://feeds.npr.org/1001/rss.xml', 'https://feeds.npr.org/1014/rss.xml', 'https://rss.nytimes.com/services/xml/rss/nyt/US.xml'],
+  DE: ['German', 'https://www.tagesschau.de/inland/index~rss2.xml', 'https://www.tagesschau.de/index~rss2.xml'],
+  FR: ['French', 'https://www.lemonde.fr/politique/rss_full.xml', 'https://www.lemonde.fr/societe/rss_full.xml'],
+  ES: ['Spanish', 'https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/espana/portada'],
+  PT: ['Portuguese', 'https://www.publico.pt/api/list/politica'],
+  NL: ['English', 'https://nltimes.nl/rss'],
+  CH: ['English', 'https://www.swissinfo.ch/eng/rss/politics'],
+  JP: ['English', 'https://www3.nhk.or.jp/rss/news/cat1.xml', 'https://www.japantimes.co.jp/feed/'],
+  KR: ['English', 'https://en.yna.co.kr/RSS/news.xml'],
+  CN: ['English', 'https://www.scmp.com/rss/4/feed'],
+  IN: ['English', 'https://www.thehindu.com/news/national/feeder/default.rss'],
+  PK: ['English', 'https://www.dawn.com/feeds/home'],
+  AU: ['English', 'https://www.abc.net.au/news/feed/51120/rss.xml'],
+  CA: ['English', 'https://www.cbc.ca/webfeed/rss/rss-canada', 'https://www.cbc.ca/webfeed/rss/rss-politics'],
+  BR: ['Portuguese', 'https://g1.globo.com/rss/g1/politica/', 'https://g1.globo.com/rss/g1/economia/'],
+  RU: ['English', 'https://meduza.io/rss/en/all'],
+  UA: ['English', 'https://www.ukrinform.net/rss/block-lastnews', 'https://kyivindependent.com/news-archive/rss/'],
+  IL: ['English', 'https://www.timesofisrael.com/feed/'],
+  NG: ['English', 'https://punchng.com/feed/'],
+  PH: ['English', 'https://www.rappler.com/feed/'],
+  IE: ['English', 'https://www.rte.ie/feeds/rss/?index=/news/'],
+  NZ: ['English', 'https://www.rnz.co.nz/rss/national.xml'],
+};
+
 // Altri modi in cui i giornali nominano un paese (oltre al nome inglese e a quello italiano).
 const SINONIMI = {
   US: ['United States', 'U.S.', 'US', 'USA', 'Washington', 'White House', 'Stati Uniti', 'Usa'], CN: ['China', 'Chinese', 'Beijing', 'Cina', 'Pechino'],
@@ -121,7 +150,7 @@ const campo = (xml, ...nomi) => {
   return '';
 };
 
-async function leggiFeed(url) {
+async function leggiFeed(url, lingua) {
   try {
     const r = await fetch(url, { signal: AbortSignal.timeout(30_000), headers: { 'user-agent': 'il-mondo-stamattina (notiziario personale)' } });
     if (!r.ok) throw new Error(r.status);
@@ -131,7 +160,7 @@ async function leggiFeed(url) {
     const voci = [...xml.matchAll(/<(item|entry)[\s>][\s\S]*?<\/\1>/gi)].map(([x]) => {
       const href = x.match(/<link[^>]*href="([^"]+)"/i)?.[1];
       const data = Date.parse(campo(x, 'pubDate', 'dc:date', 'updated', 'published'));
-      return { t: campo(x, 'title'), s: campo(x, 'description', 'summary', 'content').slice(0, 280), u: campo(x, 'link') || href, d: dominio, l: url.includes('ansa.it') ? 'Italian' : 'English', data };
+      return { t: campo(x, 'title'), s: campo(x, 'description', 'summary', 'content').slice(0, 280), u: campo(x, 'link') || href, d: dominio, l: lingua || (url.includes('ansa.it') ? 'Italian' : 'English'), data };
     }).filter(v => v.t && v.u && !(v.data < limite));
     log(`  feed ${dominio}: ${voci.length} notizie`);
     return voci;
@@ -217,7 +246,11 @@ function pulisci(articoli, visti = new Set()) {
 
 async function raccogli(paesi) {
   log(`Leggo ${FEED.length} feed internazionali...`);
-  const voci = (await Promise.all(FEED.map(leggiFeed))).flat();
+  const voci = (await Promise.all(FEED.map(u => leggiFeed(u)))).flat();
+  const nazionali = {};
+  await Promise.all(Object.entries(FEED_NAZIONALI).map(async ([id, [lingua, ...urls]]) => {
+    nazionali[id] = (await Promise.all(urls.map(u => leggiFeed(u, lingua)))).flat();
+  }));
   const dalMondo = assegna(voci, JSON.parse(await readFile(qui('../dati/paesi.json'), 'utf8')));
 
   // La stampa locale serve di più dove quella internazionale dice poco: GDELT parte da quei paesi.
@@ -227,9 +260,11 @@ async function raccogli(paesi) {
   for (const [i, p] of ordine.entries()) {
     const visti = new Set();
     // prima la stampa internazionale (ha anche un breve sommario), poi quella locale
-    const estero = pulisci(dalMondo[p.id] || [], visti).slice(0, 10);
+    // prima le notizie interne dei feed nazionali, quando ci sono
+    const interne = pulisci(nazionali[p.id] || [], visti).slice(0, 12);
+    const estero = pulisci(dalMondo[p.id] || [], visti).slice(0, interne.length ? 6 : 10);
     const locale = gdeltSpento ? [] : pulisci(await gdelt(`sourcecountry:${p.fips}`, 50), visti);
-    raccolta[p.id] = [...estero, ...locale].slice(0, 22);
+    raccolta[p.id] = [...interne, ...estero, ...locale].slice(0, 24);
     if (!gdeltSpento || i % 25 === 0) log(`[${i + 1}/${paesi.length}] ${p.nome}: ${estero.length} internazionali, ${locale.length} locali`);
   }
   const coperti = Object.values(raccolta).filter(v => v.length).length;
@@ -310,23 +345,9 @@ let ultimaGemini = 0;
 let modelloUsato = null;
 let modelli = null;
 
-// I modelli da provare: quelli scelti, poi gli altri "Flash" che la chiave può usare.
-// Quello che ha appena funzionato passa davanti, così le richieste successive vanno a colpo sicuro.
+// Il modello che ha appena funzionato passa davanti, così le richieste successive vanno a colpo sicuro.
 async function elencoModelli() {
-  if (modelli) return modelli;
-  modelli = [...MODELLI];
-  try {
-    const r = await fetch('https://generativelanguage.googleapis.com/v1beta/models?pageSize=200', {
-      headers: { 'x-goog-api-key': CHIAVE }, signal: AbortSignal.timeout(30_000),
-    });
-    const altri = ((await r.json()).models || [])
-      .filter(m => m.supportedGenerationMethods?.includes('generateContent'))
-      .map(m => m.name.replace(/^models\//, ''))
-      .filter(n => /flash/.test(n) && !/image|tts|audio|live|thinking|exp|preview/.test(n))
-      .sort().reverse();
-    for (const n of altri) if (!modelli.includes(n) && modelli.length < 5) modelli.push(n);
-  } catch { /* si usano solo i modelli scelti */ }
-  log(`Modelli Gemini da provare: ${modelli.join(', ')}`);
+  modelli ??= [...MODELLI];
   return modelli;
 }
 
@@ -352,7 +373,7 @@ async function gemini(istruzioni, testo, schema) {
               contents: [{ role: 'user', parts: [{ text: testo }] }],
               generationConfig: { responseMimeType: 'application/json', responseSchema: schema, temperature: 0.3, maxOutputTokens: 32768 },
             }),
-            signal: AbortSignal.timeout(120_000),
+            signal: AbortSignal.timeout(75_000),
           });
           corpo = await r.json();
         } catch (e) {
@@ -442,18 +463,31 @@ const risultato = {};
 const senzaAi = opz('--senza-ai') || !CHIAVE;
 if (!CHIAVE && !opz('--senza-ai')) log('GEMINI_API_KEY mancante: salvo solo i titoli originali.');
 
-for (let i = 0; i < conTitoli.length; i += PAESI_PER_RICHIESTA) {
-  const gruppo = conTitoli.slice(i, i + PAESI_PER_RICHIESTA);
-  let risposta = null;
-  if (!senzaAi) {
-    log(`Gemini: paesi ${i + 1}-${i + gruppo.length} di ${conTitoli.length}`);
-    risposta = await gemini(ISTRUZIONI, blocchiDiTesto(gruppo, raccolta), SCHEMA_PAESI);
+async function riassumi(elenco, perRichiesta, etichetta) {
+  for (let i = 0; i < elenco.length; i += perRichiesta) {
+    const gruppo = elenco.slice(i, i + perRichiesta);
+    let risposta = null;
+    if (!senzaAi) {
+      log(`Gemini${etichetta}: paesi ${i + 1}-${i + gruppo.length} di ${elenco.length}`);
+      risposta = await gemini(ISTRUZIONI, blocchiDiTesto(gruppo, raccolta), SCHEMA_PAESI);
+    }
+    const perId = new Map((risposta?.paesi || []).map(v => [String(v.id).toUpperCase(), v]));
+    for (const p of gruppo) {
+      const voce = perId.get(p.id);
+      risultato[p.id] = voce ? componi(voce, raccolta[p.id]) : soloTitoli(raccolta[p.id]);
+    }
   }
-  const perId = new Map((risposta?.paesi || []).map(v => [String(v.id).toUpperCase(), v]));
-  for (const p of gruppo) {
-    const voce = perId.get(p.id);
-    risultato[p.id] = voce ? componi(voce, raccolta[p.id]) : soloTitoli(raccolta[p.id]);
-  }
+}
+
+await riassumi(conTitoli, PAESI_PER_RICHIESTA, '');
+
+// Secondo passaggio: si riprova, a gruppi più piccoli, solo con i paesi rimasti senza riassunto.
+const mancanti = senzaAi ? [] : conTitoli.filter(p => risultato[p.id].soloTitoli);
+if (mancanti.length) {
+  log(`Secondo passaggio per ${mancanti.length} paesi rimasti senza riassunto`);
+  geminiScadenza = Date.now() + 20 * 60_000;
+  await attendi(30_000);
+  await riassumi(mancanti, 8, ' (secondo passaggio)');
 }
 
 let mondo = [];

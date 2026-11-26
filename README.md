@@ -83,8 +83,8 @@ di Gemini, il lavoro lo fa GitHub Actions e il sito resta su GitHub Pages.
   (`--senza-ai` salva solo i titoli, `--riusa-raccolta` salta GDELT e riusa l'ultima raccolta).
 - Se GDELT o Gemini non rispondono, resta online il notiziario del giorno prima. Se un gruppo di paesi
   non viene riassunto, il sito mostra i titoli originali.
-- Il modello si cambia con le variabili `GEMINI_MODEL` e `GEMINI_RISERVA` (predefiniti `gemini-flash-latest`
-  e `gemini-flash-lite-latest`). Per aggiungere l'inglese: `LINGUA=en`, le istruzioni in inglese in `genera.mjs`
+- Il modello si cambia con le variabili `GEMINI_MODEL` e `GEMINI_RISERVA` (predefiniti `gemini-flash-lite-latest`,
+  il più disponibile nel piano gratuito, e `gemini-flash-latest`). Per aggiungere l'inglese: `LINGUA=en`, le istruzioni in inglese in `genera.mjs`
   e un selettore nella pagina.
 
 I progetti formali futuri andranno ciascuno in una propria cartella, per esempio

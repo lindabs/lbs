@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Il cielo è di tutti</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Il tour virtuale dell'Open Day: sei tappe in 3D ispirate alla Notte Stellata di Van Gogh e a Il cielo è di tutti di Gianni Rodari, con i bambini di 5 anni come guide.">
+<meta property="og:title" content="Il cielo è di tutti · Open Day">
+<meta property="og:description" content="Ogni bambino ha una stella da far brillare. Entra nel tour virtuale dell'Open Day.">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="it_IT">
+<meta property="og:url" content="https://lindabs.github.io/lbs/openday/">
+<meta property="og:image" content="https://lindabs.github.io/lbs/openday/anteprima.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#070d22">
+<meta name="referrer" content="no-referrer">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23070d22'/%3E%3Cpath d='M32 9l6.6 14.6 15.9 1.7-11.9 10.7 3.4 15.7L32 43.6l-14 8.1 3.4-15.7L9.5 25.3l15.9-1.7z' fill='%23f2c14e'/%3E%3C/svg%3E">
+<style>
+@font-face{font-family:"Instrument Serif";font-style:normal;font-weight:400;font-display:swap;src:url(caratteri/instrument-serif.woff2) format("woff2")}
+@font-face{font-family:"Instrument Serif";font-style:italic;font-weight:400;font-display:swap;src:url(caratteri/instrument-serif-corsivo.woff2) format("woff2")}
+@font-face{font-family:"Hanken Grotesk";font-style:normal;font-weight:300 700;font-display:swap;src:url(caratteri/hanken-grotesk.woff2) format("woff2")}
+@font-face{font-family:"Caveat";font-style:normal;font-weight:400 700;font-display:swap;src:url(caratteri/caveat.woff2) format("woff2")}
+/* Layout: la scena 3D a tutto schermo; sopra, la barra delle tappe in alto e la scheda della tappa in basso a sinistra. */
+:root{
+  --notte:#070d22; --inchiostro:#0f1b41; --cobalto:#3d63c9; --oro:#f2c14e; --luna:#fbe9a8; --carta:#eef1fb; --nebbia:#a9b4d8;
+  --vetro:rgba(9,16,42,.84); --filo:rgba(242,193,78,.3); --scuro:#141005;
+  --display:"Instrument Serif","Iowan Old Style",Georgia,serif;
+  --testo:"Hanken Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mano:"Caveat","Comic Sans MS",cursive;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%;margin:0;background:var(--notte);color:var(--carta);font:15px/1.5 var(--testo);overflow:hidden;-webkit-tap-highlight-color:transparent}
+#scena{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:grab}
+#scena.trascina{cursor:grabbing}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--oro);outline-offset:2px}
+.btn{display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:8px 14px;border-radius:999px;border:1px solid var(--filo);background:rgba(255,255,255,.06);color:var(--carta);font:600 14px/1.2 var(--testo);cursor:pointer;text-align:left}
+.btn:hover{background:rgba(255,255,255,.12)}
+.btn.primo{background:var(--oro);color:var(--scuro);border-color:transparent}
+.btn.primo:hover{background:#f7cf6b}
+.btn[aria-pressed="true"]{background:rgba(242,193,78,.2);border-color:var(--oro)}
+.btn svg{width:18px;height:18px;flex:none}
+.tondo{width:40px;height:40px;padding:0;justify-content:center}
+
+/* HUD */
+.hud{position:fixed;inset:0;pointer-events:none;display:flex;flex-direction:column;justify-content:space-between;gap:12px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:calc(env(safe-area-inset-top,0px) + 12px) calc(env(safe-area-inset-bottom,0px) + 12px)}
+.hud > *{pointer-events:auto}
+.testata{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;pointer-events:none}
+.testata > *{pointer-events:auto}
+.marchio{background:var(--vetro);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid var(--filo);border-radius:16px;padding:8px 14px 10px;min-width:0}
+.marchio small{display:block;font:600 11px/1.2 var(--testo);letter-spacing:.14em;text-transform:uppercase;color:var(--nebbia)}
+.marchio b{font:400 26px/1.05 var(--display);font-style:italic;color:var(--luna)}
+.percorso{display:flex;gap:6px;align-items:center;background:var(--vetro);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid var(--filo);border-radius:999px;padding:5px}
+.percorso button{position:relative;width:34px;height:34px;border-radius:50%;border:0;background:transparent;cursor:pointer;display:grid;place-items:center;color:var(--nebbia);font:700 13px var(--testo)}
+.percorso button svg{position:absolute;inset:3px;width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:1.4;opacity:.55}
+.percorso button.vista svg{fill:rgba(242,193,78,.25);stroke:var(--oro);opacity:1}
+.percorso button[aria-current="step"]{color:var(--scuro)}
+.percorso button[aria-current="step"] svg{fill:var(--oro);stroke:var(--oro);opacity:1}
+.percorso button span{position:relative}
+.strumenti{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.strumenti .btn{background:var(--vetro);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+
+/* Scheda della tappa */
+#scheda{width:min(410px,100%);max-height:min(52vh,560px);display:flex;flex-direction:column;background:var(--vetro);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--filo);border-radius:20px;overflow:hidden}
+#scheda header{padding:14px 16px 10px;display:grid;grid-template-columns:1fr auto;gap:2px 10px;align-items:start}
+#scheda .num{font:600 11px/1.2 var(--testo);letter-spacing:.14em;text-transform:uppercase;color:var(--oro)}
+#scheda h2{grid-column:1;margin:2px 0 0;font:400 30px/1.05 var(--display);text-wrap:balance}
+#scheda .sotto{grid-column:1;margin:0;color:var(--nebbia);font-size:13.5px}
+#chiudiScheda{grid-row:1/span 3;grid-column:2}
+.schede{display:flex;gap:4px;padding:0 12px;border-bottom:1px solid rgba(255,255,255,.08)}
+.schede button{border:0;background:none;padding:8px 8px 9px;font:600 13px var(--testo);color:var(--nebbia);cursor:pointer;border-bottom:2px solid transparent}
+.schede button[aria-selected="true"]{color:var(--carta);border-color:var(--oro)}
+.corpo{padding:12px 16px 4px;overflow:auto;min-height:0;flex:1;overscroll-behavior:contain}
+.corpo p{margin:0 0 10px}
+.corpo h3{margin:12px 0 6px;font:600 11px/1.2 var(--testo);letter-spacing:.14em;text-transform:uppercase;color:var(--nebbia)}
+.corpo ul{margin:0 0 10px;padding-left:18px}
+.corpo li{margin:2px 0}
+.domanda{font:400 24px/1.15 var(--display);font-style:italic;color:var(--luna);margin:2px 0 10px!important}
+.citazione{font:600 23px/1.15 var(--mano);color:var(--luna)}
+.azioni{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 12px}
+.chip{min-height:34px;padding:6px 11px;font-size:13px}
+.campo{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 10px}
+.campo input[type=text]{flex:1 1 180px;min-width:0;min-height:40px;padding:8px 12px;border-radius:12px;border:1px solid var(--filo);background:rgba(0,0,0,.25);color:var(--carta);font:500 15px var(--testo)}
+.campo input::placeholder{color:#7f8ab0}
+.nota{font-size:12.5px;color:var(--nebbia)}
+.piede{display:flex;justify-content:space-between;gap:8px;padding:10px 12px 12px;border-top:1px solid rgba(255,255,255,.08)}
+#scheda.chiusa .schede,#scheda.chiusa .corpo{display:none}
+#scheda.chiusa header{padding-bottom:4px}
+#scheda.chiusa .sotto{display:none}
+
+/* Punti informativi, fumetto della guida, barra degli attrezzi */
+#punti{position:fixed;inset:0;pointer-events:none;overflow:hidden}
+.punto{position:absolute;left:0;top:0;width:30px;height:30px;margin:-15px 0 0 -15px;border-radius:50%;border:1px solid var(--oro);background:rgba(7,13,34,.55);color:var(--oro);display:grid;place-items:center;pointer-events:auto;cursor:pointer;padding:0}
+.punto svg{width:16px;height:16px;fill:currentColor}
+.punto::after{content:"";position:absolute;inset:-5px;border-radius:50%;border:1px solid rgba(242,193,78,.5);animation:pulsa 2.4s ease-out infinite}
+@keyframes pulsa{from{transform:scale(.8);opacity:1}to{transform:scale(1.5);opacity:0}}
+.punto span{position:absolute;left:36px;top:50%;transform:translateY(-50%);white-space:nowrap;background:var(--vetro);border:1px solid var(--filo);padding:3px 9px;border-radius:999px;font:600 12px var(--testo);color:var(--carta);opacity:0;transition:opacity .2s;pointer-events:none}
+.punto:hover span,.punto:focus-visible span{opacity:1}
+#fumetto{position:fixed;left:0;top:0;max-width:min(270px,70vw);background:var(--luna);color:#1b2350;border-radius:18px;padding:9px 14px 10px;font:600 21px/1.12 var(--mano);pointer-events:auto;cursor:pointer;box-shadow:0 8px 30px rgba(0,0,0,.35);transform:translate(-50%,-100%);transition:opacity .25s}
+#fumetto small{display:block;font:700 10.5px/1.3 var(--testo);letter-spacing:.12em;text-transform:uppercase;color:#6a5a1e;margin-bottom:2px}
+#fumetto::after{content:"";position:absolute;left:50%;bottom:-9px;margin-left:-9px;border:9px solid transparent;border-bottom:0;border-top-color:var(--luna)}
+#attrezzi{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(env(safe-area-inset-bottom,0px) + 16px);display:flex;gap:6px;flex-wrap:wrap;justify-content:center;background:var(--vetro);border:1px solid var(--filo);border-radius:999px;padding:6px;max-width:calc(100% - 32px)}
+#avviso{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 84px);transform:translateX(-50%);max-width:min(560px,calc(100% - 32px));background:var(--vetro);border:1px solid var(--filo);border-radius:14px;padding:10px 14px;font-size:14px;text-align:center;pointer-events:none}
+#info{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(env(safe-area-inset-bottom,0px) + 16px);width:min(340px,calc(100% - 32px));background:var(--vetro);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--oro);border-radius:18px;padding:14px 16px}
+#info h4{margin:0 30px 6px 0;font:400 24px/1.1 var(--display)}
+#info p{margin:0 0 8px;font-size:14px}
+#info .x{position:absolute;right:8px;top:8px}
+
+/* Ingresso */
+#ingresso{position:fixed;inset:0;display:flex;align-items:flex-end;background:radial-gradient(ellipse at 30% 30%,rgba(23,40,100,.35),rgba(7,13,34,.92) 70%);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:24px calc(env(safe-area-inset-bottom,0px) + 28px);overflow:auto}
+#ingresso .dentro{max-width:640px;display:flex;flex-direction:column;gap:14px}
+#ingresso small{font:600 12px/1.2 var(--testo);letter-spacing:.18em;text-transform:uppercase;color:var(--oro)}
+#ingresso h1{margin:0;font:400 clamp(52px,11vw,112px)/.92 var(--display);letter-spacing:-.01em;text-wrap:balance}
+#ingresso h1 em{color:var(--oro)}
+#ingresso .motto{margin:0;font:600 clamp(24px,4.2vw,32px)/1.1 var(--mano);color:var(--luna)}
+#ingresso p{margin:0;max-width:52ch;color:var(--nebbia)}
+#ingresso .azioni{margin:6px 0 0}
+#ingresso .comandi{font-size:13px;color:#8d98c0}
+
+/* Finestre */
+dialog{width:min(760px,calc(100% - 32px));max-height:calc(100% - 48px);padding:0;border:1px solid var(--filo);border-radius:22px;background:#0b1430;color:var(--carta)}
+dialog::backdrop{background:rgba(3,6,18,.7)}
+dialog .testa{position:sticky;top:0;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 18px 12px;background:#0b1430;border-bottom:1px solid rgba(255,255,255,.08);z-index:1}
+dialog h2{margin:0;font:400 30px/1.05 var(--display)}
+dialog .dentro{padding:14px 18px 20px}
+dialog h3{margin:18px 0 6px;font:600 11px/1.2 var(--testo);letter-spacing:.14em;text-transform:uppercase;color:var(--oro)}
+dialog p{margin:0 0 10px;max-width:68ch}
+.griglia{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.griglia > div{min-width:0}
+.griglia ul{margin:0;padding-left:18px}
+.spunta{list-style:none;padding:0!important}
+.spunta label{display:flex;gap:8px;align-items:flex-start;padding:3px 0;cursor:pointer}
+.spunta input{accent-color:var(--oro);width:17px;height:17px;margin-top:2px}
+.ruoli{display:grid;gap:6px}
+.ruoli div{display:grid;grid-template-columns:minmax(150px,220px) 1fr;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.07)}
+.ruoli b{font-weight:600}
+.chiusura{font:400 26px/1.2 var(--display);font-style:italic;color:var(--luna);margin-top:14px!important}
+.mappa{overflow-x:auto}
+.mappa svg{display:block;width:100%;height:auto}
+.album{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+.album figure{margin:0;background:#f4f6fb;color:#1b2350;border-radius:6px;padding:8px 8px 6px;min-width:0}
+.album img{display:block;width:100%;height:auto;border-radius:3px}
+.album figcaption{font:600 20px/1.1 var(--mano);padding-top:6px;overflow-wrap:anywhere}
+.parole{display:flex;flex-wrap:wrap;gap:8px}
+.parole span{background:#f7df7a;color:#22306a;font:600 19px/1.1 var(--mano);padding:6px 12px;border-radius:999px}
+.parole span.es{opacity:.6}
+.vuoto{color:var(--nebbia);font-size:14px}
+.conferma{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px}
+#finale{width:min(620px,calc(100% - 32px));text-align:left}
+#finale .dentro{padding:28px 24px 24px}
+#finale blockquote{margin:0 0 18px;font:400 clamp(26px,5vw,36px)/1.15 var(--display);font-style:italic;color:var(--luna)}
+#errore{position:fixed;inset:0;display:grid;place-items:center;padding:24px;text-align:center}
+
+@media (max-width:640px){
+  .marchio b{font-size:21px}
+  .strumenti .etichetta{display:none}
+  .strumenti .btn{width:40px;padding:0;justify-content:center}
+  #scheda{width:100%;max-height:46vh}
+  #scheda h2{font-size:25px}
+  .percorso{order:3;width:100%;justify-content:space-between}
+  #info{bottom:auto;top:calc(env(safe-area-inset-top,0px) + 120px)}
+  #attrezzi{left:16px;right:16px;bottom:auto;top:calc(env(safe-area-inset-top,0px) + 172px);border-radius:18px}
+  #avviso{top:calc(env(safe-area-inset-top,0px) + 172px)}
+  .ruoli div{grid-template-columns:1fr;gap:2px}
+}
+@media (prefers-reduced-motion:reduce){.punto::after{animation:none}}
+</style>
+<script type="importmap">{"imports":{"three":"./lib/three.module.min.js"}}</script>
+</head>
+<body>
+<canvas id="scena" aria-label="Scena 3D del tour: trascina per guardarti intorno, tocca il pavimento per camminare"></canvas>
+<div id="punti" aria-label="Dettagli dell'allestimento"></div>
+<div id="fumetto" hidden role="status"></div>
+
+<div class="hud" id="hud" hidden>
+  <div class="testata">
+    <div class="marchio"><small>Open Day · tour virtuale</small><b>Il cielo è di tutti</b></div>
+    <nav class="percorso" id="percorso" aria-label="Le sei tappe"></nav>
+    <div class="strumenti">
+      <button class="btn" id="apriPianta" title="Pianta del percorso"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2zM9 4v14M15 6v14"/></svg><span class="etichetta">Pianta</span></button>
+      <button class="btn" id="apriProgetto" title="La progettazione"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3h9l4 4v14H6zM14 3v5h5M9 12h7M9 16h7"/></svg><span class="etichetta">Progetto</span></button>
+      <button class="btn" id="apriAlbum" title="Documentazione raccolta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="6" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="3.5"/><path d="M8 6l1.5-2h5L16 6"/></svg><span class="etichetta">Documentazione</span></button>
+      <button class="btn" id="audio" aria-pressed="false" title="Musica"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg><span class="etichetta">Musica</span></button>
+    </div>
+  </div>
+  <section id="scheda" aria-live="polite">
+    <header>
+      <span class="num" id="schedaNum"></span>
+      <h2 id="schedaTitolo"></h2>
+      <p class="sotto" id="schedaSotto"></p>
+      <button class="btn tondo" id="chiudiScheda" aria-expanded="true" title="Riduci la scheda"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></button>
+    </header>
+    <div class="schede" role="tablist">
+      <button role="tab" data-scheda="esperienza" aria-selected="true">Esperienza</button>
+      <button role="tab" data-scheda="allestimento" aria-selected="false">Allestimento</button>
+      <button role="tab" data-scheda="persone" aria-selected="false">Chi c'è</button>
+    </div>
+    <div class="corpo" id="schedaCorpo"></div>
+    <div class="piede">
+      <button class="btn" id="indietro">← Tappa precedente</button>
+      <button class="btn primo" id="avanti">Tappa successiva →</button>
+    </div>
+  </section>
+</div>
+
+<div id="attrezzi" hidden></div>
+<div id="avviso" hidden></div>
+<aside id="info" hidden><button class="btn tondo x" id="chiudiInfo" title="Chiudi">✕</button><h4 id="infoTitolo"></h4><p id="infoTesto"></p><div class="azioni" id="infoAzioni"></div></aside>
+<input type="file" id="fileFoto" accept="image/*" multiple hidden>
+
+<div id="ingresso">
+  <div class="dentro">
+    <small>Open Day · tour virtuale in sei tappe</small>
+    <h1>Il cielo <em>è di tutti</em></h1>
+    <p class="motto">Ogni bambino ha una stella da far brillare</p>
+    <p>Un viaggio immersivo ispirato alla Notte Stellata di Van Gogh, a <i>Il cielo è di tutti</i> di Gianni Rodari e ai cento linguaggi: la luce, le ombre, la narrazione, i materiali. A guidarti sono i bambini di 5 anni.</p>
+    <div class="azioni">
+      <button class="btn primo" id="entra">Entra nel cielo, con la musica</button>
+      <button class="btn" id="entraMuto">Entra senza audio</button>
+    </div>
+    <p class="comandi">Trascina per guardarti intorno · tocca il pavimento per camminare · tocca le stelline per i dettagli. Da tastiera: frecce o WASD per muoversi, 1–6 per le tappe.</p>
+  </div>
+</div>
+
+<dialog id="dlgPianta"><div class="testa"><h2>Pianta del percorso</h2><button class="btn tondo" data-chiudi title="Chiudi">✕</button></div><div class="dentro"><p>L'Open Day è un percorso a tappe. Tocca una stanza per andarci.</p><div class="mappa" id="mappa"></div></div></dialog>
+<dialog id="dlgProgetto"><div class="testa"><h2>La progettazione</h2><button class="btn tondo" data-chiudi title="Chiudi">✕</button></div><div class="dentro" id="progetto"></div></dialog>
+<dialog id="dlgAlbum"><div class="testa"><h2>Documentazione</h2><button class="btn tondo" data-chiudi title="Chiudi">✕</button></div><div class="dentro" id="album"></div></dialog>
+<dialog id="dlgFoto"><div class="testa"><h2>Il tuo cielo</h2><button class="btn tondo" data-chiudi title="Chiudi">✕</button></div><div class="dentro"><img id="fotoAnteprima" alt="La composizione sul tavolo luminoso vista dall'alto" style="width:100%;border-radius:10px;display:block"><form id="formFoto" class="campo" style="margin-top:12px"><input type="text" id="titoloCielo" maxlength="60" placeholder="Che titolo dai al tuo cielo?" aria-label="Titolo del tuo cielo"><button class="btn primo" type="submit">Metti nell'album</button></form><p class="nota" id="fotoNota"></p></div></dialog>
+<dialog id="finale"><div class="dentro"><blockquote>«Il cielo è di tutti, ma ogni bambino lo guarda con occhi diversi. Nella nostra scuola custodiamo ogni sguardo, ogni domanda e ogni stella.»</blockquote><div class="azioni"><button class="btn primo" id="finaleAlbum">Guarda la documentazione</button><button class="btn" id="finaleRestart">Rifai il percorso</button><button class="btn" data-chiudi>Resta qui</button></div></div></dialog>
+<div id="errore" hidden><p>Questo dispositivo non riesce a mostrare la scena 3D. La progettazione completa resta consultabile dal pulsante qui sotto.</p></div>
+
+<script type="module" src="app/main.js"></script>
+</body>
+</html>

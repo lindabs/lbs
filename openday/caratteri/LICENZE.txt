@@ -1,0 +1,6 @@
+Caratteri usati dal tour "Il cielo è di tutti", ospitati qui per non contattare server esterni.
+Tutti sono distribuiti con licenza SIL Open Font License 1.1: https://openfontlicense.org
+
+instrument-serif.woff2, instrument-serif-corsivo.woff2   Instrument Serif · Copyright The Instrument Serif Project Authors
+hanken-grotesk.woff2                                      Hanken Grotesk · Copyright The Hanken Grotesk Project Authors
+caveat.woff2                                              Caveat · Copyright The Caveat Project Authors

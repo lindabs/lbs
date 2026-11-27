@@ -8,6 +8,7 @@ Biglietto da visita digitale e progetti formali di LBS.
   esempi: [Santorini](https://lindabs.github.io/lbs/cartolina/per-te/#santorini) · [Parigi](https://lindabs.github.io/lbs/cartolina/per-te/#parigi)
 - **Buon Appetito** (cena di festa a tappe): https://lindabs.github.io/lbs/cena/
 - **Il mondo stamattina** (notiziario del mattino sul globo): https://lindabs.github.io/lbs/mondo/
+- **Il cielo è di tutti** (tour virtuale in 3D dell'Open Day): https://lindabs.github.io/lbs/openday/
 
 ## Come è organizzata la repository
 
@@ -31,6 +32,9 @@ mondo/dati/         paesi, confini e il notiziario del giorno (oggi-it.json, pi�
 mondo/sorgenti/     lo script del mattino (genera.mjs) e quello che prepara paesi e confini
 mondo/lib/          globe.gl, ospitato in locale
 .github/workflows/mondo.yml  l'automatismo che ogni mattina scrive il notiziario
+openday/index.html  Il cielo è di tutti: la pagina del tour (interfaccia e stili)
+openday/app/        il tour: dati.js (tutti i testi), stanze.js, luce.js, ombre.js, racconto.js, main.js
+openday/lib/        three.js, ospitato in locale
 ```
 
 ### Aggiornare Ciak
@@ -87,6 +91,23 @@ di Gemini, il lavoro lo fa GitHub Actions e il sito resta su GitHub Pages.
 - Il modello si cambia con le variabili `GEMINI_MODEL` e `GEMINI_RISERVA` (predefiniti `gemini-flash-lite-latest`,
   il più disponibile nel piano gratuito, e `gemini-flash-latest`). Per aggiungere l'inglese: `LINGUA=en`, le istruzioni in inglese in `genera.mjs`
   e un selettore nella pagina.
+
+## Il cielo è di tutti
+
+Il tour virtuale dell'Open Day, costruito dalla progettazione in sei tappe: si cammina nella scuola in 3D
+con una guida di 5 anni, si toccano le stelline per leggere allestimento, materiali e ruoli.
+
+- Tappa 1, ingresso: teli, stelle dorate, spirali, luci LED, parole dei bambini, tavolo dell'accoglienza.
+- Tappa 2, aula immersiva: il cielo animato ispirato alla Notte Stellata su pareti e soffitto, musica, foto dei laboratori
+  (il pulsante «Carica le foto dei laboratori» mette le vostre foto sul pannello).
+- Tappa 3, atelier della luce: tavolo luminoso su cui posare sagome, gemme, acetati; la composizione si fotografa e riceve un titolo.
+- Tappa 4, atelier delle ombre: ombre vere sul telo con lampada, torcia, tre luci colorate e proiettore, anche l'ombra del corpo.
+- Tappa 5, angolo lettura: l'albo, le domande per la conversazione e i cartoncini «Nel mio cielo c'è…».
+- Tappa 6, costellazione: ogni famiglia appende la sua stella; poi la frase conclusiva.
+- «Progetto» riporta tutta la progettazione, con il materiale occorrente da spuntare; «Documentazione» raccoglie foto, frasi e stelle.
+- Tutto resta sul dispositivo di chi lo usa (localStorage e IndexedDB). La musica è generata dal browser.
+- Testi, parole dei bambini ed esempi si cambiano in `openday/app/dati.js`. Le parole appese all'ingresso sono esempi.
+- Link diretto a una tappa: `openday/#tappa-4`.
 
 I progetti formali futuri andranno ciascuno in una propria cartella, per esempio
 `nome-progetto/index.html`, raggiungibile su `https://lindabs.github.io/lbs/nome-progetto/`.
